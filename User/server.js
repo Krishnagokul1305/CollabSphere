@@ -1,33 +1,58 @@
-const { GraphQLObjectType, GraphQLSchema,GraphQLString } = require('graphql');
-const { createHandler } = require('graphql-http/lib/use/express');
-const express = require('express');
- 
-// Construct a schema
-const schema = new GraphQLSchema({
-  query: new GraphQLObjectType({
-    name: 'Query',
-    fields: {
-      hello: { type: GraphQLString },
-    },
-  }),
+let { ApolloServer } = require("@apollo/server");
+let { expressMiddleware } = require("@apollo/server/express4");
+let typeDefs = require("./app/schema.js");
+let cookieParser = require("cookie-parser");
+let express = require("express");
+let cors = require("cors");
+let bodyParser = require("body-parser");
+let dotenv = require("dotenv");
+
+let Query = require("./app/Query.js");
+let Mutation = require("./app/Mutation.js");
+
+dotenv.config({
+  path: "./.env",
 });
- 
-// The rootValue provides a resolver function for each API endpoint
-const rootValue = {
-  hello() {
-    return 'Hello world!';
+
+// Create the Apollo Server
+let server = new ApolloServer({
+  typeDefs,
+  resolvers: {
+    Query,
+    Mutation,
   },
-};
- 
-const app = express();
- 
-app.all(
-  '/graphql',
-  createHandler({
-    schema: schema,
-    rootValue,
-  }),
-);
- 
-app.listen(4000);
-console.log('Running a GraphQL API server at http://localhost:4000/graphql');
+});
+
+// Start the Apollo Server
+async function startServer() {
+  await server.start();
+
+  // Set up Express app
+  const app = express();
+
+  // Middleware
+  app.use(cors());
+  app.use(cookieParser());
+  app.use(bodyParser.json());
+
+  // ✅ Fix: Pass `req` and `res` explicitly to the context
+  app.use(
+    "/graphql",
+    expressMiddleware(server, {
+      context: async ({ req, res }) => ({ req, res }),
+    })
+  );
+
+  app.listen(4000, () => {
+    console.log(`🚀 GraphQL server ready at http://localhost:4000/graphql`);
+  });
+}
+
+// Run the server
+startServer()
+  .then(() => {
+    console.log("Server started");
+  })
+  .catch((error) => {
+    console.log(error);
+  });
