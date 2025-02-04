@@ -21,6 +21,11 @@ let server = new ApolloServer({
     Query,
     Mutation,
   },
+  formatError: (err) => ({
+    message: err.message || "An unknown error occurred",
+    code: err.extensions?.code || "INTERNAL_SERVER_ERROR",
+    status: err.extensions?.http?.status || 500,
+  }),
 });
 
 // Start the Apollo Server

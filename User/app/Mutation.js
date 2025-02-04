@@ -2,6 +2,7 @@ const prisma = require("../DB/prisma");
 const bcrypt = require("bcryptjs");
 const { generateToken } = require("../Utils/jwtprovider");
 const { signInUser } = require("../Utils/cookie");
+const { GraphQLError } = require("graphql");
 const { AuthenticationError } = require("apollo-server-express"); // Ensure this is imported
 const getAuthenticatedUser = require("../authentication");
 
@@ -23,10 +24,10 @@ module.exports = {
   },
 
   async updateUser(_, arg, context) {
-    const userId = getAuthenticatedUser(context); // Get logged-in user's ID
+    const userId = getAuthenticatedUser(context);
 
     if (userId !== arg.id) {
-      throw new Error("Unauthorized: You can only update your own account.");
+      throw new Error("Unauthorized access");
     }
 
     try {
@@ -40,17 +41,21 @@ module.exports = {
   },
 
   async deleteUser(_, arg, context) {
-    const userId = getAuthenticatedUser(context);
-
-    if (userId !== arg.id) {
-      throw new Error("Unauthorized: You can only delete your own account.");
-    }
-
     try {
+      const userId = getAuthenticatedUser(context);
+
+      if (!userId) {
+        throw new Error("Unauthorized Access");
+      }
+
+      console.log(userId, arg.id);
+      if (userId != arg.id)
+        throw new Error("Unauthorized access You can delete only your account");
+
       await prisma.user.delete({ where: { id: arg.id } });
       return true;
     } catch (error) {
-      throw new Error("Error deleting user: " + error.message);
+      throw new Error(error.message);
     }
   },
 
