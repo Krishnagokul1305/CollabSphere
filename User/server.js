@@ -9,6 +9,7 @@ let dotenv = require("dotenv");
 
 let Query = require("./app/Query.js");
 let Mutation = require("./app/Mutation.js");
+const getAuthenticatedUser = require("./Utils/authentication.js");
 
 dotenv.config({
   path: "./.env",
@@ -40,11 +41,18 @@ async function startServer() {
   app.use(cookieParser());
   app.use(bodyParser.json());
 
-  // ✅ Fix: Pass `req` and `res` explicitly to the context
   app.use(
     "/graphql",
     expressMiddleware(server, {
-      context: async ({ req, res }) => ({ req, res }),
+      context: async ({ req, res }) => {
+        try {
+          const userId = await getAuthenticatedUser(req);
+          return { req, res, userId };
+        } catch (error) {
+          console.log(error);
+          return { req, res, userId: null };
+        }
+      },
     })
   );
 

@@ -1,61 +1,48 @@
 const prisma = require("../DB/prisma");
 const bcrypt = require("bcryptjs");
 const { generateToken } = require("../Utils/jwtprovider");
-const { signInUser } = require("../Utils/cookie");
-const { GraphQLError } = require("graphql");
-const { AuthenticationError } = require("apollo-server-express"); // Ensure this is imported
-const getAuthenticatedUser = require("../authentication");
+const { signInUser, clearCookie } = require("../Utils/cookie");
+const { AuthenticationError } = require("apollo-server-express");
 
 module.exports = {
-  async createUser(_, arg) {
+  async updateUser(_, arg, { userId }) {
+    console.log(userId);
     try {
-      const hashedPassword = await bcrypt.hash(arg.input.password, 10);
-      return await prisma.user.create({
-        data: {
-          email: arg.input.email,
-          name: arg.input.name,
-          role: arg.input.role,
-          password: hashedPassword,
-        },
-      });
-    } catch (error) {
-      throw new Error("Error creating user: " + error.message);
-    }
-  },
+      if (!userId || userId !== arg.id) {
+        throw new AuthenticationError(
+          "Unauthorized access: You can only update your own data."
+        );
+      }
 
-  async updateUser(_, arg, context) {
-    const userId = getAuthenticatedUser(context);
-
-    if (userId !== arg.id) {
-      throw new Error("Unauthorized access");
-    }
-
-    try {
+      // Proceed with updating the user data
       return await prisma.user.update({
         where: { id: arg.id },
         data: { name: arg.name },
       });
     } catch (error) {
-      throw new Error("Error updating user: " + error.message);
+      throw new Error(error.message);
     }
   },
 
-  async deleteUser(_, arg, context) {
+  async deleteUser(_, arg, { userId }) {
     try {
-      const userId = getAuthenticatedUser(context);
-
+      // Check if the user is authenticated
       if (!userId) {
-        throw new Error("Unauthorized Access");
+        throw new AuthenticationError("Unauthorized Access: Please log in.");
       }
 
-      console.log(userId, arg.id);
-      if (userId != arg.id)
-        throw new Error("Unauthorized access You can delete only your account");
+      // Ensure the user can only delete their own account
+      if (userId !== arg.id) {
+        throw new AuthenticationError(
+          "Unauthorized access: You can delete only your account."
+        );
+      }
 
+      // Proceed with deleting the user
       await prisma.user.delete({ where: { id: arg.id } });
       return true;
     } catch (error) {
-      throw new Error(error.message);
+      throw new Error("Error deleting user: " + error.message);
     }
   },
 
@@ -64,7 +51,11 @@ module.exports = {
       if (!context || !context.res) {
         throw new Error("Missing response object in context.");
       }
+
+      // Hash the user's password
       const hashedPassword = await bcrypt.hash(arg.input.password, 10);
+
+      // Create a new user in the database
       const newUser = await prisma.user.create({
         data: {
           email: arg.input.email,
@@ -75,7 +66,9 @@ module.exports = {
       });
 
       const token = generateToken(newUser.id);
+
       signInUser(context, token);
+
       return {
         success: true,
         message: "Registration successful",
@@ -92,21 +85,25 @@ module.exports = {
         where: { email: arg.input.email },
       });
 
+      // If user doesn't exist, throw an error
       if (!user) {
         throw new AuthenticationError("Invalid credentials.");
       }
 
+      // Compare the provided password with the stored password hash
       const isPasswordValid = await bcrypt.compare(
         arg.input.password,
         user.password
       );
 
+      // If password is incorrect, throw an error
       if (!isPasswordValid) {
         throw new AuthenticationError("Invalid credentials.");
       }
 
+      // Generate a token for the logged-in user
       const token = generateToken(user.id);
-      console.log(token);
+
       signInUser(context, token);
 
       return {
@@ -117,5 +114,9 @@ module.exports = {
     } catch (error) {
       throw new Error("Error logging in: " + error.message);
     }
+  },
+  async logout(_, args, { res }) {
+    await clearCookie(res);
+    return true;
   },
 };

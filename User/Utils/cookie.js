@@ -7,8 +7,8 @@ exports.signInUser = (context, token) => {
   });
 };
 
-exports.clearCookie = (context) => {
-  context.res.clearCookie("token", {
+exports.clearCookie = async (res) => {
+  res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "Strict",

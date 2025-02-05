@@ -11,23 +11,13 @@ type User {
   role: Role!
   createdAt: String!
   updatedAt: String!
-  sessions: [Session]
 }
 
-type Session {
-  id: Int!
-  userId: Int!
-  sessionToken: String!
-  expiresAt: String!
-  createdAt: String!
-  user: User!
-}
 
 type Query {
   users: [User!]!
   user(id: Int!): User
-  sessions: [Session]
-  session(id: Int!): Session
+  getMe:User!
 }
 
 type Mutation {
@@ -36,6 +26,7 @@ type Mutation {
   updateUser(id: Int!, name:String): User!
   register(input:InputUser):successUser!,
   login(input:Login):successUser!
+  logout:Boolean!
 }
 
 type successUser{
