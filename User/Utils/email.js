@@ -12,7 +12,7 @@ module.exports = class {
       secure: true, // true for port 465, false for other ports
       auth: {
         user: "krishnagokul1729@gmail.com",
-        pass: "hndqpybdyxhaaplc",
+        pass: process.env.MAILER_PASSWORD,
       },
     });
   }
@@ -20,7 +20,7 @@ module.exports = class {
   async sendMail(to, subject, text, html) {
     try {
       const info = await this.transporter.sendMail({
-        from: '"Maddison Foo Koch 👻" <maddison53@ethereal.email>',
+        from: process.env.MAILER_USER,
         to,
         subject,
         text,
@@ -37,13 +37,13 @@ module.exports = class {
 
   async sendWelcomeEmail(to, username) {
     const subject = "Welcome to Our Platform 🎉";
-    const { html, text } = generateWelcomeEmail();
+    const { html, text } = generateWelcomeEmail(username);
     return this.sendMail(to, subject, text, html);
   }
 
   async sendResetPasswordEmail(to, resetLink) {
     const subject = "Reset Your Password 🔒";
-    const html = this.sendResetPasswordEmail();
+    const html = generateForgotPasswordEmail("", resetLink);
     return this.sendMail(to, subject, "reset password", html);
   }
 };

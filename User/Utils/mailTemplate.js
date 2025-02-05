@@ -1,13 +1,15 @@
 const Mailgen = require("mailgen");
 
+const product = {
+  name: "Your App Name",
+  link: "https://yourapp.com",
+  logo: "https://yourapp.com/logo.png",
+};
+
 function generateWelcomeEmail(username) {
   const mailGenerator = new Mailgen({
     theme: "default",
-    product: {
-      name: "Your App Name",
-      link: "https://yourapp.com",
-      logo: "https://yourapp.com/logo.png", // Optional
-    },
+    product,
   });
 
   const emailTemplate = {
@@ -22,8 +24,6 @@ function generateWelcomeEmail(username) {
           link: "https://yourapp.com/dashboard",
         },
       },
-      outro:
-        "If you have any questions, feel free to reply to this email. We're here to help!",
     },
   };
 
@@ -36,11 +36,7 @@ function generateWelcomeEmail(username) {
 function generateForgotPasswordEmail(username, resetLink) {
   const mailGenerator = new Mailgen({
     theme: "default",
-    product: {
-      name: "Your App Name",
-      link: "https://yourapp.com",
-      logo: "https://yourapp.com/logo.png", // Optional
-    },
+    product,
   });
 
   const emailTemplate = {

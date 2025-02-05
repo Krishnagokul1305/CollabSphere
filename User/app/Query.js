@@ -1,8 +1,7 @@
 const prisma = require("../DB/prisma");
 
 module.exports = {
-  users: async (_, arg, { userId }) => {
-    console.log(userId);
+  users: async (_, arg) => {
     try {
       return await prisma.user.findMany();
     } catch (error) {
