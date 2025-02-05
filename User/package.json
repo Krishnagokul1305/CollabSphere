@@ -17,12 +17,15 @@
     "body-parser": "^1.20.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "graphql": "^16.10.0",
     "graphql-http": "^1.22.4",
     "graphql-tag": "^2.12.6",
     "jsonwebtoken": "^9.0.2",
+    "mailgen": "^2.0.29",
+    "nodemailer": "^6.10.0",
     "prisma": "^6.3.0"
   }
 }

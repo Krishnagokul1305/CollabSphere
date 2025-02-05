@@ -27,6 +27,8 @@ type Mutation {
   register(input:InputUser):successUser!,
   login(input:Login):successUser!
   logout:Boolean!
+  forgotPassword(email: String!): String!
+  resetPassword(email: String!, token: String!, newPassword: String!): String!
 }
 
 type successUser{
