@@ -1,8 +1,8 @@
 const Mailgen = require("mailgen");
 
 const product = {
-  name: "Your App Name",
-  link: "https://yourapp.com",
+  name: process.env.APP_NAME,
+  link: process.env.FRONTEND_URL,
   logo: "https://yourapp.com/logo.png",
 };
 
@@ -21,7 +21,7 @@ function generateWelcomeEmail(username) {
         button: {
           color: "#22BC66",
           text: "Go to App",
-          link: "https://yourapp.com/dashboard",
+          link: process.env.FRONTEND_URL,
         },
       },
     },
@@ -47,7 +47,7 @@ function generateForgotPasswordEmail(username, resetLink) {
       action: {
         instructions: "Click the button below to set a new password:",
         button: {
-          color: "#22BC66", // Green color for confirmation
+          color: "#22BC66",
           text: "Reset Password",
           link: resetLink,
         },

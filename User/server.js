@@ -15,7 +15,6 @@ dotenv.config({
   path: "./.env",
 });
 
-// Create the Apollo Server
 let server = new ApolloServer({
   typeDefs,
   resolvers: {
@@ -33,10 +32,8 @@ let server = new ApolloServer({
 async function startServer() {
   await server.start();
 
-  // Set up Express app
   const app = express();
 
-  // Middleware
   app.use(cors());
   app.use(cookieParser());
   app.use(bodyParser.json());
@@ -61,7 +58,6 @@ async function startServer() {
   });
 }
 
-// Run the server
 startServer()
   .then(() => {
     console.log("Server started");

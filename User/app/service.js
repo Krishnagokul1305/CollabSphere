@@ -78,7 +78,6 @@ const forgotPassword = async (email) => {
   const resetToken = crypto.randomBytes(32).toString("hex");
   const hashedToken = await bcrypt.hash(resetToken, 10);
   const expirationTime = new Date(Date.now() + 15 * 60 * 1000);
-  console.log(resetToken);
   await prisma.user.update({
     where: { email },
     data: {
@@ -87,7 +86,7 @@ const forgotPassword = async (email) => {
     },
   });
 
-  const resetLink = `https://yourapp.com/reset-password?token=${resetToken}&email=${email}`;
+  const resetLink = `${process.env.FRONTEND_URL}?token=${resetToken}&email=${email}`;
   await mailService.sendResetPasswordEmail(email, resetLink);
 
   return "Password reset email sent.";
@@ -102,7 +101,6 @@ const resetPassword = async (email, token, newPassword) => {
       throw new Error("Token has expired.");
 
     const isValid = await bcrypt.compare(token, user.password_reset_token);
-    console.log(isValid);
     if (!isValid) throw new Error("Invalid token.");
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
