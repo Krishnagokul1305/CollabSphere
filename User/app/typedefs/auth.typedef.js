@@ -8,7 +8,7 @@ type Mutation {
 }
 
 type SuccessUser {
-  success: Boolean!
+  success: Boolean! 
   user: User
   message: String!
 }
