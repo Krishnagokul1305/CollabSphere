@@ -1,42 +1,25 @@
-const prisma = require("../DB/prisma");
+const prisma = require("../../DB/prisma");
+const { createCookie, clearCookie } = require("../../Utils/cookie");
 const bcrypt = require("bcryptjs");
-const crypto = require("crypto");
-const { generateToken } = require("../Utils/jwtprovider");
-const { signInUser, clearCookie } = require("../Utils/cookie");
-const { AuthenticationError } = require("apollo-server-express");
-const MailService = require("../Utils/email");
-
+const { generateToken } = require("../../Utils/jwtprovider");
+const MailService = require("../../Utils/email");
 const mailService = new MailService();
+const crypto = require("crypto");
 
-const updateUser = async (userId, id, name) => {
-  if (!userId || userId !== id) {
-    throw new AuthenticationError(
-      "Unauthorized access: You can only update your own data."
-    );
-  }
+const login = async (input, res) => {
+  const user = await prisma.user.findUnique({ where: { email: input.email } });
+  if (!user) throw new Error("User not found");
 
-  return await prisma.user.update({ where: { id }, data: { name } });
+  const isPasswordValid = await bcrypt.compare(input.password, user.password);
+  if (!isPasswordValid) throw new Error("Invalid credentials.");
+
+  const token = generateToken(user.id);
+  createCookie(res, token);
+
+  return { success: true, message: "Login successful", user };
 };
 
-const deleteUser = async (userId, id) => {
-  if (!userId) {
-    throw new AuthenticationError("Unauthorized Access: Please log in.");
-  }
-  if (userId !== id) {
-    throw new AuthenticationError(
-      "Unauthorized access: You can delete only your account."
-    );
-  }
-
-  await prisma.user.delete({ where: { id } });
-  return true;
-};
-
-const register = async (input, context) => {
-  if (!context || !context.res) {
-    throw new Error("Missing response object in context.");
-  }
-
+const register = async (input, res) => {
   const hashedPassword = await bcrypt.hash(input.password, 10);
   const newUser = await prisma.user.create({
     data: {
@@ -48,7 +31,7 @@ const register = async (input, context) => {
   });
 
   const token = generateToken(newUser.id);
-  signInUser(context, token);
+  createCookie(res, token);
   await mailService.sendWelcomeEmail(input.email, input.name);
 
   return {
@@ -58,17 +41,9 @@ const register = async (input, context) => {
   };
 };
 
-const login = async (input, context) => {
-  const user = await prisma.user.findUnique({ where: { email: input.email } });
-  if (!user) throw new AuthenticationError("Invalid credentials.");
-
-  const isPasswordValid = await bcrypt.compare(input.password, user.password);
-  if (!isPasswordValid) throw new AuthenticationError("Invalid credentials.");
-
-  const token = generateToken(user.id);
-  signInUser(context, token);
-
-  return { success: true, message: "Login successful", user };
+const logout = async (res) => {
+  await clearCookie(res);
+  return true;
 };
 
 const forgotPassword = async (email) => {
@@ -120,17 +95,10 @@ const resetPassword = async (email, token, newPassword) => {
   }
 };
 
-const logout = async (res) => {
-  await clearCookie(res);
-  return true;
-};
-
 module.exports = {
-  updateUser,
-  deleteUser,
-  register,
   login,
+  logout,
+  register,
   forgotPassword,
   resetPassword,
-  logout,
 };

@@ -1,5 +1,5 @@
-exports.signInUser = (context, token) => {
-  context.res.cookie("token", token, {
+exports.createCookie = (res, token) => {
+  res.cookie("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "Strict",

@@ -1,67 +1,51 @@
-let { ApolloServer } = require("@apollo/server");
-let { expressMiddleware } = require("@apollo/server/express4");
-let typeDefs = require("./app/schema.js");
-let cookieParser = require("cookie-parser");
-let express = require("express");
-let cors = require("cors");
-let bodyParser = require("body-parser");
-let dotenv = require("dotenv");
+const { ApolloServer } = require("@apollo/server");
+const { expressMiddleware } = require("@apollo/server/express4");
 
-let Query = require("./app/Query.js");
-let Mutation = require("./app/Mutation.js");
-const getAuthenticatedUser = require("./Utils/authentication.js");
+const cookieParser = require("cookie-parser");
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const dotenv = require("dotenv");
+const passport = require("./Utils/passport.js");
 
-dotenv.config({
-  path: "./.env",
-});
+const typeDefs = require("./app/typedefs/index.js");
+const resolvers = require("./app/resolvers/index.js");
 
-let server = new ApolloServer({
-  typeDefs,
-  resolvers: {
-    Query,
-    Mutation,
-  },
-  formatError: (err) => ({
-    message: err.message || "An unknown error occurred",
-    code: err.extensions?.code || "INTERNAL_SERVER_ERROR",
-    status: err.extensions?.http?.status || 500,
-  }),
-});
+dotenv.config({ path: "./.env" });
 
-// Start the Apollo Server
-async function startServer() {
+const server = new ApolloServer({ typeDefs, resolvers });
+
+const app = express();
+
+async function start() {
   await server.start();
-
-  const app = express();
-
-  app.use(cors());
-  app.use(cookieParser());
-  app.use(bodyParser.json());
 
   app.use(
     "/graphql",
+    cors({
+      origin: process.env.FRONTEND_URL,
+      credentials: true,
+    }),
+    cookieParser(),
+    passport.initialize(),
+    bodyParser.json(),
     expressMiddleware(server, {
-      context: async ({ req, res }) => {
-        try {
-          const userId = await getAuthenticatedUser(req);
-          return { req, res, userId };
-        } catch (error) {
-          console.log(error);
-          return { req, res, userId: null };
-        }
+      context: ({ req, res }) => {
+        return new Promise((resolve) => {
+          passport.authenticate("jwt", { session: false }, (err, user) => {
+            console.log(user);
+            resolve({ req, res, user });
+          })(req, res);
+        });
       },
     })
   );
 
-  app.listen(4000, () => {
-    console.log(`🚀 GraphQL server ready at http://localhost:4000/graphql`);
+  const port = process.env.PORT || 4000;
+
+  app.listen(port, () => {
+    console.log(`🚀 GraphQL server ready at http://localhost:${port}/graphql`);
   });
 }
 
-startServer()
-  .then(() => {
-    console.log("Server started");
-  })
-  .catch((error) => {
-    console.log(error);
-  });
+start().catch((error) => console.error(error));
