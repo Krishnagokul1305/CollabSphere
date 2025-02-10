@@ -4,12 +4,12 @@ import { GalleryVerticalEnd } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
-import { login } from "../lib/auth";
 import { useRouter } from "next/navigation";
 import FormInput from "./FormInput";
 import Link from "next/link";
+import { sendPasswordResetEmail, resetPassword } from "../lib/auth";
 
-export default function LoginForm() {
+function ForgotPasswordForm() {
   const {
     register,
     handleSubmit,
@@ -17,14 +17,14 @@ export default function LoginForm() {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  const router = useRouter();
-
   const onSubmit = async (data) => {
     try {
-      await login(data.email, data.password);
-      router.push("/");
+      await sendPasswordResetEmail(data.email);
+      alert("Password reset email sent!");
     } catch (error) {
-      setError("email", { message: error.message || "Invalid credentials" });
+      setError("email", {
+        message: error.message || "Failed to send reset email",
+      });
     }
   };
 
@@ -42,7 +42,7 @@ export default function LoginForm() {
               </div>
               <span>Acme Inc.</span>
             </a>
-            <h1 className="text-xl font-bold">Welcome to Acme Inc.</h1>
+            <h1 className="text-xl font-bold">Forgot Password</h1>
           </div>
 
           <FormInput
@@ -55,43 +55,18 @@ export default function LoginForm() {
             error={errors.email}
           />
 
-          <FormInput
-            id="password"
-            label="Password"
-            type="password"
-            placeholder="Enter your password"
-            register={register}
-            validation={{
-              required: "Password is required",
-              minLength: {
-                value: 6,
-                message: "Password must be at least 6 characters",
-              },
-            }}
-            error={errors.password}
-          />
-
           <Button
             type="submit"
             className="w-full py-6 px-5 rounded-lg"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Logging in..." : "Login"}
+            {isSubmitting ? "Sending..." : "Send Reset Link"}
           </Button>
 
-          <div className="flex justify-between text-sm">
-            <Link
-              href="/forgotPassword"
-              className="text-blue-500 hover:underline ms-auto"
-            >
-              Forgot Password?
-            </Link>
-          </div>
-
           <div className="text-center text-sm tracking-wide">
-            Don't have an account?{" "}
-            <Link href="/register" className="text-blue-500 hover:underline">
-              Register
+            Remember your password?{" "}
+            <Link href="/login" className="text-blue-500 hover:underline">
+              Login
             </Link>
           </div>
         </div>
@@ -99,3 +74,5 @@ export default function LoginForm() {
     </div>
   );
 }
+
+export default ForgotPasswordForm;

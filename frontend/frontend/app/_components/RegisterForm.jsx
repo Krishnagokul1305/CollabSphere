@@ -4,12 +4,12 @@ import { GalleryVerticalEnd } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
-import { login } from "../lib/auth";
 import { useRouter } from "next/navigation";
 import FormInput from "./FormInput";
 import Link from "next/link";
+import { register as registerApi } from "../lib/auth";
 
-export default function LoginForm() {
+export default function RegisterForm() {
   const {
     register,
     handleSubmit,
@@ -21,10 +21,11 @@ export default function LoginForm() {
 
   const onSubmit = async (data) => {
     try {
-      await login(data.email, data.password);
+      console.log(data);
+      await registerApi(data.email, data.password, data.name);
       router.push("/");
     } catch (error) {
-      setError("email", { message: error.message || "Invalid credentials" });
+      setError("email", { message: error.message || "Registration failed" });
     }
   };
 
@@ -42,8 +43,18 @@ export default function LoginForm() {
               </div>
               <span>Acme Inc.</span>
             </a>
-            <h1 className="text-xl font-bold">Welcome to Acme Inc.</h1>
+            <h1 className="text-xl font-bold">Create an Account</h1>
           </div>
+
+          <FormInput
+            id="name"
+            label="Name"
+            type="text"
+            placeholder="Enter your name"
+            register={register}
+            validation={{ required: "Name is required" }}
+            error={errors.name}
+          />
 
           <FormInput
             id="email"
@@ -76,22 +87,13 @@ export default function LoginForm() {
             className="w-full py-6 px-5 rounded-lg"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Logging in..." : "Login"}
+            {isSubmitting ? "Registering..." : "Register"}
           </Button>
 
-          <div className="flex justify-between text-sm">
-            <Link
-              href="/forgotPassword"
-              className="text-blue-500 hover:underline ms-auto"
-            >
-              Forgot Password?
-            </Link>
-          </div>
-
           <div className="text-center text-sm tracking-wide">
-            Don't have an account?{" "}
-            <Link href="/register" className="text-blue-500 hover:underline">
-              Register
+            Already have an account?{" "}
+            <Link href="/login" className="text-blue-500 hover:underline">
+              Login
             </Link>
           </div>
         </div>

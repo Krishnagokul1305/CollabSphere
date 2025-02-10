@@ -1,6 +1,5 @@
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import { Providers } from "./_components/Provider";
 import { Toaster } from "react-hot-toast";
 
 const poppins = Poppins({
@@ -17,10 +16,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${poppins.className} dark antialiased`}>
-        <Providers>
-          <Toaster />
-          {children}
-        </Providers>
+        <Toaster />
+        {children}
       </body>
     </html>
   );

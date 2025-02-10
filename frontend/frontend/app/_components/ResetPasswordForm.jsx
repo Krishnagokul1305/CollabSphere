@@ -4,12 +4,10 @@ import { GalleryVerticalEnd } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
-import { login } from "../lib/auth";
 import { useRouter } from "next/navigation";
 import FormInput from "./FormInput";
-import Link from "next/link";
 
-export default function LoginForm() {
+function ResetPasswordForm() {
   const {
     register,
     handleSubmit,
@@ -20,11 +18,17 @@ export default function LoginForm() {
   const router = useRouter();
 
   const onSubmit = async (data) => {
+    if (data.newPassword !== data.confirmPassword) {
+      setError("confirmPassword", { message: "Passwords do not match" });
+      return;
+    }
     try {
-      await login(data.email, data.password);
-      router.push("/");
+      await resetPassword(data.newPassword);
+      router.push("/login");
     } catch (error) {
-      setError("email", { message: error.message || "Invalid credentials" });
+      setError("newPassword", {
+        message: error.message || "Failed to reset password",
+      });
     }
   };
 
@@ -42,33 +46,33 @@ export default function LoginForm() {
               </div>
               <span>Acme Inc.</span>
             </a>
-            <h1 className="text-xl font-bold">Welcome to Acme Inc.</h1>
+            <h1 className="text-xl font-bold">Reset Password</h1>
           </div>
 
           <FormInput
-            id="email"
-            label="Email"
-            type="email"
-            placeholder="Enter your email"
-            register={register}
-            validation={{ required: "Email is required" }}
-            error={errors.email}
-          />
-
-          <FormInput
-            id="password"
-            label="Password"
+            id="newPassword"
+            label="New Password"
             type="password"
-            placeholder="Enter your password"
+            placeholder="Enter new password"
             register={register}
             validation={{
-              required: "Password is required",
+              required: "New password is required",
               minLength: {
                 value: 6,
                 message: "Password must be at least 6 characters",
               },
             }}
-            error={errors.password}
+            error={errors.newPassword}
+          />
+
+          <FormInput
+            id="confirmPassword"
+            label="Confirm Password"
+            type="password"
+            placeholder="Confirm new password"
+            register={register}
+            validation={{ required: "Please confirm your password" }}
+            error={errors.confirmPassword}
           />
 
           <Button
@@ -76,26 +80,12 @@ export default function LoginForm() {
             className="w-full py-6 px-5 rounded-lg"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Logging in..." : "Login"}
+            {isSubmitting ? "Resetting..." : "Reset Password"}
           </Button>
-
-          <div className="flex justify-between text-sm">
-            <Link
-              href="/forgotPassword"
-              className="text-blue-500 hover:underline ms-auto"
-            >
-              Forgot Password?
-            </Link>
-          </div>
-
-          <div className="text-center text-sm tracking-wide">
-            Don't have an account?{" "}
-            <Link href="/register" className="text-blue-500 hover:underline">
-              Register
-            </Link>
-          </div>
         </div>
       </form>
     </div>
   );
 }
+
+export default ResetPasswordForm;
