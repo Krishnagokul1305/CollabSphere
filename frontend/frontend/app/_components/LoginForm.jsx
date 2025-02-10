@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LOGIN_MUTATION } from "../graphql/mutations";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const {
@@ -17,13 +18,18 @@ export default function LoginForm() {
     formState: { errors, isSubmitting },
   } = useForm();
 
+  const router = useRouter();
+
   const [login, { loading, error }] = useMutation(LOGIN_MUTATION, {
     onError: (error) => {
       toast.error(error.message);
     },
-    onCompleted: () => {
+    onCompleted: (data) => {
+      console.log(data);
       toast.success("Logged in successfully");
+      router.push("/");
     },
+    context: { fetchOptions: { credentials: "include" } },
   });
 
   const onSubmit = async (data) => {

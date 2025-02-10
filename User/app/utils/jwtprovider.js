@@ -1,7 +1,7 @@
 const { sign } = require("jsonwebtoken");
 
-exports.generateToken = (id) => {
+exports.generateToken = (id, expires) => {
   return sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
+    expiresIn: expires,
   });
 };

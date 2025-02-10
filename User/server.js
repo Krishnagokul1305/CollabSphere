@@ -1,51 +1,40 @@
-const { ApolloServer } = require("@apollo/server");
-const { expressMiddleware } = require("@apollo/server/express4");
-
-const cookieParser = require("cookie-parser");
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
-const passport = require("./Utils/passport.js");
+const errorHandler = require("./app/utils/ErrorHandler.js");
 
-const typeDefs = require("./app/typedefs/index.js");
-const resolvers = require("./app/resolvers/index.js");
+const authRouter = require("./app/features/auth/auth.route.js");
+const userRouter = require("./app/features/users/user.route.js");
+const morgan = require("morgan");
+const AppError = require("./app/utils/AppError.js");
 
 dotenv.config({ path: "./.env" });
 
-const server = new ApolloServer({ typeDefs, resolvers });
-
 const app = express();
 
-async function start() {
-  await server.start();
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  })
+);
+app.use(cookieParser());
+app.use(morgan("dev"));
+app.use(bodyParser.json());
+// app.use(passport.initialize());
 
-  app.use(
-    "/graphql",
-    cors({
-      origin: process.env.FRONTEND_URL,
-      credentials: true,
-    }),
-    cookieParser(),
-    passport.initialize(),
-    bodyParser.json(),
-    expressMiddleware(server, {
-      context: ({ req, res }) => {
-        return new Promise((resolve) => {
-          passport.authenticate("jwt", { session: false }, (err, user) => {
-            console.log(user);
-            resolve({ req, res, user });
-          })(req, res);
-        });
-      },
-    })
-  );
+app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
+app.use("*", (req, res, next) => {
+  return next(new AppError("no routes found for the request", 404));
+});
 
-  const port = process.env.PORT || 4000;
+app.use(errorHandler);
 
-  app.listen(port, () => {
-    console.log(`🚀 GraphQL server ready at http://localhost:${port}/graphql`);
-  });
-}
+const port = process.env.PORT || 4000;
 
-start().catch((error) => console.error(error));
+app.listen(port, () => {
+  console.log(`🚀 REST API server running at http://localhost:${port}`);
+});

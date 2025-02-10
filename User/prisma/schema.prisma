@@ -17,6 +17,7 @@ model User {
   updatedAt            DateTime  @updatedAt
   password_reset_token String?
   expiration_time      DateTime? @db.Timestamp(6)
+  avatar               String    @default("https://res.cloudinary.com/dm6id7bsm/image/upload/v1739165056/xdtahwktodz4sgmhrooz.png")
 }
 
 enum Role {

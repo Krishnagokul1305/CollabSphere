@@ -1,14 +1,14 @@
-exports.createCookie = (res, token) => {
-  res.cookie("token", token, {
+exports.createCookie = (res, key, value) => {
+  res.cookie(key, value, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "Strict",
+    sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 };
 
-exports.clearCookie = async (res) => {
-  res.clearCookie("token", {
+exports.clearCookie = async (res, key) => {
+  res.clearCookie(key, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "Strict",
