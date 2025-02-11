@@ -1,6 +1,11 @@
 "use client";
 
-import { GalleryVerticalEnd } from "lucide-react";
+import {
+  GalleryVerticalEnd,
+  MessageCircleCode,
+  MessageCircleCodeIcon,
+  MessageSquareMoreIcon,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
@@ -9,6 +14,7 @@ import Link from "next/link";
 import { forgotPassword } from "../lib/auth";
 import toast from "react-hot-toast";
 import Spinner from "./Spinner";
+import Logo from "./Logo";
 
 function ForgotPasswordForm() {
   const {
@@ -23,10 +29,7 @@ function ForgotPasswordForm() {
       await forgotPassword(data.email);
       toast.success("Reset email sent");
     } catch (error) {
-      toast.error("Failed to send reset email");
-      setError("email", {
-        message: error.message || "Failed to send reset email",
-      });
+      toast.error(error.message || "Failed to send reset email");
     }
   };
 
@@ -35,15 +38,7 @@ function ForgotPasswordForm() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
-            <a
-              href="#"
-              className="flex flex-col items-center gap-2 font-medium"
-            >
-              <div className="flex h-8 w-8 items-center justify-center rounded-md">
-                <GalleryVerticalEnd className="size-6" />
-              </div>
-              <span>Acme Inc.</span>
-            </a>
+            <Logo />
             <h1 className="text-xl font-bold">Forgot Password</h1>
           </div>
 

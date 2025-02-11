@@ -1,6 +1,5 @@
 "use client";
 
-import { GalleryVerticalEnd } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
@@ -10,6 +9,7 @@ import FormInput from "./FormInput";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import Spinner from "./Spinner";
+import Logo from "./Logo";
 
 export default function LoginForm() {
   const {
@@ -36,16 +36,8 @@ export default function LoginForm() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
-            <a
-              href="#"
-              className="flex flex-col items-center gap-2 font-medium"
-            >
-              <div className="flex h-8 w-8 items-center justify-center rounded-md">
-                <GalleryVerticalEnd className="size-6" />
-              </div>
-              <span>Acme Inc.</span>
-            </a>
-            <h1 className="text-xl font-bold">Welcome to Acme Inc.</h1>
+            <Logo />
+            <h1 className="text-xl font-bold">Welcome to ChatterBox.</h1>
           </div>
 
           <FormInput

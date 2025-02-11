@@ -9,6 +9,7 @@ import FormInput from "./FormInput";
 import { resetPassword } from "../lib/auth";
 import toast from "react-hot-toast";
 import Spinner from "./Spinner";
+import Logo from "./Logo";
 
 function ResetPasswordForm({ resetToken }) {
   const {
@@ -31,9 +32,6 @@ function ResetPasswordForm({ resetToken }) {
       router.push("/login");
     } catch (error) {
       toast.error("Failed to reset password");
-      setError("newPassword", {
-        message: error.message || "Failed to reset password",
-      });
     }
   };
 
@@ -42,15 +40,7 @@ function ResetPasswordForm({ resetToken }) {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
-            <a
-              href="#"
-              className="flex flex-col items-center gap-2 font-medium"
-            >
-              <div className="flex h-8 w-8 items-center justify-center rounded-md">
-                <GalleryVerticalEnd className="size-6" />
-              </div>
-              <span>Acme Inc.</span>
-            </a>
+            <Logo />
             <h1 className="text-xl font-bold">Reset Password</h1>
           </div>
 

@@ -1,4 +1,6 @@
 const express = require("express");
+const { Server } = require("socket.io");
+
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -23,7 +25,6 @@ app.use(
 app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(bodyParser.json());
-// app.use(passport.initialize());
 
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);

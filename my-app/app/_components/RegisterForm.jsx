@@ -10,6 +10,7 @@ import Link from "next/link";
 import { register as registerApi } from "../lib/auth";
 import toast from "react-hot-toast";
 import Spinner from "./Spinner";
+import Logo from "./Logo";
 
 export default function RegisterForm() {
   const {
@@ -36,15 +37,7 @@ export default function RegisterForm() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
-            <a
-              href="#"
-              className="flex flex-col items-center gap-2 font-medium"
-            >
-              <div className="flex h-8 w-8 items-center justify-center rounded-md">
-                <GalleryVerticalEnd className="size-6" />
-              </div>
-              <span>Acme Inc.</span>
-            </a>
+            <Logo />
             <h1 className="text-xl font-bold">Create an Account</h1>
           </div>
 
