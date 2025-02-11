@@ -8,6 +8,7 @@ import FormInput from "./FormInput";
 import Link from "next/link";
 import { forgotPassword } from "../lib/auth";
 import toast from "react-hot-toast";
+import Spinner from "./Spinner";
 
 function ForgotPasswordForm() {
   const {
@@ -61,7 +62,7 @@ function ForgotPasswordForm() {
             className="w-full py-6 px-5 rounded-lg"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Sending..." : "Send Reset Link"}
+            {isSubmitting ? <Spinner /> : "Send Reset Link"}
           </Button>
 
           <div className="text-center text-sm tracking-wide">

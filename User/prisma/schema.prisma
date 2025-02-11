@@ -15,7 +15,7 @@ model User {
   role                 Role      @default(USER)
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
-  password_reset_token String?
+  password_reset_token String?   @unique
   expiration_time      DateTime? @db.Timestamp(6)
   avatar               String    @default("https://res.cloudinary.com/dm6id7bsm/image/upload/v1739165056/xdtahwktodz4sgmhrooz.png")
 }

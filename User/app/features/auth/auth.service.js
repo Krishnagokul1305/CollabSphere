@@ -37,8 +37,14 @@ const forgotPasswordService = async (email) => {
   if (!user) throw new AppError("User not found", 404);
 
   const resetToken = crypto.randomBytes(32).toString("hex");
-  const hashedToken = await bcrypt.hash(resetToken, 10);
+
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
   const expirationTime = new Date(Date.now() + 15 * 60 * 1000);
+
   await prisma.user.update({
     where: { email },
     data: {
@@ -47,25 +53,29 @@ const forgotPasswordService = async (email) => {
     },
   });
 
-  const resetLink = `${process.env.FRONTEND_URL}?token=${resetToken}&email=${email}`;
+  const resetLink = `${process.env.FRONTEND_URL}/resetPassword/${resetToken}`;
   await mailService.sendResetPasswordEmail(email, resetLink);
 
   return "Password reset email sent.";
 };
 
-const resetPasswordService = async (email, token, newPassword) => {
-  const user = await prisma.user.findUnique({ where: { email } });
-  if (!user || !user.password_reset_token)
-    throw new AppError("Invalid or expired token", 400);
-  if (new Date() > user.expiration_time)
-    throw new AppError("Token has expired", 400);
+const resetPasswordService = async (token, newPassword) => {
+  if (!token) throw new AppError("Token not found", 400);
 
-  const isValid = await bcrypt.compare(token, user.password_reset_token);
-  if (!isValid) throw new AppError("Invalid token", 400);
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+  const user = await prisma.user.findUnique({
+    where: { password_reset_token: hashedToken },
+  });
+
+  if (!user || !user.expiration_time || new Date() > user.expiration_time) {
+    throw new AppError("Invalid or expired token", 400);
+  }
 
   const hashedPassword = await bcrypt.hash(newPassword, 10);
+
   await prisma.user.update({
-    where: { email },
+    where: { id: user.id },
     data: {
       password: hashedPassword,
       password_reset_token: null,

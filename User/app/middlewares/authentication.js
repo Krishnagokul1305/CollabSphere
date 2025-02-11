@@ -37,8 +37,6 @@ const authMiddleware = async (req, res, next) => {
       },
     });
 
-    console.log(userId, user);
-
     if (!user) {
       return next(new AppError("Unauthorized: User not found.", 401));
     }

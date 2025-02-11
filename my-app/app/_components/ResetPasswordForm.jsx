@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import FormInput from "./FormInput";
 import { resetPassword } from "../lib/auth";
 import toast from "react-hot-toast";
+import Spinner from "./Spinner";
 
 function ResetPasswordForm({ resetToken }) {
   const {
@@ -84,7 +85,7 @@ function ResetPasswordForm({ resetToken }) {
             className="w-full py-6 px-5 rounded-lg"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Resetting..." : "Reset Password"}
+            {isSubmitting ? <Spinner /> : "Reset Password"}
           </Button>
         </div>
       </form>

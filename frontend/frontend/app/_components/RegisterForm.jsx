@@ -8,12 +8,12 @@ import { useRouter } from "next/navigation";
 import FormInput from "./FormInput";
 import Link from "next/link";
 import { register as registerApi } from "../lib/auth";
+import toast from "react-hot-toast";
 
 export default function RegisterForm() {
   const {
     register,
     handleSubmit,
-    setError,
     formState: { errors, isSubmitting },
   } = useForm();
 
@@ -23,9 +23,10 @@ export default function RegisterForm() {
     try {
       console.log(data);
       await registerApi(data.email, data.password, data.name);
+      toast.success("Registration successful");
       router.push("/");
     } catch (error) {
-      setError("email", { message: error.message || "Registration failed" });
+      toast.error(error.message || "Registration failed");
     }
   };
 

@@ -8,6 +8,7 @@ import { login } from "../lib/auth";
 import { useRouter } from "next/navigation";
 import FormInput from "./FormInput";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 export default function LoginForm() {
   const {
@@ -22,9 +23,10 @@ export default function LoginForm() {
   const onSubmit = async (data) => {
     try {
       await login(data.email, data.password);
+      toast.success("Logged in successfully");
       router.push("/");
     } catch (error) {
-      setError("email", { message: error.message || "Invalid credentials" });
+      toast.error(error.message || "Failed to login");
     }
   };
 

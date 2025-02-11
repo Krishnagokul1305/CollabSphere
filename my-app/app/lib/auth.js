@@ -107,6 +107,9 @@ export const refreshToken = async () => {
     const response = await fetch(`${API_BASE}/auth/refresh-token`, {
       method: "GET",
       credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
     if (!response.ok) {
       const errorData = await response.json();

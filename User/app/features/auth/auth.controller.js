@@ -45,9 +45,9 @@ const forgotPassword = asyncHandler(async (req, res) => {
 });
 
 const resetPassword = asyncHandler(async (req, res) => {
-  const { email, newPassword } = req.body;
+  const { newPassword } = req.body;
   const { resetToken } = req.params;
-  const message = await resetPasswordService(email, resetToken, newPassword);
+  const message = await resetPasswordService(resetToken, newPassword);
   res.status(200).json({ success: true, message });
 });
 
@@ -64,19 +64,17 @@ const getMe = asyncHandler(async (req, res) => {
 
 const refreshToken = asyncHandler(async (req, res) => {
   const { refreshToken } = req.cookies;
-  if (!refreshToken) return next(new AppError("Unauthorized", 401));
+
+  if (!refreshToken) throw new AppError("Unauthorized", 401);
 
   const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
 
   const user = await prisma.user.findUnique({ where: { id: decoded.id } });
-
   if (!user) {
     throw new AppError("Unauthorized", 401);
   }
   const newAccessToken = generateToken(user.id, "1d");
-
   createCookie(res, "token", newAccessToken);
-
   res.status(200).json({ success: true, accessToken: newAccessToken });
 });
 
