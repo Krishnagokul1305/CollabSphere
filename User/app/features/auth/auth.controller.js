@@ -78,6 +78,20 @@ const refreshToken = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, accessToken: newAccessToken });
 });
 
+const googleLogin = asyncHandler(async (req, res, next) => {
+  // const user = req.user;
+  // if (!user) {
+  //   throw new AppError("Unauthorized", 401);
+  // }
+  // const token = generateToken(user.id, "1d");
+  // const refreshToken = generateToken(user.id, "7d");
+
+  // createCookie(res, "token", token);
+  // createCookie(res, "refreshToken", refreshToken);
+
+  res.redirect("http://localhost:3000/dashboard");
+});
+
 module.exports = {
   register,
   login,
@@ -86,4 +100,5 @@ module.exports = {
   resetPassword,
   getMe,
   refreshToken,
+  googleLogin,
 };

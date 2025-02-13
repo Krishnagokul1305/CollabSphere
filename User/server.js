@@ -11,6 +11,8 @@ const authRouter = require("./app/features/auth/auth.route.js");
 const userRouter = require("./app/features/users/user.route.js");
 const morgan = require("morgan");
 const AppError = require("./app/utils/AppError.js");
+const passport = require("passport");
+require("./app/utils/passport.js");
 
 dotenv.config({ path: "./.env" });
 
@@ -24,6 +26,7 @@ app.use(
 );
 app.use(cookieParser());
 app.use(morgan("dev"));
+app.use(passport.initialize());
 app.use(bodyParser.json());
 
 app.use("/api/auth", authRouter);
