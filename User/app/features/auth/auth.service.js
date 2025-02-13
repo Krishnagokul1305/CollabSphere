@@ -9,7 +9,9 @@ const mailService = new MailService();
 const loginService = async (email, password) => {
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) throw new AppError("User not found", 404);
-
+  if (user.password == null && password != null) {
+    throw new AppError("Invalid credentials", 401);
+  }
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) throw new AppError("Invalid credentials", 401);
 
@@ -19,7 +21,10 @@ const loginService = async (email, password) => {
 };
 
 const registerService = async (email, name, role, password) => {
+  if (!email || !name || !role || !password)
+    throw new AppError("Please provide all required fields", 400);
   const hashedPassword = await bcrypt.hash(password, 10);
+
   const newUser = await prisma.user.create({
     data: { email, name, role, password: hashedPassword },
   });

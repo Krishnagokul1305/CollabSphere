@@ -10,10 +10,14 @@ export default function FormInput({
   register,
   error,
   validation,
+  children,
 }) {
   return (
     <div className="grid gap-2">
-      <Label htmlFor={id}>{label}</Label>
+      <div className="flex items-center justify-between">
+        <Label htmlFor={id}>{label}</Label>
+        {children}
+      </div>
       <Input
         id={id}
         type={type}

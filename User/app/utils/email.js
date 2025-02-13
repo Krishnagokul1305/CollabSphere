@@ -9,7 +9,7 @@ module.exports = class {
     this.transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 465,
-      secure: true, // true for port 465, false for other ports
+      secure: true,
       auth: {
         user: "krishnagokul1729@gmail.com",
         pass: process.env.MAILER_PASSWORD,

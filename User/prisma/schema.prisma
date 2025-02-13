@@ -10,7 +10,7 @@ datasource db {
 model User {
   id                   Int       @id @default(autoincrement())
   email                String    @unique
-  password             String
+  password             String?
   name                 String
   role                 Role      @default(USER)
   createdAt            DateTime  @default(now())
@@ -18,6 +18,7 @@ model User {
   password_reset_token String?   @unique
   expiration_time      DateTime? @db.Timestamp(6)
   avatar               String    @default("https://res.cloudinary.com/dm6id7bsm/image/upload/v1739165056/xdtahwktodz4sgmhrooz.png")
+  googleId             String?
 }
 
 enum Role {

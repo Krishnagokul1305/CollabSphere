@@ -79,17 +79,17 @@ const refreshToken = asyncHandler(async (req, res) => {
 });
 
 const googleLogin = asyncHandler(async (req, res, next) => {
-  // const user = req.user;
-  // if (!user) {
-  //   throw new AppError("Unauthorized", 401);
-  // }
-  // const token = generateToken(user.id, "1d");
-  // const refreshToken = generateToken(user.id, "7d");
+  const user = req.user;
+  if (!user) {
+    throw new AppError("Unauthorized", 401);
+  }
+  const token = generateToken(user.id, "1d");
+  const refreshToken = generateToken(user.id, "7d");
 
-  // createCookie(res, "token", token);
-  // createCookie(res, "refreshToken", refreshToken);
+  createCookie(res, "token", token);
+  createCookie(res, "refreshToken", refreshToken);
 
-  res.redirect("http://localhost:3000/dashboard");
+  res.redirect("http://localhost:3000/");
 });
 
 module.exports = {
