@@ -89,7 +89,7 @@ const googleLogin = asyncHandler(async (req, res, next) => {
   createCookie(res, "token", token);
   createCookie(res, "refreshToken", refreshToken);
 
-  res.redirect("http://localhost:3000/");
+  res.redirect(process.env.FRONTEND_URL);
 });
 
 module.exports = {

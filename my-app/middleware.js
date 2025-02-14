@@ -2,12 +2,13 @@ import { NextResponse } from "next/server";
 
 export async function middleware(req) {
   let accessToken = req.cookies.get("token")?.value;
+
   if (!accessToken) {
     return NextResponse.redirect("http://localhost:3000/login");
   }
 
   try {
-    const userResponse = await fetch("http://localhost:4000/api/auth/me", {
+    const userResponse = await fetch(`${process.env.API_BASE}/auth/me`, {
       method: "GET",
       credentials: "include",
       headers: {
@@ -26,7 +27,7 @@ export async function middleware(req) {
     }
 
     const refreshResponse = await fetch(
-      "http://localhost:4000/api/auth/refresh-token",
+      `${process.env.API_BASE}/auth/refresh-token`,
       {
         method: "GET",
         credentials: "include",
