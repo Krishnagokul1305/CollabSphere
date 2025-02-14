@@ -1,5 +1,11 @@
+import Chat from "@/app/_components/Chat";
+
 function page() {
-  return <div>chat</div>;
+  return (
+    <div>
+      <Chat />
+    </div>
+  );
 }
 
 export default page;

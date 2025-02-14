@@ -74,7 +74,7 @@ const data = {
 export function AppSidebar({ ...props }) {
   return (
     <Sidebar
-      className="top-[--header-height] !h-[calc(100svh-var(--header-height))] mt-5 rounded-r-md"
+      className="top-[--header-height] border-t !h-[calc(100svh-var(--header-height))] mt-5 rounded-r-md"
       {...props}
     >
       <SidebarHeader>
