@@ -6,8 +6,23 @@ async function getAll() {
   const users = await prisma.user.findMany({
     select: {
       id: true,
-      role: true,
-      updatedAt: true,
+      email: true,
+      name: true,
+      avatar: true,
+    },
+  });
+  return users;
+}
+
+async function getMultipleUsers(ids) {
+  const users = await prisma.user.findMany({
+    where: {
+      id: {
+        in: ids.map((id) => +id),
+      },
+    },
+    select: {
+      id: true,
       email: true,
       name: true,
       avatar: true,
@@ -21,7 +36,6 @@ async function getById(id) {
     where: { id: +id },
     select: {
       id: true,
-      role: true,
       updatedAt: true,
       email: true,
       name: true,
@@ -63,5 +77,6 @@ module.exports = {
   getById,
   create,
   updateById,
+  getMultipleUsers,
   deleteById,
 };

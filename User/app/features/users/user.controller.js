@@ -39,8 +39,24 @@ const deleteuser = catchError(async (req, res, next) => {
   await userService.deletebyId(id);
 });
 
+const getMultipleUsers = catchError(async (req, res, next) => {
+  const { ids } = req.body;
+  if (!ids || ids.length === 0) {
+    res.status(200).status({
+      status: "success",
+      data: [],
+    });
+  }
+  const data = await userService.getMultipleUsers(ids);
+  res.status(200).json({
+    status: "success",
+    data,
+  });
+});
+
 module.exports = {
   getAlluser,
+  getMultipleUsers,
   getuserById,
   createuser,
   updateuser,

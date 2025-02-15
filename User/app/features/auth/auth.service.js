@@ -31,9 +31,7 @@ const registerService = async (email, name, role, password) => {
 
   const token = generateToken(newUser.id, "1d");
   const refreshToken = generateToken(newUser.id, "7d");
-
   await mailService.sendWelcomeEmail(email, name);
-
   return { user: newUser, token, refreshToken };
 };
 
