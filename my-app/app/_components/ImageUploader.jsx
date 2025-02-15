@@ -1,8 +1,10 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import { useState } from "react";
 
-export default function CustomUploader() {
+export default function ImageUploader() {
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -48,40 +50,27 @@ export default function CustomUploader() {
   };
 
   return (
-    <div className="flex flex-col items-center mt-32 justify-center p-6 bg-gray-100 rounded-lg shadow-lg w-full max-w-md mx-auto">
-      <h2 className="text-lg font-semibold text-gray-800 mb-4">
-        Upload an Image
-      </h2>
-
-      {/* Image Preview */}
-      <div className="w-64 h-64 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-white overflow-hidden">
-        {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt="Uploaded Preview"
-            className="w-full h-full object-cover"
-          />
-        ) : loading ? (
-          <p className="text-gray-500 text-sm">Uploading...</p>
-        ) : (
-          <p className="text-gray-500 text-sm">No image selected</p>
-        )}
+    <div className=" p-3   w-full mt-5">
+      <h1 className="text-lg font-semibold">Profile Photo</h1>
+      <div className="mt-3 space-y-5 flex items-center flex-col rounded-lg">
+        <div className="bg-sidebar w-full p-5 flex items-center justify-center rounded-lg">
+          <div className="relative md:w-56 w-full h-56 md:rounded-full rounded-lg overflow-hidden border bg-white">
+            <img
+              src="https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D"
+              alt="Profile photo"
+              className="object-cover w-full h-full"
+            />
+          </div>
+        </div>
+        <div className="w-full flex items-center gap-4 justify-end">
+          <Button variant="outline" className="px-5" size="lg">
+            Choose you Avatar
+          </Button>
+          <Button className="px-5" size="lg">
+            Save
+          </Button>
+        </div>
       </div>
-
-      {/* File Input */}
-      <input
-        type="file"
-        accept="image/*"
-        className="mt-4 hidden"
-        id="fileUpload"
-        onChange={handleFileChange}
-      />
-      <label
-        htmlFor="fileUpload"
-        className="mt-4 px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition cursor-pointer"
-      >
-        {loading ? "Uploading..." : "Choose File"}
-      </label>
     </div>
   );
 }
