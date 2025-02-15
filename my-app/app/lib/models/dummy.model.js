@@ -1,48 +1,50 @@
-import mongoose from "mongoose";
+const { default: mongoose } = require("mongoose");
 
-const EventSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, "Event name is required"],
-    minlength: [3, "Event name must be at least 3 characters long"],
-    maxlength: [100, "Event name must be less than 100 characters"],
-  },
-  startDate: {
-    type: Date,
-    required: [true, "Start date is required"],
-    validate: [
-      {
-        validator: function (value) {
-          return value > Date.now();
-        },
-        message: "Start date must be greater than today",
-      },
-      {
-        validator: function (value) {
-          return this.endDate ? value <= this.endDate : true;
-        },
-        message: "Start date must be before or equal to the end date",
-      },
-    ],
-  },
-  endDate: {
-    type: Date,
-    required: [true, "End date is required"],
-  },
-  organiser: {
-    type: String,
-    required: [true, "Organiser name is required"],
-    minlength: [3, "Organiser name must be at least 3 characters long"],
-    maxlength: [100, "Organiser name must be less than 100 characters"],
-  },
-  location: {
-    type: String,
-    required: [true, "Location is required"],
-    minlength: [3, "Location must be at least 3 characters long"],
-    maxlength: [200, "Location must be less than 200 characters"],
-  },
-});
+const { Schema } = mongoose;
 
-const eventsModel = mongoose.model("Event", EventSchema);
+const userSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    rollNo: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    year: {
+      type: Number,
+      required: true,
+    },
+    batch: String,
+    department: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    role: {
+      type: String,
+      enum: ["student", "faculty"],
+      default: "student",
+    },
+    Mentor: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+    img: {
+      type: String,
+      default:
+        "https://imgcdn.stablediffusionweb.com/2024/2/24/88cfa19b-b263-4599-a1c5-bb34eb13eb9c.jpg",
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-export const Event = eventsModel;
+module.exports = mongoose.models.User || mongoose.model("User", userSchema);
