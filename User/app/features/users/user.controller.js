@@ -27,6 +27,9 @@ const createuser = catchError(async (req, res, next) => {
 });
 
 const updateuser = catchError(async (req, res, next) => {
+  if (req.body.password || req.body.passwordConfirm) {
+    return next(new AppError("This route is not for updating password", 400));
+  }
   const updatedData = userService.updateById(req.params.id, req.body);
   res.status(200).json({
     status: "success",

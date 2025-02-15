@@ -34,6 +34,7 @@ const authMiddleware = async (req, res, next) => {
         email: true,
         name: true,
         avatar: true,
+        password: true,
       },
     });
 
@@ -41,7 +42,7 @@ const authMiddleware = async (req, res, next) => {
       return next(new AppError("Unauthorized: User not found.", 401));
     }
 
-    if (user.updatedAt.getTime() > tokenIssuedAt) {
+    if (!user.updatedAt || user.updatedAt.getTime() > tokenIssuedAt) {
       return next(
         new AppError(
           "Unauthorized: Password changed recently. Please log in again!",
@@ -53,6 +54,7 @@ const authMiddleware = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
+    console.log(error);
     return next(new AppError("Internal Server Error", 500));
   }
 };

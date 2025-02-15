@@ -11,7 +11,7 @@ function ProfileInput({
   return (
     <div className="mt-4">
       <label className="block text-sm font-medium">{label}</label>
-      <div className="relative mt-1">
+      <div className="relative mt-2">
         <input
           type={type}
           className={`w-full border rounded-lg px-4 py-3 ${

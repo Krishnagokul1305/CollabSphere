@@ -7,14 +7,14 @@ const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const errorHandler = require("./app/utils/ErrorHandler.js");
 
+dotenv.config({ path: "./config.env" });
+
 const authRouter = require("./app/features/auth/auth.route.js");
 const userRouter = require("./app/features/users/user.route.js");
 const morgan = require("morgan");
 const AppError = require("./app/utils/AppError.js");
 const passport = require("passport");
 require("./app/utils/passport.js");
-
-dotenv.config({ path: "./.env" });
 
 const app = express();
 

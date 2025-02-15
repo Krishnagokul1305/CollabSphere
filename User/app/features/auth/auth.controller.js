@@ -8,6 +8,7 @@ const {
   registerService,
   forgotPasswordService,
   resetPasswordService,
+  updatePasswordService,
 } = require("./auth.service");
 const prisma = require("../../../DB/prisma");
 
@@ -27,6 +28,7 @@ const register = asyncHandler(async (req, res) => {
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const { user, token, refreshToken } = await loginService(email, password);
+  console.log(token, refreshToken);
   createCookie(res, "token", token);
   createCookie(res, "refreshToken", refreshToken);
   res.status(200).json({ success: true, user, token });
@@ -92,7 +94,25 @@ const googleLogin = asyncHandler(async (req, res, next) => {
   res.redirect(process.env.FRONTEND_URL);
 });
 
+const updatePassword = asyncHandler(async (req, res) => {
+  throw new AppError("Not implemented", 501);
+  const { user } = req;
+  const { currentPassword, newPassword } = req.body;
+  if (!currentPassword || !newPassword) {
+    throw new AppError("Please provide all the required fields", 400);
+  }
+  await updatePasswordService(currentPassword, newPassword, user);
+  const token = generateToken(user.id, "1d");
+  const refreshToken = generateToken(user.id, "7d");
+
+  createCookie(res, "token", token);
+  createCookie(res, "refreshToken", refreshToken);
+
+  res.status(200).json({ success: true, message: "Password updated" });
+});
+
 module.exports = {
+  updatePassword,
   register,
   login,
   logout,

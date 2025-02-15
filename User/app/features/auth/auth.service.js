@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const { generateToken } = require("../../utils/jwtprovider");
 const AppError = require("../../utils/AppError");
 const MailService = require("../../utils/email");
+const { createCookie } = require("../../utils/cookie");
 const mailService = new MailService();
 
 const loginService = async (email, password) => {
@@ -89,9 +90,27 @@ const resetPasswordService = async (token, newPassword) => {
   return "Password successfully reset.";
 };
 
+const updatePasswordService = async (oldpassword, newpassword, user) => {
+  if (!oldpassword || !newpassword) {
+    throw new AppError("Please provide all the required fields", 400);
+  }
+  const isPasswordValid = await bcrypt.compare(oldpassword, user.password);
+  if (!isPasswordValid) throw new AppError("Invalid credentials", 401);
+  const hashedPassword = await bcrypt.hash(newpassword, 10);
+  const updatedUser = await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      password: hashedPassword,
+      updatedAt: new Date(),
+    },
+  });
+  return updatedUser;
+};
+
 module.exports = {
   loginService,
   registerService,
   forgotPasswordService,
   resetPasswordService,
+  updatePasswordService,
 };

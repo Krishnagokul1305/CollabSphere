@@ -13,10 +13,10 @@ export default function ProfileEditForm() {
   return (
     <div className="mx-auto md:p-6 p-3 rounded-lg">
       <h2 className="text-2xl font-semibold">User Information</h2>
-      <p className="dark:text-gray-300 text-gray-500 md:text-base text-sm tracking-wide md:tracking-normal mt-1">
+      {/* <p className="dark:text-gray-300 text-gray-500 md:text-base text-sm tracking-wide md:tracking-normal mt-1">
         Here you can edit public information about yourself. The changes will be
         displayed for other users within 5 minutes.
-      </p>
+      </p> */}
       <div className="mt-5">
         <h2 className="text-lg font-semibold"></h2>
         <ProfileInput
