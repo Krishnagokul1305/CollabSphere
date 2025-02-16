@@ -4,10 +4,12 @@ const prisma = require("../../DB/prisma");
 
 const authMiddleware = async (req, res, next) => {
   try {
+    console.log(req.cookies);
     if (!req.cookies || !req.cookies.token) {
       return next(new AppError("Unauthorized: No token provided.", 401));
     }
     let decoded;
+    console.log(req.cookies.token);
     try {
       decoded = verify(req.cookies.token, process.env.JWT_SECRET);
     } catch (error) {

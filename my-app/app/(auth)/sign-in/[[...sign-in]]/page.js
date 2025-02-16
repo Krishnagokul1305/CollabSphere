@@ -1,7 +1,5 @@
 import LoginForm from "@/app/_components/LoginForm";
 
-function page() {
+export default function Page() {
   return <LoginForm />;
 }
-
-export default page;

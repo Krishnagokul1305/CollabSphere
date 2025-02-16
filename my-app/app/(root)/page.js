@@ -1,8 +1,14 @@
-import { AppSidebar } from "@/components/app-sidebar";
-import { SiteHeader } from "@/components/site-header";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarInset } from "@/components/ui/sidebar";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
-export default function Page() {
+export default async function Page() {
+  // const { userId } = await auth();
+  // if (!userId) {
+  //   return <div>Sign in to view this page</div>;
+  // }
+
+  // const user = await currentUser();
+  // console.log(user);
   return (
     <div className="[--header-height:calc(theme(spacing.14))]">
       <SidebarInset>

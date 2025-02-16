@@ -1,16 +1,17 @@
 "use client";
 
-import { GalleryVerticalEnd } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import FormInput from "./FormInput";
 import Link from "next/link";
-import { register as registerApi } from "../lib/auth";
+import { useSignUp } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 import Spinner from "./Spinner";
 import Logo from "./Logo";
+import { useState } from "react";
+import { OtpModal } from "./OtpModal";
 
 export default function RegisterForm() {
   const {
@@ -20,15 +21,55 @@ export default function RegisterForm() {
   } = useForm();
 
   const router = useRouter();
+  const { isLoaded, signUp, setActive } = useSignUp();
 
+  const [verifying, setVerifying] = useState(false);
+  const [otpOpen, setOtpOpen] = useState(false);
+  const [loading, setLoading] = useState("");
+
+  // Handle submission of the sign-up form
   const onSubmit = async (data) => {
+    if (!isLoaded) return;
+
     try {
-      console.log(data);
-      await registerApi(data.email, data.password, data.name);
-      toast.success("Registration successful");
-      router.push("/");
-    } catch (error) {
-      toast.error(error.message || "Registration failed");
+      await signUp.create({
+        emailAddress: data.email,
+        password: data.password,
+      });
+
+      await signUp.prepareEmailAddressVerification({
+        strategy: "email_code",
+      });
+
+      setVerifying(true);
+      setOtpOpen(true);
+    } catch (err) {
+      console.error(JSON.stringify(err, null, 2));
+      toast.error(err.message);
+    }
+  };
+
+  const handleVerify = async (otpCode) => {
+    if (!isLoaded) return;
+
+    try {
+      setLoading(true);
+      const signUpAttempt = await signUp.attemptEmailAddressVerification({
+        code: otpCode,
+      });
+      setLoading(false);
+      if (signUpAttempt.status === "complete") {
+        await setActive({ session: signUpAttempt.createdSessionId });
+        toast.success("Account created successfully!");
+        setOtpOpen(false);
+        router.push("/");
+      } else {
+        console.error(JSON.stringify(signUpAttempt, null, 2));
+        toast.error("Invalid OTP. Please try again.");
+      }
+    } catch (err) {
+      console.error("Error:", JSON.stringify(err, null, 2));
+      toast.error(err.message);
     }
   };
 
@@ -40,16 +81,6 @@ export default function RegisterForm() {
             <Logo />
             <h1 className="text-xl font-bold">Create an Account</h1>
           </div>
-
-          <FormInput
-            id="name"
-            label="Name"
-            type="text"
-            placeholder="Enter your name"
-            register={register}
-            validation={{ required: "Name is required" }}
-            error={errors.name}
-          />
 
           <FormInput
             id="email"
@@ -87,12 +118,22 @@ export default function RegisterForm() {
 
           <div className="text-center text-sm tracking-wide">
             Already have an account?{" "}
-            <Link href="/login" className="text-blue-500 hover:underline">
+            <Link href="/sign-in" className="text-blue-500 hover:underline">
               Login
             </Link>
           </div>
         </div>
       </form>
+
+      {/* OTP Modal */}
+      {verifying && (
+        <OtpModal
+          open={otpOpen}
+          loading={loading}
+          onClose={() => setOtpOpen(false)}
+          onVerify={handleVerify}
+        />
+      )}
     </div>
   );
 }

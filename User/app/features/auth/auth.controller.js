@@ -95,7 +95,6 @@ const googleLogin = asyncHandler(async (req, res, next) => {
 });
 
 const updatePassword = asyncHandler(async (req, res) => {
-  throw new AppError("Not implemented", 501);
   const { user } = req;
   const { currentPassword, newPassword } = req.body;
   if (!currentPassword || !newPassword) {
@@ -104,7 +103,7 @@ const updatePassword = asyncHandler(async (req, res) => {
   await updatePasswordService(currentPassword, newPassword, user);
   const token = generateToken(user.id, "1d");
   const refreshToken = generateToken(user.id, "7d");
-
+  console.log("updated");
   createCookie(res, "token", token);
   createCookie(res, "refreshToken", refreshToken);
 

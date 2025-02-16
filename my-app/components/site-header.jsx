@@ -1,6 +1,6 @@
 "use client";
 
-import { Moon, SidebarIcon, Sun } from "lucide-react";
+import { Dot, DotIcon, Moon, SidebarIcon, Sun } from "lucide-react";
 
 import { SearchForm } from "@/components/search-form";
 import {
@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useSidebar } from "@/components/ui/sidebar";
+import { UserButton } from "@clerk/nextjs";
 
 export function SiteHeader() {
   const { toggleSidebar } = useSidebar();
@@ -31,11 +32,12 @@ export function SiteHeader() {
         </Button>
         <Separator orientation="vertical" className="mr-2 h-4" />
         <div className="flex-1"></div>
+        <UserButton userProfileUrl="/profile" />
 
-        <Button className="h-8 w-8" variant="ghost" size="icon">
-          <Sun className="h-7 w-7 hidden dark:block" />
-          <Moon className="h-7 w-7 dark:hidden" />
-        </Button>
+        <div className="flex items-center ms-2 justify-center cursor-pointer">
+          <Sun className=" hidden dark:block" size={25} />
+          <Moon className=" dark:hidden" size={25} />
+        </div>
       </div>
     </header>
   );

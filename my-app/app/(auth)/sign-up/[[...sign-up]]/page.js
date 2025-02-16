@@ -1,7 +1,5 @@
 import RegisterForm from "@/app/_components/RegisterForm";
 
-function page() {
+export default function Page() {
   return <RegisterForm />;
 }
-
-export default page;

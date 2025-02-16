@@ -1,39 +1,55 @@
 "use client";
 
-function ProfileInput({
+import { Skeleton } from "@/components/ui/skeleton";
+
+export default function ProfileInput({
   label,
+  name,
+  register,
+  errors,
   type = "text",
-  value,
-  onChange,
-  placeholder,
+  isLoading = true,
   disabled = false,
 }) {
   return (
-    <div className="mt-4">
-      <label className="block text-sm font-medium">{label}</label>
-      <div className="relative mt-2">
-        <input
-          type={type}
-          className={`w-full border rounded-lg px-4 py-3 ${
-            disabled ? "dark:text-gray-300 text-gray-500" : "text-gray-800"
-          } focus:outline-none focus:ring-2 focus:ring-blue-500`}
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder}
-          disabled={disabled}
-          readOnly={disabled}
-        />
-        {value && !disabled && (
-          <button
-            className="absolute right-3 top-3 text-gray-500"
-            onClick={() => onChange({ target: { value: "" } })}
-          >
-            &#x2715;
-          </button>
+    <div className="flex md:gap-4 gap-2 md:flex-row flex-col md:items-center">
+      <div className="space-y-1 basis-[20%]">
+        <label htmlFor={name}>{label}</label>
+      </div>
+      <div className="w-full">
+        {isLoading ? (
+          <Skeleton className="w-full border rounded-lg px-4 py-6" />
+        ) : (
+          <input
+            id={name}
+            type={type}
+            disabled={disabled}
+            defaultValue={""}
+            placeholder={`Enter your ${label.toLowerCase()}`}
+            className={`w-full border rounded-lg px-4 py-3 ${
+              disabled ? "text-gray-300" : "text-gray-800"
+            } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            {...register(name, {
+              required: `${label} is required`,
+              ...(name === "fullName" && {
+                minLength: {
+                  value: 3,
+                  message: "Full Name must be at least 3 characters",
+                },
+              }),
+              ...(name === "email" && {
+                pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                  message: "Invalid email address",
+                },
+              }),
+            })}
+          />
+        )}
+        {errors[name] && (
+          <p className="text-red-500 text-sm mt-1.5">{errors[name].message}</p>
         )}
       </div>
     </div>
   );
 }
-
-export default ProfileInput;

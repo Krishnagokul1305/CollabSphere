@@ -1,75 +1,70 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { useDropzone } from "react-dropzone";
+import { Upload, Image } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default function ImageUploader() {
-  const [imageUrl, setImageUrl] = useState(null);
-  const [loading, setLoading] = useState(false);
+export default function ImageUploader({ setValue, image, isLoading = true }) {
+  const [file, setFile] = useState(image || "");
 
-  const handleFileChange = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    setLoading(true);
-
-    const formData = new FormData();
-    formData.append(
-      "operations",
-      JSON.stringify({
-        query: `
-        mutation UploadImage($file: Upload!) {
-          uploadProfileImage(file: $file)
-        }
-      `,
-        variables: { file: null },
-      })
-    );
-    formData.append("map", JSON.stringify({ 0: ["variables.file"] }));
-    formData.append("0", file);
-
-    try {
-      const response = await fetch("http://localhost:4000/graphql", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data?.data?.uploadProfileImage) {
-        setImageUrl(data.data.uploadProfileImage);
-      } else {
-        console.error("Upload failed:", data.errors);
+  const onDrop = useCallback(
+    (acceptedFiles) => {
+      const uploadedFile = acceptedFiles[0];
+      if (uploadedFile) {
+        setFile(URL.createObjectURL(uploadedFile));
+        setValue("profileImage", uploadedFile);
       }
-    } catch (error) {
-      console.error("Error uploading file:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [setValue]
+  );
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: { "image/*": [] },
+    maxSize: 10 * 1024 * 1024, // 10MB
+  });
 
   return (
-    <div className=" p-3   w-full md:mt-5">
-      <h1 className="text-lg font-semibold">Profile Photo</h1>
-      <div className="mt-3 space-y-5 flex items-center flex-col rounded-lg">
-        <div className="bg-sidebar w-full p- flex items-center justify-center rounded-lg">
-          <div className="relative w-full h-60  rounded-lg overflow-hidden border bg-white">
-            <img
-              src="https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D"
-              alt="Profile photo"
-              className="object-cover w-full h-full"
-            />
+    <div className="flex w-full flex-col md:flex-row items-center gap-10">
+      {/* Profile Picture */}
+      <div className="md:basis-[20%]  w-[100%]">
+        {!isLoading ? (
+          <div className="md:w-24 md:h-24 h-full w-[100%]  md:rounded-full rounded-lg overflow-hidden border">
+            {file ? (
+              <img
+                src={file}
+                alt="Uploaded"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                <Image className="text-gray-500" size={24} />
+              </div>
+            )}
           </div>
+        ) : (
+          <Skeleton className="md:w-24 md:h-24 h-36 w-[100%]  md:rounded-full rounded-lg overflow-hidden border" />
+        )}
+      </div>
+
+      {/* Upload Box */}
+      <div
+        {...getRootProps()}
+        className="flex flex-col w-full items-center justify-center border-2 border-dashed rounded-lg p-6 cursor-pointer transition 
+        hover:border-gray-400"
+      >
+        <input {...getInputProps()} />
+        <div className="flex flex-col gap-3 items-center text-center space-x-2">
+          <Upload size={20} className="text-gray-500" />
+          <span className="font-medium text-gray-700">
+            <span className="font-semibold">Click here</span> to upload your
+            file or drag.
+          </span>
         </div>
-        <div className="w-full flex items-center gap-4 justify-end">
-          <Button variant="secondary" className="px-5" size="lg">
-            Choose you Avatar
-          </Button>
-          <Button className="px-5" size="lg">
-            Save
-          </Button>
-        </div>
+        <p className="text-sm text-gray-500 mt-1 text-center">
+          Supported Format: SVG, JPG, PNG (500kb-1MB each)
+        </p>
       </div>
     </div>
   );
