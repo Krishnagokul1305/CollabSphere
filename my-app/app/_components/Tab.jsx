@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 const tabs = [
@@ -8,7 +9,12 @@ const tabs = [
 ];
 
 function Tab() {
-  const [activeTab, setActiveTab] = useState("details");
+  const pathname = usePathname();
+  const [activeTab, setActiveTab] = useState(
+    pathname == "/profile/appearance" ? "appearance" : "details"
+  );
+
+  console.log(pathname);
   return (
     <div className="border-b flex space-x-6">
       {tabs.map((tab) => (

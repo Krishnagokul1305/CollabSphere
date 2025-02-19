@@ -8,8 +8,10 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import Tabs from "@/app/_components/profile/Tabs";
+import UserList from "@/app/_components/users/UserList";
+import { DataTableDemo } from "@/app/_components/table/Table";
 
-function page({ params }) {
+function layout({ children }) {
   return (
     <div className="space-y-5">
       <div className="py-4 rounded-md px-6 pb-3 bg-sidebar space-y-3">
@@ -37,11 +39,23 @@ function page({ params }) {
           <Button variant="primary">+ Invite members</Button>
         </div>
       </div>
-      <div>
-        <Tabs projectId={"hello"} />
+      <div className=" gap-5">
+        <div className="space-y-5">
+          <div className="bg-sidebar flex items-center justify-between p-2 rounded-md">
+            {/* <Tabs projectId={"hello"} /> */}
+            <div></div>
+            <Button className="me-3 bg-black text-white">Filter</Button>
+          </div>
+          <main className="bg-sidebar rounded-md h-[60vh]">
+            <DataTableDemo />
+          </main>
+        </div>
+        {/* <div className="bg-sidebar rounded-md">
+          <UserList />
+        </div> */}
       </div>
     </div>
   );
 }
 
-export default page;
+export default layout;

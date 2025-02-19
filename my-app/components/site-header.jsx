@@ -1,20 +1,12 @@
 "use client";
 
-import { Dot, DotIcon, Moon, SidebarIcon, Sun } from "lucide-react";
+import { Bell, Dot, DotIcon, Moon, SidebarIcon, Sun } from "lucide-react";
 
-import { SearchForm } from "@/components/search-form";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useSidebar } from "@/components/ui/sidebar";
-import { UserButton } from "@clerk/nextjs";
+import NotificationSheet from "@/app/_components/notification/NotificationSheet";
 
 export function SiteHeader() {
   const { toggleSidebar } = useSidebar();
@@ -32,12 +24,19 @@ export function SiteHeader() {
         </Button>
         <Separator orientation="vertical" className="mr-2 h-4" />
         <div className="flex-1"></div>
-        <UserButton userProfileUrl="/profile" />
 
-        <div className="flex items-center ms-2 justify-center cursor-pointer">
-          <Sun className=" hidden dark:block" size={25} />
-          <Moon className=" dark:hidden" size={25} />
+        <div className="flex items-center ms-2 rounded-full p-2 justify-center cursor-pointer">
+          <Sun className=" hidden dark:block" size={20} />
+          <Moon className=" dark:hidden" size={20} />
         </div>
+        <Sheet>
+          <SheetTrigger asChild>
+            <div className="flex items-center gap-2 rounded-full p-2 cursor-pointer">
+              <Bell size={20} />
+            </div>
+          </SheetTrigger>
+          <NotificationSheet />
+        </Sheet>
       </div>
     </header>
   );

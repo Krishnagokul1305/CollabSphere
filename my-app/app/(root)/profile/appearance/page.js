@@ -1,5 +1,7 @@
+import Theme from "@/app/_components/profile/Theme";
+
 function page() {
-  return <div></div>;
+  return <Theme />;
 }
 
 export default page;

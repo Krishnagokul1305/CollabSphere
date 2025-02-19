@@ -1,147 +1,61 @@
-export const login = async (email, password) => {
-  try {
-    const response = await fetch(`http://localhost:4000/api/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({ email, password }),
-    });
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Something went wrong");
-    }
-    const data = await response.json();
-    console.log(data);
-    return data;
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
+import dbConnect from "@/app/lib/db";
+import userModel from "@/app/lib/models/user.model";
+import NextAuth from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
 
-export const logout = async () => {
-  try {
-    const response = await fetch(`http://localhost:4000/api/auth/logout`, {
-      method: "GET",
-      credentials: "include",
-    });
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Something went wrong");
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
+export const authOptions = {
+  session: {
+    strategy: "jwt",
+  },
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
+  ],
 
-export const register = async (email, password, name) => {
-  try {
-    const response = await fetch(`http://localhost:4000/api/auth/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({ email, password, name }),
-    });
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Something went wrong");
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
+  callbacks: {
+    async jwt({ token, account }) {
+      if (account && account.provider === "google") {
+        await dbConnect();
+        let existingUser = await userModel.findOne({ email: token.email });
 
-export const forgotPassword = async (email) => {
-  try {
-    const response = await fetch(
-      `http://localhost:4000/api/auth/forgotpassword`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ email }),
+        if (!existingUser) {
+          existingUser = await userModel.create({
+            email: token.email,
+            name: token.name,
+            avatar: token.picture,
+            role: "user",
+          });
+        }
+
+        token.user = {
+          id: existingUser._id.toString(),
+          email: existingUser.email,
+          name: existingUser.name,
+          role: existingUser.role,
+          avatar: existingUser.avatar,
+        };
       }
-    );
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Something went wrong");
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw new Error(error.message);
-  }
+      return token;
+    },
+
+    async session({ session, token }) {
+      session.user = token.user;
+      console.log(session);
+      return session;
+    },
+  },
+
+  pages: {
+    signIn: "/login",
+    newUser: "/profile",
+    signOut: "/login",
+  },
+
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
-export const resetPassword = async (newPassword, token) => {
-  try {
-    const response = await fetch(
-      `http://localhost:4000/api/auth/resetpassword/${token}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ newPassword }),
-      }
-    );
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Something went wrong");
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
+const handler = NextAuth(authOptions);
 
-export const refreshToken = async () => {
-  try {
-    const response = await fetch(
-      `http://localhost:4000/api/auth/refresh-token`,
-      {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Something went wrong");
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-
-export const getUser = async () => {
-  try {
-    const response = await fetch(`http://localhost:4000/api/auth/me`, {
-      method: "GET",
-      credentials: "include",
-    });
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Something went wrong");
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
-};
+export { handler as GET, handler as POST };

@@ -1,5 +1,4 @@
 import { SidebarInset } from "@/components/ui/sidebar";
-import { auth, currentUser } from "@clerk/nextjs/server";
 
 export default async function Page() {
   // const { userId } = await auth();
