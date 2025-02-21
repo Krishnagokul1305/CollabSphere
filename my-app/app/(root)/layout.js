@@ -10,13 +10,13 @@ export const metadata = {
 
 function layout({ children }) {
   return (
-    <div className="[--header-height:calc(theme(spacing.14))]">
-      <SidebarProvider className="flex flex-col">
+    <div className="[--header-height:calc(theme(spacing.14))] w-full relative">
+      <SidebarProvider className="flex flex-col h-screen">
         <SiteHeader />
-        <div className="flex flex-1">
+        <div className="flex flex-1 min-w-0 overflow-hidden">
           <AppSidebar />
-          <SidebarInset>
-            <main className="p-5">{children}</main>
+          <SidebarInset className="flex-1 min-w-0">
+            <main className="p-5 w-full overflow-auto">{children}</main>
           </SidebarInset>
         </div>
       </SidebarProvider>

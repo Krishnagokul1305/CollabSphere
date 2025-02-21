@@ -2,6 +2,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import Provider from "./_components/auth/Provider";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const poppins = Poppins({
   weight: ["400", "500", "600", "700", "800", "900"],
@@ -17,9 +18,11 @@ export default function RootLayout({ children }) {
   return (
     <Provider>
       <html lang="en">
-        <body className={poppins.className + "dark antialiased"}>
-          <Toaster />
-          {children}
+        <body className={poppins.className}>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <Toaster />
+            {children}
+          </ThemeProvider>
         </body>
       </html>
     </Provider>

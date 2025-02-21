@@ -35,6 +35,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import ReusableDropdown from "../ReusableDropdown";
 
 const data = [
   {
@@ -76,6 +77,14 @@ const data = [
     priority: "medium",
     assignee: "emma.brown@example.com",
     dueDate: "2024-09-20",
+  },
+  {
+    id: "task3",
+    title: "Implement payment gateway",
+    status: "completed",
+    priority: "high",
+    assignee: "mike.jones@example.com",
+    dueDate: "2024-08-30",
   },
 ];
 
@@ -125,13 +134,20 @@ export const columns = [
     ),
   },
   {
+    accessorKey: "assignee",
+    header: "Assignee",
+    cell: ({ row }) => (
+      <div className="lowercase">{row.getValue("assignee")}</div>
+    ),
+  },
+  {
     accessorKey: "priority",
     header: "Priority",
     cell: ({ row }) => {
       const priority = row.getValue("priority");
       return (
         <span
-          className={`px-2 py-1 rounded text-xs font-medium ${
+          className={`px-2 py-1 flex items-center gap-2 w-fit rounded-md ${
             priority === "high"
               ? "bg-red-200 text-red-800"
               : priority === "medium"
@@ -139,18 +155,22 @@ export const columns = [
               : "bg-green-200 text-green-800"
           }`}
         >
+          <span
+            className={`w-2.5 h-2.5 rounded-full ${
+              priority === "high"
+                ? "bg-red-500 "
+                : priority === "medium"
+                ? "bg-yellow-500 "
+                : "bg-green-500 "
+            }
+          }`}
+          ></span>
           {priority}
         </span>
       );
     },
   },
-  {
-    accessorKey: "assignee",
-    header: "Assignee",
-    cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("assignee")}</div>
-    ),
-  },
+
   {
     accessorKey: "dueDate",
     header: () => <div className="text-right">Due Date</div>,
@@ -166,26 +186,25 @@ export const columns = [
       const task = row.original;
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+        <ReusableDropdown
+          trigger={
             <Button variant="ghost" className="h-8 w-8 p-0">
               <span className="sr-only">Open menu</span>
               <MoreHorizontal />
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(task.id)}
-            >
-              Copy Task ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View Task</DropdownMenuItem>
-            <DropdownMenuItem>Edit Task</DropdownMenuItem>
-            <DropdownMenuItem>Delete Task</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          }
+          label="Actions"
+          items={[
+            {
+              label: "Copy Task ID",
+              action: () => navigator.clipboard.writeText(task.id),
+            },
+            { separator: true },
+            { label: "View Task", action: () => console.log("View Task") },
+            { label: "Edit Task", action: () => console.log("Edit Task") },
+            { label: "Delete Task", action: () => console.log("Delete Task") },
+          ]}
+        />
       );
     },
   },
@@ -217,93 +236,53 @@ export function DataTableDemo() {
   });
 
   return (
-    <div className="w-full">
-      <div className="flex items-center">
-        {/* <Input
-          placeholder="Filter emails..."
-          value={table.getColumn("email")?.getFilterValue() ?? ""}
-          onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>  
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu> */}
-      </div>
-      <div className="px-2">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id} className="py-3">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="py-3 px-3">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
+    <Table>
+      <TableHeader>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <TableRow key={headerGroup.id}>
+            {headerGroup.headers.map((header) => {
+              return (
+                <TableHead key={header.id} className="py-3 px-4">
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
                       )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
+                </TableHead>
+              );
+            })}
+          </TableRow>
+        ))}
+      </TableHeader>
+      <TableBody>
+        {table.getRowModel().rows?.length ? (
+          table.getRowModel().rows.map((row) => (
+            <TableRow
+              key={row.id}
+              data-state={row.getIsSelected() && "selected"}
+            >
+              {row.getVisibleCells().map((cell) => (
                 <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
+                  key={cell.id}
+                  className="py-4 px-4 whitespace-nowrap"
                 >
-                  No results.
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-    </div>
+              ))}
+            </TableRow>
+          ))
+        ) : (
+          <TableRow>
+            <TableCell
+              colSpan={columns.length}
+              className="h-24 text-wrap text-center"
+            >
+              No results.
+            </TableCell>
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
   );
 }
