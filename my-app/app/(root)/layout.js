@@ -13,7 +13,7 @@ function layout({ children }) {
     <div className="[--header-height:calc(theme(spacing.14))] w-full relative">
       <SidebarProvider className="flex flex-col h-screen">
         <SiteHeader />
-        <div className="flex flex-1 min-w-0 overflow-hidden">
+        <div className="flex flex-1 min-w-0">
           <AppSidebar />
           <SidebarInset className="flex-1 min-w-0">
             <main className="p-5 w-full overflow-auto">{children}</main>

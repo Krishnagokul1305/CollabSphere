@@ -9,14 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-export default function Modal({
-  title,
-  description,
-  children,
-  Trigger,
-  isDelete = false,
-  onDelete,
-}) {
+export default function Modal({ title, description, children, Trigger }) {
   return (
     <Dialog>
       <DialogTrigger asChild>{Trigger}</DialogTrigger>
@@ -30,15 +23,9 @@ export default function Modal({
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
-          {isDelete ? (
-            <Button variant="destructive" onClick={onDelete}>
-              Delete
-            </Button>
-          ) : (
-            <DialogClose asChild>
-              <Button variant="default">Confirm</Button>
-            </DialogClose>
-          )}
+          <DialogClose asChild>
+            <Button variant="default">Confirm</Button>
+          </DialogClose>
         </div>
       </DialogContent>
     </Dialog>
