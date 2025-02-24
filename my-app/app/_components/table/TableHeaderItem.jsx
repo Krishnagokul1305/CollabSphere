@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export function TableColumnHeader({ column, title, className }) {
+export default function TableColumnHeader({ column, title, className }) {
   if (!column.getCanSort()) {
     return <div className={cn(className)}>{title}</div>;
   }

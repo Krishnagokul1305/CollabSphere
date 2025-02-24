@@ -1,45 +1,5 @@
 const users = [
   {
-    name: "Brooklyn Simmons",
-    role: "Front-End Developer",
-    department: "Software",
-    email: "brooklyns@ahfagon.com",
-    phone: "(239) 555-0108",
-    status: "Active",
-    avatar:
-      "https://plus.unsplash.com/premium_photo-1661589836910-b3b0bf644bd5?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmVzc2lvbmFsJTIwYmxhY2slMjB3b21hbnxlbnwwfHwwfHx8MA%3D%3D",
-  },
-  {
-    name: "Esther Howard",
-    role: "UI/UX Designer",
-    department: "Creative",
-    email: "estherh@ahfagon.com",
-    phone: "(208) 555-0112",
-    status: "Active",
-    avatar:
-      "https://plus.unsplash.com/premium_photo-1661589836910-b3b0bf644bd5?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmVzc2lvbmFsJTIwYmxhY2slMjB3b21hbnxlbnwwfHwwfHx8MA%3D%3D",
-  },
-  {
-    name: "Leslie Alexander",
-    role: "Product Manager",
-    department: "Product",
-    email: "lesliea@ahfagon.com",
-    phone: "(239) 555-0108",
-    status: "Active",
-    avatar:
-      "https://plus.unsplash.com/premium_photo-1661589836910-b3b0bf644bd5?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmVzc2lvbmFsJTIwYmxhY2slMjB3b21hbnxlbnwwfHwwfHx8MA%3D%3D",
-  },
-  {
-    name: "Wade Warren",
-    role: "QA Tester",
-    department: "Product",
-    email: "wadew@ahfagon.com",
-    phone: "(505) 555-0125",
-    status: "Active",
-    avatar:
-      "https://plus.unsplash.com/premium_photo-1661589836910-b3b0bf644bd5?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmVzc2lvbmFsJTIwYmxhY2slMjB3b21hbnxlbnwwfHwwfHx8MA%3D%3D",
-  },
-  {
     name: "Jenny Wilson",
     role: "Product Designer",
     department: "Creative",
@@ -152,4 +112,116 @@ const tasks = [
   },
 ];
 
-export { users, tasks };
+const tableData = [
+  {
+    date: "Today, 20 Sept 2023",
+    total: "22:24:32",
+    selectedCount: 2,
+    items: [
+      {
+        id: 1,
+        selected: false,
+        task: "Branding elements",
+        billableStatus: "Billable",
+        user: "Culhane",
+        company: "Zendesk",
+        startTime: "12:29",
+        endTime: "18:43",
+        duration: "3:04:25",
+        status: "Completed",
+      },
+      {
+        id: 2,
+        selected: false,
+        task: "Dashboard Redesign",
+        billableStatus: "Non Billable",
+        user: "Angel Gouse",
+        company: "Toptal",
+        startTime: "10:34",
+        endTime: "12:50",
+        duration: "05:12:09",
+        status: "Completed",
+      },
+      {
+        id: 3,
+        selected: true,
+        task: "Company logos",
+        billableStatus: "Billable",
+        user: "Chance Levin",
+        company: "BairesDev",
+        startTime: "06:11",
+        endTime: "09:32",
+        duration: "09:43:00",
+        status: "Completed",
+      },
+      {
+        id: 4,
+        selected: true,
+        task: "IOS Mobile App",
+        billableStatus: "Billable",
+        user: "Kadin Aminoff",
+        company: "InVision",
+        startTime: "14:22",
+        endTime: "16:21",
+        duration: "04:33:04",
+        status: "Completed",
+      },
+    ],
+  },
+  {
+    date: "Yesterday, 19 Sept 2023",
+    total: "16:26:45",
+    items: [
+      {
+        id: 5,
+        selected: false,
+        task: "Font End design",
+        billableStatus: "Billable",
+        user: "Talan Calzoni",
+        company: "Cuberto",
+        startTime: "01:34",
+        endTime: "03:12",
+        duration: "05:34:43",
+        status: "Completed",
+      },
+      {
+        id: 6,
+        selected: false,
+        task: "Brochure Design",
+        billableStatus: "Non Billable",
+        user: "Zaire Lipshutz",
+        company: "Huge",
+        startTime: "15:55",
+        endTime: "18:43",
+        duration: "04:12:05",
+        status: "Completed",
+      },
+      {
+        id: 7,
+        selected: false,
+        task: "Web Design",
+        billableStatus: "Billable",
+        user: "Lipshutz",
+        company: "Frog Design",
+        startTime: "07:24",
+        endTime: "08:49",
+        duration: "02:32:23",
+        status: "Completed",
+      },
+      {
+        id: 8,
+        selected: false,
+        task: "Dashboard Redesign",
+        billableStatus: "Non Billable",
+        user: "Siphorn",
+        company: "UsabilityHub",
+        startTime: "01:54",
+        endTime: "-",
+        duration: "03:32:54",
+        status: "Pending", // Mark as pending since endTime is "-"
+      },
+    ],
+  },
+];
+
+export { users, tasks, tableData };

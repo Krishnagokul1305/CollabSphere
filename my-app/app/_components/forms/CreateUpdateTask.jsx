@@ -1,5 +1,5 @@
 "use client";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -30,14 +30,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  MultiSelector,
-  MultiSelectorContent,
-  MultiSelectorInput,
-  MultiSelectorItem,
-  MultiSelectorList,
-  MultiSelectorTrigger,
-} from "@/components/ui/multi-select";
+// import {
+//   MultiSelector,
+//   MultiSelectorContent,
+//   MultiSelectorInput,
+//   MultiSelectorItem,
+//   MultiSelectorList,
+//   MultiSelectorTrigger,
+// } from "@/components/ui/multi-select";
 
 const formSchema = z.object({
   name_4530468647: z.string().min(1),
@@ -48,7 +48,7 @@ const formSchema = z.object({
   name_4324431227: z.array(z.string()).nonempty("Please at least one item"),
 });
 
-export default function MyForm() {
+export default function CreateUpdateTask() {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -59,7 +59,6 @@ export default function MyForm() {
 
   function onSubmit(values) {
     try {
-      console.log(values);
       toast(
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
           <code className="text-white">{JSON.stringify(values, null, 2)}</code>
@@ -75,30 +74,26 @@ export default function MyForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 max-w-3xl mx-auto py-10"
+        className="space-y-8 max-w-8xl"
       >
-        <div className="grid grid-cols-12 gap-4">
-          <div className="col-span-4">
-            <FormField
-              control={form.control}
-              name="name_4530468647"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Title</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter a short Description"
-                      type=""
-                      {...field}
-                    />
-                  </FormControl>
+        <FormField
+          control={form.control}
+          name="name_4530468647"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Title</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Enter a short Description"
+                  type=""
+                  {...field}
+                />
+              </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-        </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}
@@ -112,7 +107,7 @@ export default function MyForm() {
                     <Button
                       variant={"outline"}
                       className={cn(
-                        "w-[240px] pl-3 text-left font-normal",
+                        " pl-3 py-5 text-left font-normal",
                         !field.value && "text-muted-foreground"
                       )}
                     >
@@ -226,7 +221,7 @@ export default function MyForm() {
             />
           </div>
         </div>
-
+        {/* 
         <FormField
           control={form.control}
           name="name_4324431227"
@@ -260,7 +255,7 @@ export default function MyForm() {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
         <Button type="submit">Submit</Button>
       </form>
     </Form>

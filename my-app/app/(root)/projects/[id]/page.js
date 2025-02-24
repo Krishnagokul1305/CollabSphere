@@ -1,4 +1,3 @@
-import { createColumn } from "@/app/_components/table/Column";
 import DataTable from "@/app/_components/table/Table";
 import { tasks } from "@/app/lib/dummydata";
 

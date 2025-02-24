@@ -4,9 +4,9 @@ import { List } from "lucide-react";
 
 const EmptyList = ({ count, title, message }) => {
   return (
-    <div className="flex flex-col items-center justify-center p-5 min-h-[40vh] text-center">
+    <div className="flex flex-col items-center justify-center p-5 border  rounded-md bg-sidebar min-h-[40vh] text-center">
       <div className="relative">
-        <div className="p-5 w-24 h-24 flex items-center justify-center bg-sidebar rounded-full ">
+        <div className="p-5 w-24 h-24 flex items-center justify-center bg-sidebar-border rounded-full ">
           {/* Render the Icon as a component */}
           <List className="text-2xl" />
           {count >= 0 && (

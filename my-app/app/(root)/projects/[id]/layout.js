@@ -11,6 +11,7 @@ import Tabs from "@/app/_components/profile/Tabs";
 import Modal from "@/app/_components/modal/Modal";
 import DeleteModal from "@/app/_components/modal/DeleteModal";
 import InviteUsersForm from "@/app/_components/forms/InviteUsersForm";
+import CreateUpdateTask from "@/app/_components/forms/CreateUpdateTask";
 
 function layout({ children }) {
   return (
@@ -33,17 +34,27 @@ function layout({ children }) {
         <h1 className="text-2xl font-bold">Timmy - SaaS Website</h1>
 
         {/* Meta Info */}
-        <div className="flex gap-4 justify-between flex-col md:flex-row md:items-center">
+        <div className="flex gap-4 justify-between w-full flex-col md:flex-row md:items-center">
           <p className="text-sm text-muted-foreground">
             Created on: <span className="text-foreground">Jan 8, 2024</span>
           </p>
-          <Modal
-            title=" Invite People to this Project"
-            description="Invite existing team members or add new ones."
-            Trigger={<Button variant="primary">+ Invite members</Button>}
-          >
-            <InviteUsersForm />
-          </Modal>
+          <div className="flex gap-2 flex-col md:flex-row md:items-center">
+            <Modal
+              title=" Invite People to this Project"
+              description="Invite existing team members or add new ones."
+              Trigger={<Button variant="primary">+ Invite members</Button>}
+            >
+              <InviteUsersForm />
+            </Modal>
+            <Modal
+              title="Create Task"
+              description="Create a new task for this project."
+              Trigger={<Button variant="outline">+ Add Task</Button>}
+            >
+              <CreateUpdateTask />
+            </Modal>
+          </div>
+
           {/* <DeleteModal
             trigger={<Button variant="primary">+ Invite members</Button>}
           /> */}

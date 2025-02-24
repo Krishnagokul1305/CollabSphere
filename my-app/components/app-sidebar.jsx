@@ -56,8 +56,8 @@ const data = {
       icon: GroupIcon,
     },
     {
-      title: "Assignments",
-      url: "/task",
+      title: "Todo",
+      url: "/todo",
       icon: ListCheck,
     },
   ],
