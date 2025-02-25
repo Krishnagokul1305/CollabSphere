@@ -85,7 +85,7 @@ export default function TodoList() {
               <Calendar className="w-4 h-4 mb-1" />
               <h2 className="text-lg font-semibold">{group.date}</h2>
             </div>
-            <CardContent className="space-y-2 mt-1 pb-0 ps-3">
+            <CardContent className="space-y-2 mt-1 pb-0 p-0 md:ps-3">
               {group.tasks.map((task) => (
                 <TodoListItem task={task} key={task.id} />
               ))}
