@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/breadcrumb";
 import Tabs from "@/app/_components/profile/Tabs";
 import Modal from "@/app/_components/modal/Modal";
-import DeleteModal from "@/app/_components/modal/DeleteModal";
 import InviteUsersForm from "@/app/_components/forms/InviteUsersForm";
 import CreateUpdateTask from "@/app/_components/forms/CreateUpdateTask";
 

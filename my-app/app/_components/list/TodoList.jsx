@@ -17,19 +17,27 @@ const initialData = [
         text: "Finish the sales presentation",
         time: "2:00 PM",
         completed: false,
+        priority: "high",
       },
-      { id: 2, text: "Send follow-up emails", completed: false },
+      {
+        id: 2,
+        text: "Send follow-up emails",
+        completed: false,
+        priority: "low",
+      },
       {
         id: 3,
         text: "Review and approve the marketing budget",
         time: "10:00 AM",
         completed: true,
+        priority: "high",
       },
       {
         id: 4,
         text: "Attend the team meeting",
         time: "10:30 AM",
         completed: true,
+        priority: "low",
       },
     ],
   },
@@ -41,17 +49,30 @@ const initialData = [
         text: "Read a chapter of your book",
         time: "7:00 PM",
         completed: false,
+        priority: "low",
       },
     ],
   },
   {
     date: "Wed, 27 Sept",
-    tasks: [{ id: 6, text: "Pay the electricity bill", completed: true }],
+    tasks: [
+      {
+        id: 6,
+        text: "Pay the electricity bill",
+        completed: true,
+        priority: "high",
+      },
+    ],
   },
   {
     date: "Fri, 29 Sept",
     tasks: [
-      { id: 7, text: "Take 10 minutes for meditation", completed: false },
+      {
+        id: 7,
+        text: "Take 10 minutes for meditation",
+        completed: false,
+        priority: "low",
+      },
     ],
   },
 ];
@@ -85,7 +106,7 @@ export default function TodoList() {
               <Calendar className="w-4 h-4 mb-1" />
               <h2 className="text-lg font-semibold">{group.date}</h2>
             </div>
-            <CardContent className="space-y-2 mt-1 pb-0 p-0 md:ps-3">
+            <CardContent className="space-y-2 mt-1 pb-0 p-0 md:ps-3 w-full">
               {group.tasks.map((task) => (
                 <TodoListItem task={task} key={task.id} />
               ))}

@@ -1,4 +1,5 @@
 import CreateUpdateTask from "@/app/_components/forms/CreateUpdateTask";
+import CreateUpdateTodo from "@/app/_components/forms/CreateUpdateTodo";
 import TodoList from "@/app/_components/list/TodoList";
 import Modal from "@/app/_components/modal/Modal";
 import DataTable from "@/app/_components/table/Table";
@@ -20,7 +21,7 @@ function page() {
           description="Create a new task for this project."
           Trigger={<Button variant="primary">+ Add Task</Button>}
         >
-          <CreateUpdateTask />
+          <CreateUpdateTodo />
         </Modal>
       </div>
       <div className=" rounded-md">

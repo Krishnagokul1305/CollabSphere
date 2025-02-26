@@ -2,14 +2,14 @@
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import { Clock, GripVertical, MoreVertical } from "lucide-react";
+import { Clock, GripVertical } from "lucide-react";
 import ReusableDropdown from "../ReusableDropdown";
-import { Button } from "@/components/ui/button";
 
 export default function TodoListItem({ task, onToggle }) {
+  console.log(task);
   return (
     <div className="flex items-start md:items-center md:flex-row gap-2 flex-col w-full hover:bg-sidebar-border justify-between  rounded-lg p-3">
-      <div className="flex items-start md:items-center space-x-3">
+      <div className="flex items-start md:items-center space-x-3 w-full">
         <ReusableDropdown
           trigger={
             <GripVertical className="w-5 h-5 cursor-pointer text-gray-600 dark:text-gray-200" />
@@ -38,12 +38,19 @@ export default function TodoListItem({ task, onToggle }) {
             </span>
           </div>
           <div className="flex items-center gap-3 mt-2 md:mt-0">
-            {task.time && (
-              <div className="flex w-full items-center space-x-1 text-gray-600 dark:text-gray-200 text-xs">
-                <Clock className="w-3 h-3" />
-                <span>{task.time}</span>
-              </div>
-            )}
+            <span
+              className={cn(
+                "text-xs font-medium text-white dark:text-gray-200 rounded-md px-2 py-0.5",
+                task.priority === "high" ? "bg-red-500" : "bg-green-500"
+              )}
+            >
+              {task.priority}
+            </span>
+
+            <div className="flex w-full  items-center space-x-1 text-gray-600 dark:text-gray-200 text-xs">
+              <Clock className="w-3 h-3" />
+              <span>{task.time ? task.time : "N/A"}</span>
+            </div>
           </div>
         </div>
       </div>
