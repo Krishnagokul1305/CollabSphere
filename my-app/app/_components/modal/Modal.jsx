@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, forwardRef, useImperativeHandle } from "react";
 import {
   Dialog,
   DialogTrigger,
@@ -9,42 +9,32 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 
-export default function Modal({
-  title,
-  description,
-  children,
-  Trigger,
-  onConfirm,
-}) {
+const Modal = forwardRef(({ title, description, children, Trigger }, ref) => {
   const [open, setOpen] = useState(false);
 
-  const handleConfirm = async (event) => {
-    event.preventDefault();
-    if (onConfirm) {
-      await onConfirm();
-    }
-    setOpen(false);
-  };
+  useImperativeHandle(ref, () => ({
+    open: () => setOpen(true),
+    close: () => setOpen(false),
+  }));
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{Trigger}</DialogTrigger>
+      {Trigger && <DialogTrigger asChild>{Trigger}</DialogTrigger>}
       <DialogContent className="max-w-md">
         <DialogHeader>
           {title && <DialogTitle>{title}</DialogTitle>}
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
         <div>
-          {typeof children === "function" ? children(handleConfirm) : children}
-        </div>
-        <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancel
-          </Button>
+          {children &&
+            React.cloneElement(children, { close: () => setOpen(false) })}
         </div>
       </DialogContent>
     </Dialog>
   );
-}
+});
+
+Modal.displayName = "Modal"; // Required for forwardRef
+
+export default Modal;

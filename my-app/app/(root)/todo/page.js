@@ -1,12 +1,11 @@
-import CreateUpdateTask from "@/app/_components/forms/CreateUpdateTask";
 import CreateUpdateTodo from "@/app/_components/forms/CreateUpdateTodo";
 import TodoList from "@/app/_components/list/TodoList";
 import Modal from "@/app/_components/modal/Modal";
-import DataTable from "@/app/_components/table/Table";
-import { tableData } from "@/app/lib/dummydata";
+import { getTodos } from "@/app/lib/data-service";
 import { Button } from "@/components/ui/button";
 
-function page() {
+async function page() {
+  const data = await getTodos();
   return (
     <div className="space-y-5">
       <div className="py-4 rounded-md px-3 md:px-6 pb-3 bg-sidebar space-y-3 flex flex-col md:flex-row  md:items-center justify-between">
@@ -18,14 +17,14 @@ function page() {
         </div>
         <Modal
           title="Create Task"
-          description="Create a new task for this project."
+          description="Add new Activity to do."
           Trigger={<Button variant="primary">+ Add Task</Button>}
         >
           <CreateUpdateTodo />
         </Modal>
       </div>
       <div className=" rounded-md">
-        <TodoList />
+        <TodoList todo={data} />
       </div>
     </div>
   );

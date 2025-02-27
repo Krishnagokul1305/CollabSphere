@@ -15,6 +15,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { SmartDatetimePicker } from "@/components/ui/smart-datetime-input";
 import { RadioGroupItem, RadioGroup } from "@/components/ui/radio-group";
 import toast from "react-hot-toast";
+import { createTodo, updateTodo } from "@/app/lib/actions/todoAction";
+import Spinner from "../Spinner";
+import { useState } from "react";
 
 const formSchema = z.object({
   description: z.string().min(1, "Description is required"),
@@ -22,20 +25,33 @@ const formSchema = z.object({
   priority: z.string(),
 });
 
-export default function CreateUpdateTodo() {
+export default function CreateUpdateTodo({ close, initialData }) {
+  let [loading, setLoading] = useState(false);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      date_time: new Date(),
+      description: initialData?.description || "",
+      priority: initialData?.priority || "low",
+      date_time: initialData?.date_time
+        ? new Date(initialData.date_time)
+        : new Date(),
     },
   });
 
-  function onSubmit(values) {
+  async function onSubmit(values) {
+    setLoading(true);
     try {
-      console.log(values);
+      if (!initialData) await createTodo(values);
+      else {
+        await updateTodo(initialData._id, values);
+      }
+      close();
+      toast.success("Form submitted successfully!");
     } catch (error) {
       console.error("Form submission error", error);
       toast.error("Failed to submit the form. Please try again.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -114,8 +130,21 @@ export default function CreateUpdateTodo() {
             </FormItem>
           )}
         />
-
-        {/* <Button type="submit">Submit</Button> */}
+        <div className="flex items-center justify-end gap-3">
+          <Button
+            variant="outline"
+            disabled={loading}
+            onClick={(e) => {
+              e.preventDefault;
+              close();
+            }}
+          >
+            Cancel
+          </Button>
+          <Button type="submit" variant="primary" disabled={loading}>
+            {loading ? <Spinner theme={"light"} /> : "Submit"}
+          </Button>
+        </div>
       </form>
     </Form>
   );

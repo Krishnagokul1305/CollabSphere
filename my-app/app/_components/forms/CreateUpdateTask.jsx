@@ -48,7 +48,7 @@ const formSchema = z.object({
   name_4324431227: z.array(z.string()).nonempty("Please at least one item"),
 });
 
-export default function CreateUpdateTask() {
+export default function CreateUpdateTask({ close }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -59,11 +59,8 @@ export default function CreateUpdateTask() {
 
   function onSubmit(values) {
     try {
-      toast(
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      );
+      console.log(values);
+      toast.success("form submitted successfully");
     } catch (error) {
       console.error("Form submission error", error);
       toast.error("Failed to submit the form. Please try again.");
@@ -256,7 +253,20 @@ export default function CreateUpdateTask() {
             </FormItem>
           )}
         /> */}
-        <Button type="submit">Submit</Button>
+        <div className="flex items-center justify-end gap-3">
+          <Button
+            variant="outline"
+            onClick={(e) => {
+              e.preventDefault;
+              close();
+            }}
+          >
+            Cancel
+          </Button>
+          <Button type="submit" variant="primary">
+            Submit
+          </Button>
+        </div>
       </form>
     </Form>
   );

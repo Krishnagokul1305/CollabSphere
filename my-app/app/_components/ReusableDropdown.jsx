@@ -1,3 +1,5 @@
+"use client";
+
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -17,7 +19,7 @@ const ReusableDropdown = ({ trigger, label, items }) => {
           item.separator ? (
             <DropdownMenuSeparator key={index} />
           ) : (
-            <DropdownMenuItem key={index} onClick={item.action}>
+            <DropdownMenuItem key={index} onClick={item.onClick}>
               {item.label}
             </DropdownMenuItem>
           )
