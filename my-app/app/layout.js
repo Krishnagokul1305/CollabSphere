@@ -16,15 +16,15 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <Provider>
-      <html lang="en">
-        <body className={poppins.className}>
+    <html lang="en">
+      <body className={poppins.className} suppressHydrationWarning={true}>
+        <Provider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Toaster />
             {children}
           </ThemeProvider>
-        </body>
-      </html>
-    </Provider>
+        </Provider>
+      </body>
+    </html>
   );
 }

@@ -1,19 +1,33 @@
 import EmptyList from "@/app/_components/EmptyList";
+import CreateUpdateTodo from "@/app/_components/forms/CreateUpdateTodo";
+import ProjectList from "@/app/_components/list/ProjectList";
+import Modal from "@/app/_components/modal/Modal";
+import { projects } from "@/app/lib/dummydata";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
 function page() {
+  const data = projects;
   return (
-    <div>
-      <div className="flex justify-between  items-center mb-6 py-3 px-5 rounded-md w-full overflow-x-hidden">
-        <h1 className="text-lg font-bold">Projects</h1>
-        <Link href={"/projects/timmy-sass"}>Add Project</Link>
+    <div className="space-y-5">
+      <div className="py-4 rounded-md px-3 md:px-6 pb-3 bg-sidebar space-y-3 flex flex-col md:flex-row  md:items-center justify-between">
+        <h1 className="text-2xl font-semibold">Projects</h1>
+        <Modal
+          title="Create Task"
+          description="Add new Activity to do."
+          Trigger={<Button variant="primary">+ Create Project</Button>}
+        >
+          <CreateUpdateTodo />
+        </Modal>
       </div>
-      <EmptyList
-        count={0}
-        title="No projects yet"
-        message="There aren't any projects at the moment"
-      />
+      {data.length == 0 ? (
+        <EmptyList
+          count={0}
+          title="No projects yet"
+          message="There aren't any projects at the moment"
+        />
+      ) : (
+        <ProjectList data={data} />
+      )}
     </div>
   );
 }

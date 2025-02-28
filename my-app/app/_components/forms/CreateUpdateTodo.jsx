@@ -41,15 +41,22 @@ export default function CreateUpdateTodo({ close, initialData }) {
   async function onSubmit(values) {
     setLoading(true);
     try {
-      if (!initialData) await createTodo(values);
-      else {
-        await updateTodo(initialData._id, values);
+      if (!initialData) {
+        toast.promise(createTodo(values), {
+          loading: "Loading",
+          success: "Created task Successfully",
+          error: "Error Creating task",
+        });
+      } else {
+        toast.promise(updateTodo(initialData._id, values), {
+          loading: "Loading",
+          success: "Created task Successfully",
+          error: "Error Creating task",
+        });
       }
       close();
-      toast.success("Form submitted successfully!");
     } catch (error) {
       console.error("Form submission error", error);
-      toast.error("Failed to submit the form. Please try again.");
     } finally {
       setLoading(false);
     }

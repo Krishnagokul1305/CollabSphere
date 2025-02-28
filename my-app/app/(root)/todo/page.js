@@ -2,6 +2,7 @@ import CreateUpdateTodo from "@/app/_components/forms/CreateUpdateTodo";
 import TodoList from "@/app/_components/list/TodoList";
 import Modal from "@/app/_components/modal/Modal";
 import { getTodos } from "@/app/lib/data-service";
+import { formatDateTime } from "@/app/utils/helper";
 import { Button } from "@/components/ui/button";
 
 async function page() {
@@ -12,7 +13,7 @@ async function page() {
         <div className="space-y-2">
           <h1 className="text-2xl font-semibold">Hello Gokulakrishnan</h1>
           <p className="text-base text-gray-400">
-            It&apos;s Monday 25 September 2025
+            It&apos;s {formatDateTime(new Date().toISOString()).date}
           </p>
         </div>
         <Modal

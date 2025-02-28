@@ -232,4 +232,56 @@ const tableData = [
   },
 ];
 
-export { users, tasks, tableData };
+const projects = [
+  {
+    owner: "John Doe",
+    teamMates: ["Alice Smith", "Bob Johnson", "Charlie Brown"],
+    title: "AI Chatbot Development",
+    createdAt: "2024-02-20T10:30:00Z",
+    status: "completed",
+    reason: null,
+    description:
+      "A chatbot powered by AI to automate customer service responses.",
+  },
+  {
+    owner: "Jane Smith",
+    teamMates: ["Tom Hardy", "Emma Watson"],
+    title: "E-commerce Platform",
+    createdAt: "2024-01-15T08:45:00Z",
+    status: "ongoing",
+    reason: null,
+    description:
+      "A full-stack e-commerce platform with secure payment integration.",
+  },
+  {
+    owner: "Michael Johnson",
+    teamMates: ["Sarah Lee", "Daniel Green"],
+    title: "Health Tracker App",
+    createdAt: "2023-12-10T14:20:00Z",
+    status: "on hold",
+    reason: "Budget constraints",
+    description: "A mobile app to monitor daily health and fitness activities.",
+  },
+  {
+    owner: "Emily Davis",
+    teamMates: ["Jack Wilson", "Sophia Martinez"],
+    title: "Blockchain Voting System",
+    createdAt: "2023-11-05T12:00:00Z",
+    status: "canceled",
+    reason: "Technical limitations",
+    description:
+      "A decentralized voting system leveraging blockchain technology.",
+  },
+  {
+    owner: "Chris Brown",
+    teamMates: ["Olivia Taylor", "Liam White"],
+    title: "Smart Home Automation",
+    createdAt: "2024-02-05T09:10:00Z",
+    status: "ongoing",
+    reason: null,
+    description:
+      "An IoT-based automation system to control home appliances remotely.",
+  },
+];
+
+export { users, tasks, tableData, projects };

@@ -85,7 +85,7 @@ export function createColumn(columnsConfig, actionItems = [], options = {}) {
                   label="Actions"
                   items={actionItems.map((item) => ({
                     label: item.label,
-                    action: () => item.action(rowData),
+                    onClick: () => item.action(rowData),
                     separator: item.separator || false,
                   }))}
                 />

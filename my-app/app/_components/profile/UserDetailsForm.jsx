@@ -45,8 +45,16 @@ export default function UserDetailsForm({ user, id }) {
         updatedData.append("file", profileImage);
       }
 
-      await updateUser(id, updatedData);
-      toast.success("Profile updated successfully!");
+      toast.promise(updateUser(id, updatedData), {
+        loading: "Updating profile...",
+        success: () => {
+          toast.success("Profile updated successfully");
+        },
+        error: (error) => {
+          toast.error(error.message || "Failed to update profile");
+          return error;
+        },
+      });
     } catch (error) {
       console.error(error);
       toast.error(error.message || "Failed to update profile");

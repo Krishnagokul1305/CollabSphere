@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Bell, Moon, SidebarIcon, Sun } from "lucide-react";
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -7,11 +8,15 @@ import { Separator } from "@/components/ui/separator";
 import { useSidebar } from "@/components/ui/sidebar";
 import NotificationSheet from "@/app/_components/notification/NotificationSheet";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
 
 export function SiteHeader() {
   const { toggleSidebar } = useSidebar();
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-sidebar">
@@ -31,10 +36,15 @@ export function SiteHeader() {
           className="flex items-center ms-2 rounded-full p-2 justify-center cursor-pointer"
           onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
         >
-          {resolvedTheme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+          {mounted ? (
+            resolvedTheme === "dark" ? (
+              <Sun size={20} />
+            ) : (
+              <Moon size={20} />
+            )
+          ) : null}
         </div>
 
-        {/* Notification */}
         <Sheet>
           <SheetTrigger asChild>
             <div className="flex items-center gap-2 rounded-full p-2 cursor-pointer">

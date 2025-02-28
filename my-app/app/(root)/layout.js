@@ -1,6 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import Header from "../_components/Header";
 import { SiteHeader } from "@/components/site-header";
 
 export const metadata = {

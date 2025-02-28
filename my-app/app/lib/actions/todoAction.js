@@ -40,6 +40,7 @@ export async function updateTodo(id, data) {
   todo.description = data.description;
   todo.priority = data.priority;
   todo.date_time = data.date_time;
+  todo.user = "67b2a9d26417c4c73559f646";
   await todo.save();
   revalidatePath("/todo");
 }

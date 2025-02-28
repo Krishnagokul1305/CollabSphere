@@ -14,9 +14,16 @@ import {
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export function SmartDatetimePicker({ value, onValueChange }) {
+  const now = new Date();
+
   function handleDateSelect(date) {
     if (date) {
-      onValueChange(date);
+      const selectedDate = new Date(date);
+      if (selectedDate < now) return; // Prevent past selection
+      if (!value) {
+        selectedDate.setHours(now.getHours(), now.getMinutes()); // Default time to current
+      }
+      onValueChange(selectedDate);
     }
   }
 
@@ -36,6 +43,11 @@ export function SmartDatetimePicker({ value, onValueChange }) {
       } else if (newValue === "PM" && hours < 12) {
         newDate.setHours(hours + 12);
       }
+    }
+
+    // Prevent selecting past time on the current day
+    if (newDate.toDateString() === now.toDateString() && newDate < now) {
+      return;
     }
 
     onValueChange(newDate);
@@ -65,6 +77,7 @@ export function SmartDatetimePicker({ value, onValueChange }) {
             mode="single"
             selected={value}
             onSelect={handleDateSelect}
+            fromDate={now} // Prevent past dates
             initialFocus
           />
           <div className="flex flex-col sm:flex-row sm:h-[300px] divide-y sm:divide-y-0 sm:divide-x">
@@ -72,6 +85,13 @@ export function SmartDatetimePicker({ value, onValueChange }) {
               <div className="flex sm:flex-col p-2">
                 {Array.from({ length: 12 }, (_, i) => i + 1)
                   .reverse()
+                  .filter(
+                    (hour) =>
+                      !(
+                        value?.toDateString() === now.toDateString() &&
+                        now.getHours() % 12 >= hour
+                      )
+                  ) // Disable past hours today
                   .map((hour) => (
                     <Button
                       key={hour}
@@ -92,23 +112,32 @@ export function SmartDatetimePicker({ value, onValueChange }) {
             </ScrollArea>
             <ScrollArea className="w-64 sm:w-auto">
               <div className="flex sm:flex-col p-2">
-                {Array.from({ length: 12 }, (_, i) => i * 5).map((minute) => (
-                  <Button
-                    key={minute}
-                    size="icon"
-                    variant={
-                      value && value.getMinutes() === minute
-                        ? "default"
-                        : "ghost"
-                    }
-                    className="sm:w-full shrink-0 aspect-square"
-                    onClick={() =>
-                      handleTimeChange("minute", minute.toString())
-                    }
-                  >
-                    {minute.toString().padStart(2, "0")}
-                  </Button>
-                ))}
+                {Array.from({ length: 12 }, (_, i) => i * 5)
+                  .filter(
+                    (minute) =>
+                      !(
+                        value?.toDateString() === now.toDateString() &&
+                        value?.getHours() === now.getHours() &&
+                        minute < now.getMinutes()
+                      )
+                  ) // Disable past minutes this hour
+                  .map((minute) => (
+                    <Button
+                      key={minute}
+                      size="icon"
+                      variant={
+                        value && value.getMinutes() === minute
+                          ? "default"
+                          : "ghost"
+                      }
+                      className="sm:w-full shrink-0 aspect-square"
+                      onClick={() =>
+                        handleTimeChange("minute", minute.toString())
+                      }
+                    >
+                      {minute.toString().padStart(2, "0")}
+                    </Button>
+                  ))}
               </div>
               <ScrollBar orientation="horizontal" className="sm:hidden" />
             </ScrollArea>
