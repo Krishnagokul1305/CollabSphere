@@ -15,7 +15,7 @@ const users = [
     department: "Software",
     email: "robertf@ahfagon.com",
     phone: "(225) 555-0118",
-    status: "Active",
+    status: "InActive",
     avatar:
       "https://plus.unsplash.com/premium_photo-1661589836910-b3b0bf644bd5?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmVzc2lvbmFsJTIwYmxhY2slMjB3b21hbnxlbnwwfHwwfHx8MA%3D%3D",
   },

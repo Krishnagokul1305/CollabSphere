@@ -67,7 +67,7 @@ function layout({ children }) {
             </div>
             <Button className="me-3 bg-black text-white">Filter</Button>
           </div>
-          <main className="bg-sidebar rounded-md">{children}</main>
+          <main className=" rounded-md">{children}</main>
         </div>
         {/* <div className="bg-sidebar rounded-md">
           <UserList />

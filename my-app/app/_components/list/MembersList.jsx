@@ -21,7 +21,23 @@ function MembersList() {
         { accessorKey: "role", header: "Role" },
         { accessorKey: "email", header: "Email" },
         { accessorKey: "phone", header: "Phone" },
-        { accessorKey: "status", header: "Status" },
+        {
+          accessorKey: "status",
+          header: "Status",
+          customRender: (value) => {
+            return (
+              <div
+                className={`rounded-md py-1 px-2 w-fit text-sm font-semibold ${
+                  value === "Active"
+                    ? "bg-green-200 text-green-700"
+                    : "bg-red-200 text-red-700"
+                }`}
+              >
+                {value}
+              </div>
+            );
+          },
+        },
       ]}
       actionItems={[
         { label: "view", action: () => router.push("/projects/1") },

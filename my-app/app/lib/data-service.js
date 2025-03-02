@@ -1,4 +1,5 @@
 import dbConnect from "./db";
+import Task from "./models/task.model";
 import todoModel from "./models/todo.model";
 
 export async function getTodos() {
@@ -41,3 +42,50 @@ export async function getTodos() {
   ]);
   return todos;
 }
+
+export const getTasks = async () => {
+  try {
+    const task = await Task.find()
+      .select("-attachments") // Exclude attachments
+      .populate({
+        path: "members",
+        select: "profileImage",
+      })
+      .populate({
+        path: "completedBy",
+        select: "profileImage",
+      });
+
+    if (!task) {
+      throw new Error("Task not found");
+    }
+
+    return task;
+  } catch (error) {
+    console.error("Error fetching task view card:", error);
+    throw error;
+  }
+};
+
+export const getTaskById = async (taskId) => {
+  try {
+    const task = await Task.findById(taskId)
+      .populate({
+        path: "members",
+        select: "name email avatar", // Fetch essential user details
+      })
+      .populate({
+        path: "project",
+        select: "name description", // Fetch project details
+      });
+
+    if (!task) {
+      throw new Error("Task not found");
+    }
+
+    return task;
+  } catch (error) {
+    console.error("Error fetching task by ID:", error);
+    throw error;
+  }
+};

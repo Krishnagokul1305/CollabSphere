@@ -84,7 +84,7 @@ function Task() {
             </div>
           </div>
           <div className="mt-2 space-y-2">
-            <h1 className="font-bold">Members</h1>
+            <h1 className="font-bold">Assigned To</h1>
             <div>
               <TaskMembers />
             </div>

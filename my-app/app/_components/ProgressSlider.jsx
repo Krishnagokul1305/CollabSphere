@@ -1,9 +1,9 @@
 import { Progress } from "@/components/ui/progress";
 
-function ProgressSlider() {
+function ProgressSlider({ value = 0 }) {
   return (
     <div>
-      <Progress value={10} />
+      <Progress value={value} />
     </div>
   );
 }
