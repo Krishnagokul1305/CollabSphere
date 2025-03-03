@@ -1,4 +1,4 @@
-import TaskCard from "@/app/_components/TaskCard";
+import TaskCard from "@/app/_components/Task/TaskCard";
 
 export default async function Page() {
   const dummyTasks = [

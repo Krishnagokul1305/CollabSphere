@@ -1,43 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { X, Search } from "lucide-react";
-
-const initialMembers = [
-  {
-    id: 1,
-    name: "Whitney Blessing",
-    email: "whitneyblessing@gmail.com",
-    avatar: "https://i.pravatar.cc/150?img=1",
-    added: false,
-  },
-  {
-    id: 2,
-    name: "Cheryl Green",
-    email: "cherylgreen@gmail.com",
-    avatar: "https://i.pravatar.cc/150?img=2",
-    added: true,
-  },
-  {
-    id: 3,
-    name: "Bonnie Lopez",
-    email: "bonnielopez@gmail.com",
-    avatar: "https://i.pravatar.cc/150?img=3",
-    added: false,
-  },
-];
+import { Search } from "lucide-react";
+import EmptyList from "../EmptyList";
+import { searchUser } from "@/app/lib/data-service";
+import Spinner from "../Spinner";
 
 export default function InviteUsersForm() {
-  const [members, setMembers] = useState(initialMembers);
+  const [members, setMembers] = useState([]);
   const [search, setSearch] = useState("");
   const [emails, setEmails] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  let abortController = new AbortController(); // Initialize abort controller
+
+  useEffect(() => {
+    async function loadMembers() {
+      if (!search.trim()) {
+        setMembers([]);
+        return;
+      }
+
+      setIsLoading(true);
+
+      try {
+        const users = await searchUser(search);
+        setMembers(users);
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          console.error("Error fetching users:", error);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadMembers();
+  }, [search]);
 
   const toggleMember = (id) => {
     setMembers(
-      members.map((m) => (m.id === id ? { ...m, added: !m.added } : m))
+      members.map((m) => (m._id === id ? { ...m, added: !m.added } : m))
     );
   };
 
@@ -63,11 +69,12 @@ export default function InviteUsersForm() {
         />
       </div>
       <div className="space-y-3">
-        {members
-          .filter((m) => m.name.toLowerCase().includes(search.toLowerCase()))
-          .map((member) => (
+        {isLoading ? (
+          <Spinner />
+        ) : members.length > 0 ? (
+          members.map((member) => (
             <div
-              key={member.id}
+              key={member._id}
               className="flex items-center justify-between p-2 rounded-md hover:bg-sidebar"
             >
               <div className="flex items-center gap-3">
@@ -83,12 +90,15 @@ export default function InviteUsersForm() {
               <Button
                 variant={member.added ? "destructive" : "outline"}
                 size="sm"
-                onClick={() => toggleMember(member.id)}
+                onClick={() => toggleMember(member._id)}
               >
                 {member.added ? "Remove" : "Add"}
               </Button>
             </div>
-          ))}
+          ))
+        ) : (
+          <EmptyList title="No Users Found" count={0} />
+        )}
       </div>
     </div>
   );

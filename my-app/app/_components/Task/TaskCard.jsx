@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { Check, MoreVertical } from "lucide-react";
-import ReusableDropdown from "./ReusableDropdown";
-import ProgressSlider from "./ProgressSlider";
-import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
-import Task from "@/app/_components/sheets/Task";
+import ReusableDropdown from "../ReusableDropdown";
+import ProgressSlider from "../ProgressSlider";
+import { Sheet } from "@/components/ui/sheet";
+import Task from "@/app/_components/Task/Task";
 
 function TaskCard({ task }) {
   const [open, setOpen] = useState(false);

@@ -1,5 +1,5 @@
 import EmptyList from "@/app/_components/EmptyList";
-import CreateUpdateTodo from "@/app/_components/forms/CreateUpdateTodo";
+import CreateUpdateTodo from "@/app/_components/todo/CreateUpdateTodo";
 import ProjectList from "@/app/_components/list/ProjectList";
 import Modal from "@/app/_components/modal/Modal";
 import { projects } from "@/app/lib/dummydata";

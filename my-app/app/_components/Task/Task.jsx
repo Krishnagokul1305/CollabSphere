@@ -8,7 +8,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { File } from "lucide-react";
-import TaskMembers from "../list/TaskMembers";
+import TaskMembers from "./TaskMembers";
 
 const taskData = {
   name: "Task Name",

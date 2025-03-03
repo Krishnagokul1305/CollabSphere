@@ -89,3 +89,33 @@ export const getTaskById = async (taskId) => {
     throw error;
   }
 };
+
+let controller; // Store the abort controller instance
+
+export const searchUser = async (searchTerm) => {
+  try {
+    if (!searchTerm) return [];
+
+    // Abort previous request if a new one is made
+    if (controller) {
+      controller.abort();
+    }
+
+    // Create a new abort controller
+    controller = new AbortController();
+    const { signal } = controller;
+
+    const res = await fetch(`/api/user/search?search=${searchTerm}`, {
+      signal,
+    });
+    const data = await res.json();
+    return data.users;
+  } catch (error) {
+    if (error.name === "AbortError") {
+      console.warn("Previous search request aborted");
+      return []; // Return empty array to avoid unnecessary errors
+    }
+    console.error("Error searching user:", error);
+    throw error;
+  }
+};

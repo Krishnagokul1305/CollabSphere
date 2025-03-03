@@ -1,5 +1,5 @@
-import CreateUpdateTodo from "@/app/_components/forms/CreateUpdateTodo";
-import TodoList from "@/app/_components/list/TodoList";
+import CreateUpdateTodo from "@/app/_components/todo/CreateUpdateTodo";
+import TodoList from "@/app/_components/todo/TodoList";
 import Modal from "@/app/_components/modal/Modal";
 import { getTodos } from "@/app/lib/data-service";
 import { formatDateTime } from "@/app/utils/helper";

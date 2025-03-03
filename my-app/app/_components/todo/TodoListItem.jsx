@@ -8,7 +8,7 @@ import { formatDateTime } from "@/app/utils/helper";
 import { deleteTodo, toggleStatus } from "@/app/lib/actions/todoAction";
 import { useRef, useTransition } from "react";
 import Modal from "../modal/Modal";
-import CreateUpdateTodo from "../forms/CreateUpdateTodo";
+import CreateUpdateTodo from "./CreateUpdateTodo";
 
 export default function TodoListItem({ task }) {
   const [isPending, startTransition] = useTransition();

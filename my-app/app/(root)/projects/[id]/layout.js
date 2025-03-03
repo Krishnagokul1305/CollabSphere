@@ -10,7 +10,7 @@ import {
 import Tabs from "@/app/_components/profile/Tabs";
 import Modal from "@/app/_components/modal/Modal";
 import InviteUsersForm from "@/app/_components/forms/InviteUsersForm";
-import CreateUpdateTask from "@/app/_components/forms/CreateUpdateTask";
+import CreateUpdateTask from "@/app/_components/Task/CreateUpdateTask";
 
 function layout({ children }) {
   return (

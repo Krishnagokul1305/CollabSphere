@@ -1,4 +1,4 @@
-import MembersList from "@/app/_components/list/MembersList";
+import MembersList from "@/app/_components/Task/MembersList";
 
 function page() {
   return (
