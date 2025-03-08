@@ -1,22 +1,22 @@
 import EmptyList from "@/app/_components/EmptyList";
-import CreateUpdateTodo from "@/app/_components/todo/CreateUpdateTodo";
 import ProjectList from "@/app/_components/list/ProjectList";
 import Modal from "@/app/_components/modal/Modal";
-import { projects } from "@/app/lib/dummydata";
 import { Button } from "@/components/ui/button";
+import CreateProject from "@/app/_components/project/CreateProjectForm";
+import { getProjects } from "@/app/lib/data-service";
 
-function page() {
-  const data = projects;
+async function page() {
+  const data = await getProjects();
   return (
     <div className="space-y-5">
       <div className="py-4 rounded-md px-3 md:px-6 pb-3 bg-sidebar space-y-3 flex flex-col md:flex-row  md:items-center justify-between">
         <h1 className="text-2xl font-semibold">Projects</h1>
         <Modal
-          title="Create Task"
-          description="Add new Activity to do."
+          title="Create Project"
+          description="Add new Project to your list ."
           Trigger={<Button variant="primary">+ Create Project</Button>}
         >
-          <CreateUpdateTodo />
+          <CreateProject />
         </Modal>
       </div>
       {data.length == 0 ? (

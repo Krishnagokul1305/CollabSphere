@@ -11,7 +11,6 @@ import Tabs from "@/app/_components/profile/Tabs";
 import Modal from "@/app/_components/modal/Modal";
 import InviteUsersForm from "@/app/_components/forms/InviteUsersForm";
 import CreateUpdateTask from "@/app/_components/Task/CreateUpdateTask";
-import Link from "next/link";
 
 function layout({ children }) {
   return (

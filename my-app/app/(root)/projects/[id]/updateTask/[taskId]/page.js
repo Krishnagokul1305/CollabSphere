@@ -2,7 +2,7 @@ import CreateUpdateTask from "@/app/_components/Task/CreateUpdateTask";
 
 function page() {
   return (
-    <div>
+    <div className="bg-sidebar p-5 rounded-md">
       <CreateUpdateTask />
     </div>
   );

@@ -1,32 +1,52 @@
 "use client";
 
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import DataTable from "../table/Table";
+import Modal from "../modal/Modal";
+import CreateProject from "../project/CreateProjectForm";
+import { deleteProject } from "@/app/lib/actions/projectAction";
+import { formatDateTime } from "@/app/utils/helper";
 
 function ProjectList({ data }) {
   const router = useRouter();
+  const modalRef = useRef(null);
+  const [initialData, setInitialData] = useState(null);
+
   return (
     <div className="h-full bg-sidebar rounded-md flex-1 flex-col space-y-2 md:flex">
+      <Modal
+        ref={modalRef}
+        title={initialData ? "Edit Project" : "Create Project"}
+        description="Manage your project details"
+      >
+        <CreateProject initialData={initialData} />
+      </Modal>
+
       <DataTable
         columnCofig={[
-          { accessorKey: "title", header: "Name" },
-          { accessorKey: "createdAt", header: "Created At" },
+          { accessorKey: "name", header: "Name" },
+          {
+            accessorKey: "createdAt",
+            header: "Created At",
+            customRender: (value) => formatDateTime(value).date,
+          },
           {
             accessorKey: "status",
             header: "Status",
             customRender: (value) => {
               const statusClasses = {
                 completed: "bg-green-200 text-green-800",
-                ongoing: "bg-blue-200 text-blue-800",
+                active: "bg-blue-200 text-blue-800",
                 "on hold": "bg-yellow-200 text-yellow-800",
-                canceled: "bg-red-200 text-red-800",
+                inactive: "bg-red-200 text-red-800",
               };
 
               const indicatorClasses = {
                 completed: "bg-green-500",
-                ongoing: "bg-blue-500",
+                active: "bg-blue-500",
                 "on hold": "bg-yellow-600",
-                canceled: "bg-red-500",
+                inactive: "bg-red-500",
               };
 
               return (
@@ -47,10 +67,18 @@ function ProjectList({ data }) {
           },
         ]}
         actionItems={[
-          { label: "view", action: () => router.push("/projects/1") },
-          { label: "Edit", action: () => console.log("copy") },
-          { label: "Update", action: () => console.log("copy") },
-          { label: "Delte", action: () => console.log("copy") },
+          {
+            label: "View",
+            action: (data) => router.push(`/projects/${data._id}`),
+          },
+          {
+            label: "Update",
+            action: (data) => {
+              setInitialData(data);
+              modalRef.current?.open();
+            },
+          },
+          { label: "Delete", action: (data) => deleteProject(data._id) },
         ]}
         data={data}
       />

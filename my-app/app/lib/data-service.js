@@ -1,4 +1,5 @@
 import dbConnect from "./db";
+import projectModel from "./models/project.model";
 import Task from "./models/task.model";
 import todoModel from "./models/todo.model";
 
@@ -90,18 +91,16 @@ export const getTaskById = async (taskId) => {
   }
 };
 
-let controller; // Store the abort controller instance
+let controller;
 
 export const searchUser = async (searchTerm) => {
   try {
     if (!searchTerm) return [];
 
-    // Abort previous request if a new one is made
     if (controller) {
       controller.abort();
     }
 
-    // Create a new abort controller
     controller = new AbortController();
     const { signal } = controller;
 
@@ -113,9 +112,24 @@ export const searchUser = async (searchTerm) => {
   } catch (error) {
     if (error.name === "AbortError") {
       console.warn("Previous search request aborted");
-      return []; // Return empty array to avoid unnecessary errors
+      return [];
     }
     console.error("Error searching user:", error);
+    throw error;
+  }
+};
+
+export const getProjects = async () => {
+  try {
+    const projects = await projectModel.find().lean();
+    return projects.map((project) => ({
+      ...project,
+      _id: project._id.toString(),
+      createdAt: project.createdAt.toISOString(),
+      updatedAt: project.updatedAt.toISOString(),
+    }));
+  } catch (error) {
+    console.log(error);
     throw error;
   }
 };
