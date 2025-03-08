@@ -1,9 +1,9 @@
 import { Progress } from "@/components/ui/progress";
 
-function ProgressSlider({ value = 0 }) {
+function ProgressSlider({ value = 0, color = "blue-500" }) {
   return (
     <div>
-      <Progress value={value} />
+      <Progress value={value} color={color} />
     </div>
   );
 }

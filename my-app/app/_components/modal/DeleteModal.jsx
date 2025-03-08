@@ -14,20 +14,21 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Loader2 } from "lucide-react";
 
-const DeleteModal = ({ trigger, onDelete }) => {
+const DeleteModal = ({ trigger, onDelete, open, setOpen }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleDelete = async () => {
     setIsLoading(true);
     try {
       await onDelete();
+      setOpen(false);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <AlertDialog>
+    <AlertDialog open={open}>
       <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -37,7 +38,12 @@ const DeleteModal = ({ trigger, onDelete }) => {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel
+            disabled={isLoading}
+            onClick={() => setOpen(false)}
+          >
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction onClick={handleDelete} disabled={isLoading}>
             {isLoading ? (
               <Loader2 className="animate-spin w-5 h-5" />
