@@ -12,27 +12,39 @@ const schema = new mongoose.Schema(
       required: [true, "Please provide a description for this project"],
       trim: true,
     },
-    // url: String,
-    // owner: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "User",
-    //   required: true,
-    // },
-    // team: [
-    //   {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "User",
-    //   },
-    // ],
     status: {
       type: String,
       enum: ["active", "inactive", "completed"],
       default: "active",
     },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
+    },
+    members: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "users",
+          required: true,
+        },
+        role: {
+          type: String,
+          enum: ["admin", "member"],
+          default: "member",
+        },
+        status: {
+          type: String,
+          enum: ["pending", "active", "rejected", , "inactive"],
+          default: "pending",
+        },
+      },
+    ],
   },
   {
     timestamps: true,
   }
 );
 
-export default mongoose.models.Project || mongoose.model("Project", schema);
+export default mongoose.models?.projects || mongoose.model("projects", schema);

@@ -39,3 +39,23 @@ export async function deleteProject(id) {
     throw error;
   }
 }
+
+export async function inviteMember(projectId, userId, role = "member") {
+  await projectModel.findByIdAndUpdate(projectId, {
+    $push: { members: { user: userId, role, status: "pending" } },
+  });
+}
+
+export async function acceptInvite(projectId, userId) {
+  await projectModel.updateOne(
+    { _id: projectId, "members.user": userId },
+    { $set: { "members.$.status": "active" } }
+  );
+}
+
+export async function rejectInvite(projectId, userId) {
+  await projectModel.updateOne(
+    { _id: projectId },
+    { $pull: { members: { user: userId } } }
+  );
+}

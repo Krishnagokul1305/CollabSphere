@@ -8,15 +8,15 @@ import { Search } from "lucide-react";
 import EmptyList from "../EmptyList";
 import { searchUser } from "@/app/lib/data-service";
 import Spinner from "../Spinner";
+import { inviteMember, rejectInvite } from "@/app/lib/actions/projectAction";
 
-export default function InviteUsersForm() {
-  const [members, setMembers] = useState([]);
+export default function InviteUsersForm({ projectId }) {
+  const [members, setMembers] = useState([]); // Users from search
+  const [invitedUsers, setInvitedUsers] = useState(new Set()); // Track invited users
   const [search, setSearch] = useState("");
-  const [emails, setEmails] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  let abortController = new AbortController(); // Initialize abort controller
-
+  // Fetch users based on search input
   useEffect(() => {
     async function loadMembers() {
       if (!search.trim()) {
@@ -41,24 +41,25 @@ export default function InviteUsersForm() {
     loadMembers();
   }, [search]);
 
-  const toggleMember = (id) => {
-    setMembers(
-      members.map((m) => (m._id === id ? { ...m, added: !m.added } : m))
-    );
+  // Invite a user
+  const handleInvite = async (userId) => {
+    await inviteMember(projectId, userId);
+    setInvitedUsers((prev) => new Set(prev).add(userId));
   };
 
-  const addEmail = (email) => {
-    if (email && !emails.includes(email)) {
-      setEmails([...emails, email]);
-    }
-  };
-
-  const removeEmail = (email) => {
-    setEmails(emails.filter((e) => e !== email));
+  // Remove invited user
+  const handleRemove = async (userId) => {
+    await rejectInvite(projectId, userId);
+    setInvitedUsers((prev) => {
+      const newSet = new Set(prev);
+      newSet.delete(userId);
+      return newSet;
+    });
   };
 
   return (
     <div className="max-w-md mx-auto rounded-lg space-y-4">
+      {/* Search Input */}
       <div className="relative">
         <Search className="absolute left-2 top-2.5 text-gray-400 w-5 h-5" />
         <Input
@@ -68,6 +69,8 @@ export default function InviteUsersForm() {
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
+
+      {/* User List */}
       <div className="space-y-3">
         {isLoading ? (
           <Spinner />
@@ -87,13 +90,20 @@ export default function InviteUsersForm() {
                   <p className="text-xs text-gray-500">{member.email}</p>
                 </div>
               </div>
-              <Button
-                variant={member.added ? "destructive" : "outline"}
-                size="sm"
-                onClick={() => toggleMember(member._id)}
-              >
-                {member.added ? "Remove" : "Add"}
-              </Button>
+
+              {invitedUsers.has(member._id) ? (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => handleRemove(member._id)}
+                >
+                  Remove
+                </Button>
+              ) : (
+                <Button size="sm" onClick={() => handleInvite(member._id)}>
+                  Invite
+                </Button>
+              )}
             </div>
           ))
         ) : (

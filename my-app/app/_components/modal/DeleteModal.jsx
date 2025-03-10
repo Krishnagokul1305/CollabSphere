@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, forwardRef, useImperativeHandle } from "react";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -14,8 +14,14 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Loader2 } from "lucide-react";
 
-const DeleteModal = ({ trigger, onDelete, open, setOpen }) => {
+const DeleteModal = forwardRef(({ trigger, onDelete }, ref) => {
+  const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  useImperativeHandle(ref, () => ({
+    open: () => setOpen(true),
+    close: () => setOpen(false),
+  }));
 
   const handleDelete = async () => {
     setIsLoading(true);
@@ -28,8 +34,8 @@ const DeleteModal = ({ trigger, onDelete, open, setOpen }) => {
   };
 
   return (
-    <AlertDialog open={open}>
-      <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      {trigger && <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>}
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
@@ -55,6 +61,8 @@ const DeleteModal = ({ trigger, onDelete, open, setOpen }) => {
       </AlertDialogContent>
     </AlertDialog>
   );
-};
+});
+
+DeleteModal.displayName = "DeleteModal"; // Required for forwardRef
 
 export default DeleteModal;

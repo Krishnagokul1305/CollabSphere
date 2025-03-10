@@ -7,14 +7,18 @@ import Modal from "../modal/Modal";
 import CreateProject from "../project/CreateProjectForm";
 import { deleteProject } from "@/app/lib/actions/projectAction";
 import { formatDateTime } from "@/app/utils/helper";
+import DeleteModal from "../modal/DeleteModal";
 
 function ProjectList({ data }) {
   const router = useRouter();
   const modalRef = useRef(null);
+  const deleteModalRef = useRef(null);
   const [initialData, setInitialData] = useState(null);
+  const [selectedProject, setSelectedProject] = useState(null);
 
   return (
     <div className="h-full bg-sidebar rounded-md flex-1 flex-col space-y-2 md:flex">
+      {/* Create / Update Modal */}
       <Modal
         ref={modalRef}
         title={initialData ? "Edit Project" : "Create Project"}
@@ -23,6 +27,17 @@ function ProjectList({ data }) {
         <CreateProject initialData={initialData} />
       </Modal>
 
+      {/* Delete Modal */}
+      <DeleteModal
+        ref={deleteModalRef}
+        onDelete={async () => {
+          if (selectedProject) {
+            await deleteProject(selectedProject._id);
+          }
+        }}
+      />
+
+      {/* Data Table */}
       <DataTable
         columnCofig={[
           { accessorKey: "name", header: "Name" },
@@ -78,7 +93,13 @@ function ProjectList({ data }) {
               modalRef.current?.open();
             },
           },
-          { label: "Delete", action: (data) => deleteProject(data._id) },
+          {
+            label: "Delete",
+            action: (data) => {
+              setSelectedProject(data);
+              deleteModalRef.current?.open();
+            },
+          },
         ]}
         data={data}
       />

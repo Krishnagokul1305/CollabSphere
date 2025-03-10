@@ -2,6 +2,9 @@ import dbConnect from "./db";
 import projectModel from "./models/project.model";
 import Task from "./models/task.model";
 import todoModel from "./models/todo.model";
+import "./models/user.model";
+
+dbConnect().then(() => console.log("Connected to database"));
 
 export async function getTodos() {
   await dbConnect();
@@ -121,6 +124,7 @@ export const searchUser = async (searchTerm) => {
 
 export const getProjects = async () => {
   try {
+    await dbConnect();
     const projects = await projectModel.find().lean();
     return projects.map((project) => ({
       ...project,
@@ -133,3 +137,42 @@ export const getProjects = async () => {
     throw error;
   }
 };
+
+export const getProjectById = async (projectId) => {
+  try {
+    await dbConnect();
+    const project = await projectModel.findById(projectId).lean();
+    return project;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export async function getProjectUsers(projectId) {
+  try {
+    const project = await projectModel
+      .findById(projectId)
+      .populate({
+        path: "owner",
+        select: "name email avatar phoneNo ",
+      })
+      .populate({
+        path: "members.user",
+        select: "name email avatar phoneNo ",
+      })
+      .lean();
+
+    if (!project) {
+      throw new Error("Project not found");
+    }
+
+    return {
+      owner: project.owner,
+      members: project.members,
+    };
+  } catch (error) {
+    console.error("Error fetching project users:", error);
+    throw error;
+  }
+}
