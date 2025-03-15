@@ -138,7 +138,7 @@ export default function CreateUpdateTask() {
           )}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
           <FormField
             control={form.control}
             name="name_5047767965"
@@ -178,38 +178,38 @@ export default function CreateUpdateTask() {
               </FormItem>
             )}
           />
-
-          <div>
-            <FormField
-              control={form.control}
-              name="name_1088628052"
-              render={({ field }) => (
-                <FormItem className="p-0 ">
-                  <FormLabel>Status</FormLabel>
-                  <Select
-                    className="bg-background mb-0"
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="py-6">
-                        <SelectValue placeholder="Status of the Task" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
         </div>
 
-        <FormField
+        {/* <div>
+          <FormField
+            control={form.control}
+            name="name_1088628052"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Status</FormLabel>
+                <Select
+                  className="bg-background mb-0"
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger className="py-6">
+                      <SelectValue placeholder="Status of the Task" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div> */}
+
+        {/* <FormField
           control={form.control}
           name="name_9278322836"
           render={({ field }) => (
@@ -241,9 +241,9 @@ export default function CreateUpdateTask() {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
 
-        <FormField
+        {/* <FormField
           control={form.control}
           name="name_8586994074"
           render={({ field }) => (
@@ -287,7 +287,7 @@ export default function CreateUpdateTask() {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
 
         <FormField
           control={form.control}
@@ -323,7 +323,7 @@ export default function CreateUpdateTask() {
           )}
         />
 
-        <FormField
+        {/* <FormField
           control={form.control}
           name="name_0515782917"
           className="p-0"
@@ -372,7 +372,7 @@ export default function CreateUpdateTask() {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
         <Button type="submit">Submit</Button>
       </form>
     </Form>

@@ -10,9 +10,11 @@ import { searchUser } from "@/app/lib/data-service";
 import Spinner from "../Spinner";
 import { inviteMember, rejectInvite } from "@/app/lib/actions/projectAction";
 
-export default function InviteUsersForm({ projectId }) {
-  const [members, setMembers] = useState([]); // Users from search
-  const [invitedUsers, setInvitedUsers] = useState(new Set()); // Track invited users
+export default function InviteUsersForm({ projectId, existingMembers }) {
+  const [members, setMembers] = useState([]);
+  const [projectMembers, setProjectMembers] = useState(
+    new Set(existingMembers.map((m) => m.user))
+  );
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -25,7 +27,6 @@ export default function InviteUsersForm({ projectId }) {
       }
 
       setIsLoading(true);
-
       try {
         const users = await searchUser(search);
         setMembers(users);
@@ -41,16 +42,14 @@ export default function InviteUsersForm({ projectId }) {
     loadMembers();
   }, [search]);
 
-  // Invite a user
   const handleInvite = async (userId) => {
     await inviteMember(projectId, userId);
-    setInvitedUsers((prev) => new Set(prev).add(userId));
+    setProjectMembers((prev) => new Set(prev).add(userId));
   };
 
-  // Remove invited user
   const handleRemove = async (userId) => {
     await rejectInvite(projectId, userId);
-    setInvitedUsers((prev) => {
+    setProjectMembers((prev) => {
       const newSet = new Set(prev);
       newSet.delete(userId);
       return newSet;
@@ -91,7 +90,7 @@ export default function InviteUsersForm({ projectId }) {
                 </div>
               </div>
 
-              {invitedUsers.has(member._id) ? (
+              {projectMembers.has(member._id) ? (
                 <Button
                   variant="destructive"
                   size="sm"

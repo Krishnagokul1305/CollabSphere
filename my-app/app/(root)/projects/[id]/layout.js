@@ -51,7 +51,10 @@ async function layout({ children, params }) {
               description="Invite existing team members or add new ones."
               Trigger={<Button variant="primary">+ Invite members</Button>}
             >
-              <InviteUsersForm projectId={data._id} />
+              <InviteUsersForm
+                projectId={data._id}
+                existingMembers={data?.members}
+              />
             </Modal>
             <Link href={`/projects/${data._id}/createTask`}>
               <Button variant="outline" className="p-4 w-full ">

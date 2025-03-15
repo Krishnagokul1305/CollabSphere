@@ -1,38 +1,89 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
-  Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
 import EmptyList from "../EmptyList";
+import { getUserNotifications } from "@/app/lib/data-service";
+import { markNotificationAsRead } from "@/app/lib/actions/notificationAction";
 
-function NotificationSheet() {
+function NotificationSheet({ userId }) {
+  const [notifications, setNotifications] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    async function fetchNotifications() {
+      setIsLoading(true);
+      try {
+        const data = await getUserNotifications(userId);
+        setNotifications(data);
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchNotifications();
+  }, [userId]);
+
+  const markAsRead = async (id) => {
+    await markNotificationAsRead(id);
+  };
+
   return (
     <SheetContent>
       <SheetHeader>
         <SheetTitle>Notifications</SheetTitle>
         <SheetDescription>
-          You can view and edit your notification settings here.
+          View your latest notifications here.
         </SheetDescription>
       </SheetHeader>
+
       <div className="grid gap-4 py-4">
-        <EmptyList
-          count={0}
-          title={"No Notifications"}
-          message={"You have no notifications"}
-        />
+        {isLoading ? (
+          [...Array(5)].map((_, index) => (
+            <div
+              key={index}
+              className="h-12 w-full animate-pulse bg-gray-300 rounded-md"
+            ></div>
+          ))
+        ) : notifications?.length > 0 ? (
+          notifications.map((notification) => {
+            return (
+              <div
+                key={notification._id}
+                className="p-3 bg-sidebar-border rounded-md flex flex-col items-start gap-2"
+              >
+                <div>
+                  <p className="text-sm font-medium">{notification.message}</p>
+                  <p className="text-xs text-gray-500">
+                    {new Date(notification.createdAt).toLocaleString()}
+                  </p>
+                </div>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => markAsRead(notification._id)}
+                >
+                  Mark as Read
+                </Button>
+              </div>
+            );
+          })
+        ) : (
+          <EmptyList
+            count={0}
+            title="No Notifications"
+            message="You have no notifications"
+          />
+        )}
       </div>
-      <SheetFooter>
-        {/* <SheetClose asChild>
-          <Button type="submit">Save changes</Button>
-        </SheetClose> */}
-      </SheetFooter>
     </SheetContent>
   );
 }

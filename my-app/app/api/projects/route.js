@@ -1,5 +1,4 @@
 import dbConnect from "@/app/lib/db";
-import Event from "@/app/lib/models/dummy.model";
 import { NextResponse } from "next/server";
 
 export async function GET(req, res) {

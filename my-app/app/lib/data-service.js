@@ -4,8 +4,6 @@ import Task from "./models/task.model";
 import todoModel from "./models/todo.model";
 import "./models/user.model";
 
-dbConnect().then(() => console.log("Connected to database"));
-
 export async function getTodos() {
   await dbConnect();
   const todos = await todoModel.aggregate([
@@ -168,11 +166,50 @@ export async function getProjectUsers(projectId) {
     }
 
     return {
-      owner: project.owner,
-      members: project.members,
+      owner: {
+        ...project?.owner,
+        _id: project?.owner?._id?.toString(),
+      },
+      members: project.members.map((member) => ({
+        ...member,
+        _id: member._id.toString(),
+        user: {
+          ...member.user,
+          _id: member.user._id.toString(),
+        },
+      })),
     };
   } catch (error) {
     console.error("Error fetching project users:", error);
+    throw error;
+  }
+}
+
+export async function hasUnreadNotifications(userId) {
+  try {
+    await dbConnect();
+    const exists = await Notification.exists({
+      recipient: userId,
+      isRead: false,
+    });
+    return !!exists;
+  } catch (error) {
+    console.error("Error checking unread notifications:", error);
+    return false;
+  }
+}
+
+export async function getUserNotifications(userId) {
+  try {
+    if (!userId) return null;
+    const response = await fetch(`/api/notification?userId=${userId}`, {
+      next: { tags: ["notifications"] },
+    });
+    if (!response.ok) throw new Error("Failed to fetch notifications");
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
     throw error;
   }
 }
