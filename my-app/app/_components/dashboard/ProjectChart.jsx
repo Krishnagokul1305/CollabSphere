@@ -52,7 +52,7 @@ export default function ProjectChart() {
     <div className="flex flex-col border rounded-md p-6 bg-muted/50">
       <div className="pb-2">
         <h2 className="text-lg font-semibold">Project Stats</h2>
-        <p className="text-gray-400">Here's Your Project Stats</p>
+        <p className="text-gray-400">Here&apos;s Your Project Stats</p>
       </div>
       <div className="flex-1 pb-0">
         <ChartContainer

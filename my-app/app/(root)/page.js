@@ -39,7 +39,7 @@ export default async function Page() {
             <div className="p-6 rounded-md bg-muted/50 border">
               <h2 className="text-2xl font-semibold">Hi, Gokulakrishnan!</h2>
               <p className="text-gray-400">
-                Here's what's happening with your projects today:
+                Here&apos;s what&apos;s happening with your projects today:
               </p>
             </div>
 

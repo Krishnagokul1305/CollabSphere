@@ -141,11 +141,10 @@ export const getProjectById = async (projectId) => {
   try {
     await dbConnect();
     const project = await projectModel.findById(projectId).lean();
+    if (!project) return null;
     const session = await getServerSession();
     const user = await getUserByEmail(session.user.email);
-    const isOwner = user?._id == project.owner.toString();
-    if (!project) return null;
-
+    const isOwner = user?._id == project?.owner?.toString();
     return {
       ...project,
       _id: project._id?.toString() || null,
