@@ -1,8 +1,10 @@
+import { getServerSession } from "next-auth";
 import dbConnect from "./db";
 import projectModel from "./models/project.model";
 import Task from "./models/task.model";
 import todoModel from "./models/todo.model";
 import "./models/user.model";
+import userModel from "./models/user.model";
 
 export async function getTodos() {
   await dbConnect();
@@ -123,7 +125,7 @@ export const searchUser = async (searchTerm) => {
 export const getProjects = async () => {
   try {
     await dbConnect();
-    const projects = await projectModel.find().lean();
+    const projects = await projectModel.find().select("-members").lean();
     return projects.map((project) => ({
       ...project,
       _id: project._id.toString(),
@@ -131,7 +133,6 @@ export const getProjects = async () => {
       updatedAt: project.updatedAt.toISOString(),
     }));
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -140,9 +141,27 @@ export const getProjectById = async (projectId) => {
   try {
     await dbConnect();
     const project = await projectModel.findById(projectId).lean();
-    return project;
+    const session = await getServerSession();
+    const user = await getUserByEmail(session.user.email);
+    const isOwner = user?._id == project.owner.toString();
+    if (!project) return null;
+
+    return {
+      ...project,
+      _id: project._id?.toString() || null,
+      createdAt: project.createdAt?.toISOString() || null,
+      updatedAt: project.updatedAt?.toISOString() || null,
+      isOwner,
+      owner: project.owner ? project.owner.toString() : null,
+      members:
+        project.members?.map((member) => ({
+          ...member,
+          _id: member._id?.toString() || null, // Convert member _id to string
+          user: member.user ? member.user.toString() : null,
+        })) || [],
+    };
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching project by ID:", error);
     throw error;
   }
 };
@@ -210,6 +229,17 @@ export async function getUserNotifications(userId) {
     return data;
   } catch (error) {
     console.error("Error fetching notifications:", error);
+    throw error;
+  }
+}
+
+export async function getUserByEmail(email) {
+  try {
+    await dbConnect();
+    const user = await userModel.findOne({ email });
+    return user;
+  } catch (error) {
+    console.error("Error fetching user by email:", error);
     throw error;
   }
 }

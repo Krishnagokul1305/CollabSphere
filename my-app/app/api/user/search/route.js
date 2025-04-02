@@ -1,9 +1,11 @@
 import dbConnect from "@/app/lib/db";
 import userModel from "@/app/lib/models/user.model";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
   await dbConnect();
+  const session = await getServerSession();
 
   try {
     const { search } = Object.fromEntries(new URL(req.url).searchParams);

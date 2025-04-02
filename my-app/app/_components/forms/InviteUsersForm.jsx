@@ -73,8 +73,8 @@ export default function InviteUsersForm({ projectId, existingMembers }) {
       <div className="space-y-3">
         {isLoading ? (
           <Spinner />
-        ) : members.length > 0 ? (
-          members.map((member) => (
+        ) : members?.length > 0 ? (
+          members?.map((member) => (
             <div
               key={member._id}
               className="flex items-center justify-between p-2 rounded-md hover:bg-sidebar"
@@ -90,7 +90,7 @@ export default function InviteUsersForm({ projectId, existingMembers }) {
                 </div>
               </div>
 
-              {projectMembers.has(member._id) ? (
+              {projectMembers.has(member?._id) ? (
                 <Button
                   variant="destructive"
                   size="sm"

@@ -21,7 +21,6 @@ export async function PUT(req, { params }) {
     const updatedFields = {};
 
     for (const [key, value] of formData.entries()) {
-      console.log(key, value);
       if (key === "file" && value.size > 0) {
         console.log("Uploading file...");
 
@@ -44,7 +43,6 @@ export async function PUT(req, { params }) {
         });
 
         updatedFields["avatar"] = uploadResponse.secure_url;
-        console.log("Uploaded Image URL:", uploadResponse.secure_url);
       } else if (
         value !== null &&
         value !== undefined &&
@@ -53,8 +51,6 @@ export async function PUT(req, { params }) {
         updatedFields[key] = value;
       }
     }
-
-    console.log(updatedFields);
 
     if (Object.keys(updatedFields).length === 0) {
       return NextResponse.json(

@@ -1,9 +1,13 @@
 import CreateUpdateTask from "@/app/_components/Task/CreateUpdateTask";
+import { getTaskById } from "@/app/lib/data-service";
 
-function page() {
+async function page() {
+  const { taskId } = await params;
+  const data = await getTaskById(taskId);
+  console.log(data);
   return (
     <div className="bg-sidebar p-5 rounded-md">
-      <CreateUpdateTask />
+      <CreateUpdateTask isCreate={false} />
     </div>
   );
 }

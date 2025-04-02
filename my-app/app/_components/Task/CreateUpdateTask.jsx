@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -40,42 +39,29 @@ import {
   MultiSelectorList,
   MultiSelectorTrigger,
 } from "@/components/ui/multi-select";
-import { CloudUpload, Paperclip } from "lucide-react";
-import {
-  FileInput,
-  FileUploader,
-  FileUploaderContent,
-  FileUploaderItem,
-} from "@/components/ui/file-upload";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const formSchema = z.object({
-  name_6992083096: z.string().min(1),
-  name_5857181987: z.string(),
-  name_5047767965: z.coerce.date(),
-  name_1088628052: z.string(),
-  name_9278322836: z.array(z.string()).nonempty("Please at least one item"),
-  name_8586994074: z.string(),
-  name_6266576146: z.array(z.string()).nonempty("Please at least one item"),
-  name_7551028524: z.string(),
-  name_0515782917: z.string(),
-  name_7110733347: z.string(),
+  title: z.string().min(1),
+  description: z.string(),
+  dueDate: z.coerce.date(),
+  status: z.string().optional(),
+  members: z.array(z.string()).nonempty("Please select at least one member"),
+  priority: z.string(),
+  report: z.string(),
 });
 
-export default function CreateUpdateTask() {
-  const [files, setFiles] = useState(null);
-
-  const dropZoneConfig = {
-    maxFiles: 5,
-    maxSize: 1024 * 1024 * 4,
-    multiple: true,
-  };
+export default function CreateUpdateTask({ isCreate = true, data, members }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name_9278322836: ["React"],
-      name_6266576146: ["test"],
-      name_5047767965: new Date(),
+      title: data?.title || "",
+      description: data?.description || "",
+      dueDate: data?.dueDate ? new Date(data.dueDate) : new Date(),
+      status: data?.status || "",
+      members: data?.members?.map((member) => member.email) || [],
+      priority: data?.priority || "",
+      report: data?.report || "",
     },
   });
 
@@ -99,102 +85,99 @@ export default function CreateUpdateTask() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-5 mx-auto"
       >
+        {/* Title */}
         <FormField
           control={form.control}
-          name="name_6992083096"
+          name="title"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Title</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="shadcn"
+                  placeholder="Enter title"
                   className="bg-background py-6"
-                  type=""
                   {...field}
                 />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
         />
 
+        {/* Description */}
         <FormField
           control={form.control}
-          name="name_5857181987"
+          name="description"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Placeholder"
+                  placeholder="Enter description"
                   className="resize-none bg-background"
                   {...field}
                 />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+        {/* Due Date */}
+        <FormField
+          control={form.control}
+          name="dueDate"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Due Date</FormLabel>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full py-6 text-left font-normal",
+                        !field.value && "text-muted-foreground"
+                      )}
+                    >
+                      {field.value ? (
+                        format(field.value, "PPP")
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Status (only if not creating a new task) */}
+        {!isCreate && (
           <FormField
             control={form.control}
-            name="name_5047767965"
-            render={({ field }) => (
-              <FormItem className="flex flex-col ">
-                <FormLabel>Due Date</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-full py-6 text-left font-normal",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        {/* <div>
-          <FormField
-            control={form.control}
-            name="name_1088628052"
+            name="status"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Status</FormLabel>
                 <Select
-                  className="bg-background mb-0"
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger className="py-6">
-                      <SelectValue placeholder="Status of the Task" />
+                      <SelectValue placeholder="Select status" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -202,162 +185,88 @@ export default function CreateUpdateTask() {
                     <SelectItem value="completed">Completed</SelectItem>
                   </SelectContent>
                 </Select>
-
                 <FormMessage />
               </FormItem>
             )}
           />
-        </div> */}
+        )}
 
-        {/* <FormField
-          control={form.control}
-          name="name_9278322836"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Select your framework</FormLabel>
-              <FormControl>
-                <MultiSelector
-                  values={field.value}
-                  onValuesChange={field.onChange}
-                  loop
-                >
-                  <MultiSelectorTrigger>
-                    <MultiSelectorInput placeholder="Select languages" />
-                  </MultiSelectorTrigger>
-                  <MultiSelectorContent>
-                    <MultiSelectorList>
-                      <MultiSelectorItem value={"React"}>
-                        React
-                      </MultiSelectorItem>
-                      <MultiSelectorItem value={"Vue"}>Vue</MultiSelectorItem>
-                      <MultiSelectorItem value={"Svelte"}>
-                        Svelte
-                      </MultiSelectorItem>
-                    </MultiSelectorList>
-                  </MultiSelectorContent>
-                </MultiSelector>
-              </FormControl>
-              <FormDescription>Select multiple options.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-
-        {/* <FormField
-          control={form.control}
-          name="name_8586994074"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Attachments</FormLabel>
-              <FormControl>
-                <FileUploader
-                  value={files}
-                  onValueChange={setFiles}
-                  dropzoneOptions={dropZoneConfig}
-                  className="relative bg-background rounded-lg p-2"
-                >
-                  <FileInput
-                    id="fileInput"
-                    className="outline-dashed outline-1 outline-slate-500"
+        {/* Select Members */}
+        {members && (
+          <FormField
+            control={form.control}
+            name="members"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Select Members</FormLabel>
+                <FormControl>
+                  <MultiSelector
+                    values={field.value}
+                    onValuesChange={field.onChange}
+                    loop
                   >
-                    <div className="flex items-center justify-center flex-col p-8 w-full ">
-                      <CloudUpload className="text-gray-500 w-10 h-10" />
-                      <p className="mb-1 text-sm text-gray-500 dark:text-gray-400">
-                        <span className="font-semibold">Click to upload</span>
-                        &nbsp; or drag and drop
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        SVG, PNG, JPG or GIF
-                      </p>
-                    </div>
-                  </FileInput>
-                  <FileUploaderContent>
-                    {files &&
-                      files.length > 0 &&
-                      files.map((file, i) => (
-                        <FileUploaderItem key={i} index={i}>
-                          <Paperclip className="h-4 w-4  stroke-current" />
-                          <span>{file.name}</span>
-                        </FileUploaderItem>
-                      ))}
-                  </FileUploaderContent>
-                </FileUploader>
-              </FormControl>
-              <FormDescription>Select files to upload.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
+                    <MultiSelectorTrigger>
+                      <MultiSelectorInput placeholder="Select members" />
+                    </MultiSelectorTrigger>
+                    <MultiSelectorContent>
+                      <MultiSelectorList>
+                        {members.map((member) => (
+                          <MultiSelectorItem
+                            key={member._id}
+                            value={member.user.email}
+                          >
+                            {member.user.name} ({member.user.email})
+                          </MultiSelectorItem>
+                        ))}
+                      </MultiSelectorList>
+                    </MultiSelectorContent>
+                  </MultiSelector>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
+        {/* Priority */}
         <FormField
           control={form.control}
-          name="name_7551028524"
+          name="priority"
           render={({ field }) => (
-            <FormItem className="space-y-3">
+            <FormItem>
               <FormLabel>Priority</FormLabel>
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
+                  value={field.value}
                   className="flex items-center space-x-1"
                 >
                   {[
                     ["High", "high"],
                     ["Medium", "medium"],
                     ["Low", "low"],
-                  ].map((option, index) => (
+                  ].map(([label, value], index) => (
                     <FormItem
                       className="flex items-center space-x-3 space-y-0"
                       key={index}
                     >
                       <FormControl>
-                        <RadioGroupItem value={option[1]} />
+                        <RadioGroupItem value={value} />
                       </FormControl>
-                      <FormLabel className="font-normal">{option[0]}</FormLabel>
+                      <FormLabel className="font-normal">{label}</FormLabel>
                     </FormItem>
                   ))}
                 </RadioGroup>
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
         />
 
+        {/* Report */}
         {/* <FormField
           control={form.control}
-          name="name_0515782917"
-          className="p-0"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Your Status</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                className="bg-background"
-                defaultValue={field.value}
-              >
-                <FormControl className="bg-background  py-6">
-                  <SelectTrigger>
-                    <SelectValue
-                      className="bg-background  py-6"
-                      placeholder="Select your status"
-                    />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="m@example.com">m@example.com</SelectItem>
-                  <SelectItem value="m@google.com">m@google.com</SelectItem>
-                  <SelectItem value="m@support.com">m@support.com</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="name_7110733347"
+          name="report"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Report</FormLabel>
@@ -368,12 +277,15 @@ export default function CreateUpdateTask() {
                   {...field}
                 />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
         /> */}
-        <Button type="submit">Submit</Button>
+
+        {/* Submit Button */}
+        <Button type="submit" className="block ms-auto">
+          Submit
+        </Button>
       </form>
     </Form>
   );
