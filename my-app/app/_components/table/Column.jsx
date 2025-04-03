@@ -66,7 +66,7 @@ export function createColumn(columnsConfig, actionItems = [], options = {}) {
       }
     ),
 
-    ...(actionItems.length > 0
+    ...(actionItems?.length > 0
       ? [
           {
             id: "actions",

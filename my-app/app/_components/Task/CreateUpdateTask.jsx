@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,13 +24,6 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { Calendar as CalendarIcon } from "lucide-react";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   MultiSelector,
   MultiSelectorContent,
   MultiSelectorInput,
@@ -40,6 +32,8 @@ import {
   MultiSelectorTrigger,
 } from "@/components/ui/multi-select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { createTask, updateTask } from "@/app/lib/actions/taskAction";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   title: z.string().min(1),
@@ -48,31 +42,51 @@ const formSchema = z.object({
   status: z.string().optional(),
   members: z.array(z.string()).nonempty("Please select at least one member"),
   priority: z.string(),
-  report: z.string(),
+  report: z.string().optional(),
+  tag: z.string().optional(),
 });
 
-export default function CreateUpdateTask({ isCreate = true, data, members }) {
+export default function CreateUpdateTask({
+  isCreate = true,
+  data,
+  members,
+  projectId = "",
+}) {
+  console.log(members);
+  const router = useRouter();
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: data?.title || "",
       description: data?.description || "",
-      dueDate: data?.dueDate ? new Date(data.dueDate) : new Date(),
-      status: data?.status || "",
-      members: data?.members?.map((member) => member.email) || [],
-      priority: data?.priority || "",
+      dueDate:
+        data?.dueDate && !isNaN(new Date(data.dueDate).getTime())
+          ? new Date(data.dueDate)
+          : new Date(),
+      status: data?.status || "pending",
+      members: Array.isArray(data?.members)
+        ? data.members.map((m) => m?._id)
+        : [],
+      priority: data?.priority || "Low",
       report: data?.report || "",
+      tag: data?.tag || "",
     },
   });
 
-  function onSubmit(values) {
+  async function onSubmit(values) {
     try {
-      console.log(values);
-      toast(
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      );
+      if (isCreate) {
+        await createTask({
+          ...values,
+          project: projectId,
+        });
+        toast.success("Task created successfully!");
+      } else {
+        await updateTask(data._id, values);
+        console.log("Update task logic:", values);
+        toast.success("Task updated successfully!");
+      }
+      router.push(`/projects/${projectId}/tasks`);
     } catch (error) {
       console.error("Form submission error", error);
       toast.error("Failed to submit the form. Please try again.");
@@ -86,6 +100,7 @@ export default function CreateUpdateTask({ isCreate = true, data, members }) {
         className="space-y-5 mx-auto"
       >
         {/* Title */}
+        {/* ... (rest of your form fields) ... */}
         <FormField
           control={form.control}
           name="title"
@@ -123,48 +138,67 @@ export default function CreateUpdateTask({ isCreate = true, data, members }) {
           )}
         />
 
-        {/* Due Date */}
-        <FormField
-          control={form.control}
-          name="dueDate"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Due Date</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full py-6 text-left font-normal",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    initialFocus
+        {/* Due Date and Tag */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="tag"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Tag</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter a tag eg: 'UI', 'API'"
+                    className="bg-background py-6"
+                    {...field}
                   />
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="dueDate"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Due Date</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full py-6 text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value ? (
+                          format(field.value, "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         {/* Status (only if not creating a new task) */}
-        {!isCreate && (
+        {/* {!isCreate && (
           <FormField
             control={form.control}
             name="status"
@@ -189,44 +223,42 @@ export default function CreateUpdateTask({ isCreate = true, data, members }) {
               </FormItem>
             )}
           />
-        )}
+        )} */}
 
         {/* Select Members */}
-        {members && (
-          <FormField
-            control={form.control}
-            name="members"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Select Members</FormLabel>
-                <FormControl>
-                  <MultiSelector
-                    values={field.value}
-                    onValuesChange={field.onChange}
-                    loop
-                  >
-                    <MultiSelectorTrigger>
-                      <MultiSelectorInput placeholder="Select members" />
-                    </MultiSelectorTrigger>
-                    <MultiSelectorContent>
-                      <MultiSelectorList>
-                        {members.map((member) => (
-                          <MultiSelectorItem
-                            key={member._id}
-                            value={member.user.email}
-                          >
-                            {member.user.name} ({member.user.email})
-                          </MultiSelectorItem>
-                        ))}
-                      </MultiSelectorList>
-                    </MultiSelectorContent>
-                  </MultiSelector>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
+        <FormField
+          control={form.control}
+          name="members"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Select Members</FormLabel>
+              <FormControl>
+                <MultiSelector
+                  values={field.value}
+                  onValuesChange={field.onChange}
+                  loop
+                >
+                  <MultiSelectorTrigger>
+                    <MultiSelectorInput placeholder="Select members" />
+                  </MultiSelectorTrigger>
+                  <MultiSelectorContent>
+                    <MultiSelectorList>
+                      {members?.map((member) => (
+                        <MultiSelectorItem
+                          key={member?._id}
+                          value={member?._id}
+                        >
+                          {member.name} ({member.email})
+                        </MultiSelectorItem>
+                      ))}
+                    </MultiSelectorList>
+                  </MultiSelectorContent>
+                </MultiSelector>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         {/* Priority */}
         <FormField
@@ -242,9 +274,9 @@ export default function CreateUpdateTask({ isCreate = true, data, members }) {
                   className="flex items-center space-x-1"
                 >
                   {[
-                    ["High", "high"],
-                    ["Medium", "medium"],
-                    ["Low", "low"],
+                    ["High", "High"],
+                    ["Medium", "Medium"],
+                    ["Low", "Low"],
                   ].map(([label, value], index) => (
                     <FormItem
                       className="flex items-center space-x-3 space-y-0"
@@ -262,25 +294,6 @@ export default function CreateUpdateTask({ isCreate = true, data, members }) {
             </FormItem>
           )}
         />
-
-        {/* Report */}
-        {/* <FormField
-          control={form.control}
-          name="report"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Report</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Enter the report of your task"
-                  className="resize-none bg-background"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
 
         {/* Submit Button */}
         <Button type="submit" className="block ms-auto">

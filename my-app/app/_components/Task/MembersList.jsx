@@ -2,7 +2,7 @@
 
 import DataTable from "../table/Table";
 
-function MembersList({ data }) {
+function MembersList({ data, isOwner = false }) {
   console.log(data);
   return (
     <DataTable
@@ -13,7 +13,7 @@ function MembersList({ data }) {
           header: "Avatar",
           customRender: (value, row) => (
             <img
-              src={row.user?.avatar || "/default-avatar.png"}
+              src={row.original?.user?.avatar || "/default-avatar.png"}
               alt="avatar"
               className="w-18 h-8 rounded-md"
             />
@@ -54,11 +54,15 @@ function MembersList({ data }) {
           ),
         },
       ]}
-      actionItems={[
-        { label: "Edit", action: () => console.log("copy") },
-        { label: "Update", action: () => console.log("copy") },
-        { label: "Delete", action: () => console.log("copy") },
-      ]}
+      actionItems={
+        isOwner
+          ? [
+              { label: "Edit", action: () => console.log("copy") },
+              { label: "Update", action: () => console.log("copy") },
+              { label: "Delete", action: () => console.log("copy") },
+            ]
+          : null
+      }
     />
   );
 }

@@ -9,8 +9,7 @@ async function page() {
   if (!session || !session.user) {
     return <div>User is not authenticated</div>;
   }
-  let user = await getUserById(session.user.id);
-  user = JSON.parse(JSON.stringify(user));
+  let user = await getUserById(session?.user?.id);
   return (
     <div className=" rounded-md max-w-7xl p-2 mx-auto">
       <div className="max-w-4xl">

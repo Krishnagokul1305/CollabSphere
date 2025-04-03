@@ -9,36 +9,21 @@ const taskSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: true,
       trim: true,
     },
-    category: {
+    tag: {
       type: String,
-      enum: [
-        "Web Design",
-        "Development",
-        "UI/UX",
-        "Testing",
-        "Mobile Development",
-        "DevOps",
-        "Marketing",
-      ],
-      required: true,
+      trim: true,
     },
     status: {
       type: String,
-      enum: ["To Do", "In Progress", "Review", "Completed"],
-      default: "To Do",
-    },
-    progress: {
-      type: Number,
-      min: 0,
-      max: 100,
-      default: 0,
+      enum: ["pending", "completed"],
+      default: "pending",
     },
     priority: {
       type: String,
       enum: ["High", "Medium", "Low"],
+      default: "Low",
       required: true,
     },
     dueDate: {
@@ -48,42 +33,24 @@ const taskSchema = new mongoose.Schema(
     members: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "users",
+        required: true,
       },
     ],
-    completedBy: [
+    completedMembers: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "users",
       },
     ],
     project: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Project",
+      ref: "projects",
       required: true,
-    },
-    attachments: [
-      {
-        fileName: String,
-        fileUrl: String,
-        uploadedAt: {
-          type: Date,
-          default: Date.now,
-        },
-      },
-    ],
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    updatedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
     },
   },
   {
-    timestamps: true, // Adds createdAt and updatedAt
+    timestamps: true,
   }
 );
 

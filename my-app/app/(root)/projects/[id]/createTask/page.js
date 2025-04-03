@@ -1,15 +1,17 @@
 import CreateUpdateTask from "@/app/_components/Task/CreateUpdateTask";
 import { getProjectUsers } from "@/app/lib/data-service";
-import { getServerSession } from "next-auth";
 
 async function page({ params }) {
   const { id } = await params;
-  const { members } = await getProjectUsers(id);
-  console.log(await getServerSession());
-
+  let { members } = await getProjectUsers(id, true);
+  members = members.map((member) => ({
+    _id: member?.user?._id.toString(),
+    name: member?.user?.name,
+    email: member?.user?.email,
+  }));
   return (
     <div className="bg-sidebar p-5 rounded-md">
-      <CreateUpdateTask members={members} />
+      <CreateUpdateTask members={members} projectId={id} />
     </div>
   );
 }

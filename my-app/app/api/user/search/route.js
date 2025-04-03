@@ -1,3 +1,4 @@
+import { authOptions } from "@/app/lib/auth";
 import dbConnect from "@/app/lib/db";
 import userModel from "@/app/lib/models/user.model";
 import { getServerSession } from "next-auth";
@@ -5,8 +6,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(req) {
   await dbConnect();
-  const session = await getServerSession();
-
+  const session = await getServerSession(authOptions);
   try {
     const { search } = Object.fromEntries(new URL(req.url).searchParams);
 
@@ -19,6 +19,7 @@ export async function GET(req) {
           { name: { $regex: search, $options: "i" } },
           { email: { $regex: search, $options: "i" } },
         ],
+        _id: { $ne: session?.user?.id },
       })
       .select("name email avatar");
 

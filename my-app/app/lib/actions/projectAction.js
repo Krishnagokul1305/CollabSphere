@@ -4,22 +4,17 @@ import { revalidatePath } from "next/cache";
 import projectModel from "../models/project.model";
 import { sendNotification } from "./notificationAction";
 import { getServerSession } from "next-auth";
-import { getUserByEmail } from "../data-service";
+import { authOptions } from "../auth";
 export async function insertProject(project) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     if (!session) {
       throw new Error("User not authenticated");
     }
 
-    const user = await getUserByEmail(session.user.email);
-    if (!user) {
-      throw new Error("User not found");
-    }
-
     const newProject = await projectModel.create({
       ...project,
-      owner: user._id, // Ensure owner is set correctly
+      owner: user.session?.user?.id, // Ensure owner is set correctly
     });
 
     const plainProject = {

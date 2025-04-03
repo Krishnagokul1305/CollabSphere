@@ -6,7 +6,7 @@ function layout({ children }) {
       <h1 className="text-2xl font-bold">Profile Settings</h1>
       <div>
         <Tab />
-        <div className="bg-">{children}</div>
+        <div className="bg-sidebar">{children}</div>
       </div>
     </div>
   );

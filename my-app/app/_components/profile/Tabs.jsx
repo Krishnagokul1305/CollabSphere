@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 
 const Tabs = ({ projectId }) => {
   const router = useRouter();
-  const pathname = usePathname(); // Get current URL path
+  const pathname = usePathname();
   const [activeTab, setActiveTab] = useState("/");
 
-  // Update active tab based on URL
   useEffect(() => {
     if (pathname.includes("members")) {
       setActiveTab("members");
+    } else if (pathname.includes("tasks")) {
+      setActiveTab("tasks");
     } else {
       setActiveTab("/");
     }
@@ -22,9 +23,9 @@ const Tabs = ({ projectId }) => {
   };
 
   return (
-    <div className="flex space-x-4 p-2 w-fit ">
+    <div className="flex space-x-4 p-2 w-fit">
       <Tab
-        label="Tasks"
+        label="Overview"
         isActive={activeTab === "/"}
         onClick={() => handleTabChange("/")}
       />
@@ -32,6 +33,11 @@ const Tabs = ({ projectId }) => {
         label="Members"
         isActive={activeTab === "members"}
         onClick={() => handleTabChange("members")}
+      />
+      <Tab
+        label="Tasks"
+        isActive={activeTab === "tasks"}
+        onClick={() => handleTabChange("tasks")}
       />
     </div>
   );
