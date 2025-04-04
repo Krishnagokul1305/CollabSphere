@@ -50,7 +50,7 @@ export default function CreateUpdateTodo({ close, initialData }) {
       } else {
         toast.promise(updateTodo(initialData._id, values), {
           loading: "Loading",
-          success: "Created task Successfully",
+          success: "Updated task Successfully",
           error: "Error Creating task",
         });
       }

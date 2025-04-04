@@ -3,12 +3,18 @@
 import { revalidatePath } from "next/cache";
 import dbConnect from "../db";
 import todoModel from "../models/todo.model";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth";
 
 export async function createTodo(data) {
   await dbConnect();
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    throw new Error("Unauthorized");
+  }
   const newTodo = await todoModel.create({
     ...data,
-    user: "67b2a9d26417c4c73559f646",
+    user: session.user.id,
   });
   revalidatePath("/todo");
   return {
@@ -28,7 +34,6 @@ export async function toggleStatus(id) {
 }
 
 export async function deleteTodo(id) {
-  console.log(id);
   await dbConnect();
   await todoModel.findByIdAndDelete(id);
   revalidatePath("/todo");

@@ -2,9 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import projectModel from "../models/project.model";
-import { sendNotification } from "./notificationAction";
+import { markNotificationAsRead, sendNotification } from "./notificationAction";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
+import mongoose from "mongoose";
 export async function insertProject(project) {
   try {
     const session = await getServerSession(authOptions);
@@ -14,7 +15,7 @@ export async function insertProject(project) {
 
     const newProject = await projectModel.create({
       ...project,
-      owner: user.session?.user?.id, // Ensure owner is set correctly
+      owner: session?.user?.id,
     });
 
     const plainProject = {
@@ -81,13 +82,14 @@ export async function inviteMember(projectId, userId, role = "member") {
   revalidatePath(`/projects/${projectId}/members`);
 }
 
-export async function acceptInvite(projectId, userId) {
+export async function acceptInvite(projectId, userId, notificationId) {
   const project = await projectModel.findById(projectId);
-
+  console.log(projectId, userId, notificationId);
+  console.log(project);
   if (!project) {
     throw new Error("Project not found");
   }
-
+  await markNotificationAsRead(notificationId);
   await projectModel.updateOne(
     { _id: projectId, "members.user": userId },
     { $set: { "members.$.status": "active" } }
@@ -104,12 +106,14 @@ export async function acceptInvite(projectId, userId) {
   revalidatePath(`/projects/${projectId}/members`);
 }
 
-export async function rejectInvite(projectId, userId) {
+export async function rejectInvite(projectId, userId, notificationId) {
   const project = await projectModel.findById(projectId);
 
   if (!project) {
     throw new Error("Project not found");
   }
+
+  await markNotificationAsRead(notificationId);
 
   await projectModel.updateOne(
     { _id: projectId },
@@ -122,6 +126,30 @@ export async function rejectInvite(projectId, userId) {
     project: projectId,
     type: "invite_rejected",
     message: `User has rejected your project invitation for ${project.name}.`,
+  });
+
+  revalidatePath(`/projects/${projectId}/members`);
+}
+
+export async function removeMember(projectId, userId) {
+  const project = await projectModel.findById(projectId);
+  console.log(project);
+  if (!project) {
+    throw new Error("Project not found");
+  }
+  console.log(userId);
+  const data = await projectModel.updateOne(
+    { _id: projectId },
+    { $pull: { members: { _id: new mongoose.Types.ObjectId(userId) } } },
+    { new: true }
+  );
+  console.log(data);
+  await sendNotification({
+    recipient: userId,
+    sender: project.owner,
+    project: projectId,
+    type: "invite_rejected",
+    message: `You have been removed from the project: ${project.name}.`,
   });
 
   revalidatePath(`/projects/${projectId}/members`);

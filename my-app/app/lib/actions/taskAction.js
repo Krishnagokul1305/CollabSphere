@@ -26,7 +26,6 @@ export const markTaskAsCompleted = async (taskId, userId) => {
 
     await task.save();
     revalidatePath(`/projects/${task.project}/tasks/${taskId}`);
-    return task;
   } catch (error) {
     throw new Error(error.message);
   }

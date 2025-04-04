@@ -31,6 +31,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
+import Image from "next/image";
 
 const data = {
   user: {
@@ -50,11 +51,11 @@ const data = {
       url: "/projects",
       icon: Bot,
     },
-    {
-      title: "Discussions",
-      url: "/chat",
-      icon: GroupIcon,
-    },
+    // {
+    //   title: "Discussions",
+    //   url: "/chat",
+    //   icon: GroupIcon,
+    // },
     {
       title: "Todo",
       url: "/todo",
@@ -83,11 +84,11 @@ export function AppSidebar({ ...props }) {
             <SidebarMenuButton size="lg" asChild>
               <Link href="/">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Command className="size-4" />
+                  <Image src={"/logo.png"} alt="logo" width={32} height={32} />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Acme Inc</span>
-                  <span className="truncate text-xs">Enterprise</span>
+                  <span className="truncate font-semibold">CollabSphere</span>
+                  <span className="truncate text-xs">Management</span>
                 </div>
               </Link>
             </SidebarMenuButton>

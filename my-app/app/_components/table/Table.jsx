@@ -19,6 +19,7 @@ import BulkActions from "./BulkActions";
 export default function DataTable({
   columnCofig,
   actionItems,
+  count,
   data,
   isNeededHeader = true,
   isNeededPagination = true,
@@ -54,7 +55,7 @@ export default function DataTable({
         {isNeededHeader && <DataTableHeader table={table} />}
         <DataTableBody table={table} />
       </Table>
-      {isNeededPagination && <TablePagination table={table} />}
+      {isNeededPagination && <TablePagination table={table} count={count} />}
     </div>
   );
 }

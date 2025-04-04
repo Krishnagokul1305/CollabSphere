@@ -13,6 +13,7 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 const DeleteModal = forwardRef(({ trigger, onDelete }, ref) => {
   const [open, setOpen] = useState(false);
@@ -27,7 +28,11 @@ const DeleteModal = forwardRef(({ trigger, onDelete }, ref) => {
     setIsLoading(true);
     try {
       await onDelete();
+      toast.success("Item deleted successfully");
       setOpen(false);
+    } catch (error) {
+      console.error("Error deleting item:", error);
+      toast.error("Failed to delete item");
     } finally {
       setIsLoading(false);
     }

@@ -17,7 +17,13 @@ const notificationSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["invite_request", "invite_accepted", "role_updated", "general"],
+      enum: [
+        "invite_request",
+        "invite_accepted",
+        "invite_rejected",
+        "role_updated",
+        "general",
+      ],
       required: true,
     },
     message: {

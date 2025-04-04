@@ -11,6 +11,7 @@ import {
 import EmptyList from "../EmptyList";
 import { getUserNotifications } from "@/app/lib/data-service";
 import { markNotificationAsRead } from "@/app/lib/actions/notificationAction";
+import InvitationNotification from "./InvitationNotification";
 
 function NotificationSheet({ userId }) {
   const [notifications, setNotifications] = useState([]);
@@ -21,6 +22,7 @@ function NotificationSheet({ userId }) {
       setIsLoading(true);
       try {
         const data = await getUserNotifications(userId);
+        console.log(data);
         setNotifications(data);
       } catch (error) {
         console.error("Error fetching notifications:", error);
@@ -37,7 +39,7 @@ function NotificationSheet({ userId }) {
   };
 
   return (
-    <SheetContent>
+    <SheetContent className="overflow-scroll">
       <SheetHeader>
         <SheetTitle>Notifications</SheetTitle>
         <SheetDescription>
@@ -55,6 +57,19 @@ function NotificationSheet({ userId }) {
           ))
         ) : notifications?.length > 0 ? (
           notifications.map((notification) => {
+            if (
+              notification.type === "invite_request" ||
+              "invite_accepted" ||
+              "invite_rejected"
+            ) {
+              return (
+                <InvitationNotification
+                  key={notification._id}
+                  requested={notification.type === "invite_request"}
+                  notification={notification}
+                />
+              );
+            }
             return (
               <div
                 key={notification._id}

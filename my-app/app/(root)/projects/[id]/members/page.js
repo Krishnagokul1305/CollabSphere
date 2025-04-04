@@ -8,7 +8,7 @@ async function page({ params }) {
   const isOwnerOfProject = await isOwner(id);
   return (
     <div className="bg-sidebar rounded-md">
-      <MembersList data={data} isOwner={isOwnerOfProject} />
+      <MembersList data={data} isOwner={isOwnerOfProject} projectId={id} />
     </div>
   );
 }

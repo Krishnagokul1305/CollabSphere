@@ -1,16 +1,25 @@
 import { getServerSession } from "next-auth";
 import dbConnect from "./db";
 import projectModel from "./models/project.model";
-// import Task from "./models/task.model";
 import todoModel from "./models/todo.model";
 import "./models/user.model";
 import userModel from "./models/user.model";
 import { authOptions } from "./auth";
 import taskModel from "./models/task.model";
+import mongoose from "mongoose";
 
 export async function getTodos() {
   await dbConnect();
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    throw new Error("Unauthorized");
+  }
   const todos = await todoModel.aggregate([
+    {
+      $match: {
+        user: new mongoose.Types.ObjectId(session.user.id),
+      },
+    },
     {
       $group: {
         _id: {
@@ -28,23 +37,11 @@ export async function getTodos() {
                 date: "$date_time",
               },
             },
-            // createdAt: {
-            //   $dateToString: {
-            //     format: "%Y-%m-%dT%H:%M:%S.%LZ",
-            //     date: "$createdAt",
-            //   },
-            // },
-            // updatedAt: {
-            //   $dateToString: {
-            //     format: "%Y-%m-%dT%H:%M:%S.%LZ",
-            //     date: "$updatedAt",
-            //   },
-            // }, // Convert updatedAt to string
           },
         },
       },
     },
-    { $sort: { _id: 1 } }, // Optional: Sort by date
+    { $sort: { _id: 1 } },
   ]);
   return todos;
 }
@@ -131,13 +128,32 @@ export const searchUser = async (searchTerm) => {
   }
 };
 
-export const getProjects = async () => {
+export const getProjects = async (page = 0, limit = 6) => {
   try {
     await dbConnect();
-    const projects = await projectModel.find().select("-members").lean();
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      throw new Error("Unauthorized");
+    }
+
+    const skip = (page - 1) * limit;
+
+    const userId = session.user.id;
+
+    const projects = await projectModel
+      .find({
+        $or: [{ owner: userId }, { "members.user": userId }],
+      })
+      .skip(skip)
+      .limit(limit)
+      .select("-members")
+      .lean();
+
     return projects.map((project) => ({
       ...project,
       _id: project._id.toString(),
+      isOwnerofProject: project.owner.toString() === userId,
+      owner: project.owner.toString(),
       createdAt: project.createdAt.toISOString(),
       updatedAt: project.updatedAt.toISOString(),
     }));
@@ -146,17 +162,44 @@ export const getProjects = async () => {
   }
 };
 
+export const getProjectcount = async () => {
+  try {
+    await dbConnect();
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      throw new Error("Unauthorized");
+    }
+    const userId = session.user.id;
+
+    const totalCount = await projectModel.countDocuments({
+      $or: [{ owner: userId }, { "members.user": userId }],
+    });
+
+    return totalCount;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getProjectById = async (projectId) => {
   try {
     await dbConnect();
-    const project = await projectModel.findById(projectId).lean();
+    const project = await projectModel
+      .findById(projectId)
+      .populate({
+        path: "owner",
+        select: "name email avatar",
+      })
+      .lean();
     if (!project) return null;
     return {
       ...project,
       _id: project._id?.toString() || null,
       createdAt: project.createdAt?.toISOString() || null,
       updatedAt: project.updatedAt?.toISOString() || null,
-      owner: project.owner ? project.owner.toString() : null,
+      owner: project?.owner
+        ? { ...project.owner, _id: project.owner._id.toString() }
+        : null,
       members:
         project.members?.map((member) => ({
           ...member,
