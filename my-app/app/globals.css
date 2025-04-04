@@ -74,6 +74,12 @@
   }
 }
 
+.bg {
+  background: url("../public/bg1.png") no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -82,8 +88,6 @@
     @apply bg-background text-foreground;
   }
 }
-
-
 
 @layer base {
   * {

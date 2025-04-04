@@ -14,7 +14,6 @@ function Tab() {
     pathname == "/profile/appearance" ? "appearance" : "details"
   );
 
-  console.log(pathname);
   return (
     <div className="border-b flex space-x-6">
       {tabs.map((tab) => (

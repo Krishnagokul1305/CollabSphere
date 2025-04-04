@@ -7,7 +7,6 @@ import toast from "react-hot-toast";
 function CompleteButton({ taskId, memberId }) {
   async function handleComplete() {
     try {
-      console.log(taskId, memberId);
       await markTaskAsCompleted(taskId, memberId);
       toast.success("Task marked as completed successfully!");
     } catch (error) {

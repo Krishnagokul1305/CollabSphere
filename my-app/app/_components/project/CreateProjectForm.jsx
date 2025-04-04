@@ -52,7 +52,6 @@ export default function CreateProject({ close, initialData }) {
           error: "Error creating project",
         });
       } else {
-        console.log(values);
         toast.promise(updateProject(initialData._id, values), {
           loading: "Updating project...",
           success: "Project updated successfully!",

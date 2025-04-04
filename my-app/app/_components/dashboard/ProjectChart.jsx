@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { TrendingUp } from "lucide-react";
 import { Label, Pie, PieChart } from "recharts";
 
 import {
@@ -10,54 +9,52 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-const chartData = [
-  {
-    status: "Completed",
-    value: 100,
-    fill: "hsl(var(--chart-1))",
-  },
-  {
-    status: "In Progress",
-    value: 50,
-    fill: "hsl(var(--chart-2))",
-  },
-  {
-    status: "Cancelled",
-    value: 10,
-    fill: "hsl(var(--chart-3))",
-  },
-];
-
 const chartConfig = {
   completed: {
-    label: "Completed",
-    color: "hsl(var(--chart-1))",
+    label: "completed", // Chrome
+    color: "green",
   },
   inProgress: {
     label: "In Progress",
-    color: "hsl(var(--chart-2))",
+    color: "hsl(var(--chart-1))", // Safari
   },
   cancelled: {
     label: "Cancelled",
-    color: "hsl(var(--chart-3))",
+    color: "red",
   },
 };
 
-export default function ProjectChart() {
-  const totalValue = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.value, 0);
-  }, []);
+export default function ProjectChart({ data }) {
+  const chartData = [
+    {
+      status: "Completed",
+      value: data.completed,
+      fill: chartConfig.completed.color,
+    },
+    {
+      status: "In Progress",
+      value: data.active,
+      fill: chartConfig.inProgress.color,
+    },
+    {
+      status: "Cancelled",
+      value: data.inactive,
+      fill: chartConfig.cancelled.color,
+    },
+  ];
+
+  const totalValue = data.completed + data.active + data.inactive;
 
   return (
     <div className="flex flex-col border rounded-md p-6 bg-muted/50">
       <div className="pb-2">
         <h2 className="text-lg font-semibold">Project Stats</h2>
-        <p className="text-gray-400">Here&apos;s Your Project Stats</p>
+        <p className="text-gray-400">Here's Your Project Stats</p>
       </div>
       <div className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[300px]"
+          className="mx-auto aspect-square max-h-[250px]"
         >
           <PieChart>
             <ChartTooltip
@@ -68,9 +65,9 @@ export default function ProjectChart() {
               data={chartData}
               dataKey="value"
               nameKey="status"
-              innerRadius={80}
+              innerRadius={87}
               strokeWidth={5}
-              fill={({ payload }) => payload.color}
+              fill={({ payload }) => payload.fill}
             >
               <Label
                 content={({ viewBox }) => {
@@ -94,7 +91,7 @@ export default function ProjectChart() {
                           y={(viewBox.cy || 0) + 24}
                           className="fill-muted-foreground"
                         >
-                          Tasks
+                          Projects
                         </tspan>
                       </text>
                     );

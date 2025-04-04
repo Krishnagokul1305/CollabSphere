@@ -22,7 +22,6 @@ function NotificationSheet({ userId }) {
       setIsLoading(true);
       try {
         const data = await getUserNotifications(userId);
-        console.log(data);
         setNotifications(data);
       } catch (error) {
         console.error("Error fetching notifications:", error);

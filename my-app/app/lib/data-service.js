@@ -362,3 +362,170 @@ export const getTasksById = async (taskId) => {
     throw new Error(error.message);
   }
 };
+
+export const getProjectStats = async () => {
+  try {
+    await dbConnect();
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      throw new Error("Unauthorized");
+    }
+    const userId = new mongoose.Types.ObjectId(session.user.id);
+
+    const stats = await projectModel.aggregate([
+      {
+        $match: {
+          $or: [{ owner: userId }, { "members.user": userId }],
+        },
+      },
+      {
+        $group: {
+          _id: "$status",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const result = {
+      active: 0,
+      inactive: 0,
+      completed: 0,
+    };
+
+    stats.forEach((item) => {
+      result[item._id] = item.count;
+    });
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getUserTaskStats = async () => {
+  try {
+    await dbConnect();
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error("Unauthorized");
+
+    const userId = new mongoose.Types.ObjectId(session.user.id);
+
+    const stats = await taskModel.aggregate([
+      {
+        $match: {
+          members: userId,
+        },
+      },
+      {
+        $facet: {
+          total: [{ $count: "count" }],
+          completed: [
+            {
+              $match: {
+                completedMembers: userId,
+              },
+            },
+            { $count: "count" },
+          ],
+          highPriority: [
+            {
+              $match: {
+                priority: "High",
+                completedMembers: { $ne: userId },
+              },
+            },
+            { $count: "count" },
+          ],
+        },
+      },
+      {
+        $project: {
+          total: { $ifNull: [{ $arrayElemAt: ["$total.count", 0] }, 0] },
+          completed: {
+            $ifNull: [{ $arrayElemAt: ["$completed.count", 0] }, 0],
+          },
+          highPriority: {
+            $ifNull: [{ $arrayElemAt: ["$highPriority.count", 0] }, 0],
+          },
+        },
+      },
+      {
+        $addFields: {
+          notCompleted: { $subtract: ["$total", "$completed"] },
+        },
+      },
+    ]);
+
+    return (
+      stats[0] || {
+        total: 0,
+        completed: 0,
+        notCompleted: 0,
+        highPriority: 0,
+      }
+    );
+  } catch (error) {
+    console.error("Error in getUserTaskStats:", error);
+    throw error;
+  }
+};
+
+export const getTodayCompletedTasks = async (userId) => {
+  try {
+    await dbConnect();
+    if (!userId) throw new Error("Unauthorized");
+
+    userId = new mongoose.Types.ObjectId(userId);
+
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
+    const endOfToday = new Date();
+    endOfToday.setHours(23, 59, 59, 999);
+
+    const completedToday = await taskModel.aggregate([
+      {
+        $match: {
+          completedMembers: userId,
+          updatedAt: {
+            $gte: startOfToday,
+            $lte: endOfToday,
+          },
+        },
+      },
+      {
+        $count: "tasksCompletedToday",
+      },
+    ]);
+
+    return completedToday[0]?.tasksCompletedToday || 0;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const getUpcomingTodos = async () => {
+  await dbConnect();
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    throw new Error("Unauthorized");
+  }
+  const userId = new mongoose.Types.ObjectId(session.user.id);
+
+  const now = new Date();
+
+  const todos = await todoModel
+    .find({
+      status: "pending",
+      date_time: { $gte: now },
+      user: userId,
+    })
+    .sort([
+      ["priority", 1],
+      ["date_time", 1],
+    ])
+    .limit(6)
+    .populate("user", "name email");
+
+  return todos;
+};

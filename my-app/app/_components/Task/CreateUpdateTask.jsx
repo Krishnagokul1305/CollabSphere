@@ -52,7 +52,6 @@ export default function CreateUpdateTask({
   members,
   projectId = "",
 }) {
-  console.log(members);
   const router = useRouter();
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -83,7 +82,6 @@ export default function CreateUpdateTask({
         toast.success("Task created successfully!");
       } else {
         await updateTask(data._id, values);
-        console.log("Update task logic:", values);
         toast.success("Task updated successfully!");
       }
       router.push(`/projects/${projectId}/tasks`);

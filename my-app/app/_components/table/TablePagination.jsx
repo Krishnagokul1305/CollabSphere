@@ -6,7 +6,7 @@ import { useMemo } from "react";
 
 const LIMIT = 6; // Default limit per page
 
-export default function TablePagination({ count }) {
+export default function TablePagination({ count = 0 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -31,7 +31,7 @@ export default function TablePagination({ count }) {
     if (currentPage < totalPages) goToPage(currentPage + 1);
   };
 
-  if (count === 0 || totalPages <= 1) return null;
+  // if (count === 0 || totalPages <= 1) return null;
 
   return (
     <div className="flex items-center justify-between py-3 px-4 border-t text-sm">

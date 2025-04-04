@@ -36,7 +36,7 @@ const schema = new mongoose.Schema(
         },
         status: {
           type: String,
-          enum: ["pending", "active", "rejected", , "inactive"],
+          enum: ["pending", "active", "rejected", "inactive"],
           default: "pending",
         },
       },
