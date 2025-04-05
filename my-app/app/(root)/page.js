@@ -5,10 +5,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Dashboardtask from "../_components/dashboard/Dashboardtask";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../lib/auth";
-import { getTodayCompletedTasks, getUpcomingTodos } from "../lib/data-service";
+import { getTodayCompletedTasks } from "../lib/data-service";
 import Image from "next/image";
 import ProgressChart from "../_components/dashboard/ProgressChart";
 import Activity from "../_components/dashboard/Activity";
+import TaskDailyStats from "../_components/dashboard/TaskDailyStats";
 
 export default async function Page() {
   const session = await getServerSession(authOptions);
@@ -54,10 +55,14 @@ export default async function Page() {
             <Suspense fallback={<Skeleton className={"w-full h-[400px]"} />}>
               <DashboardChart />
             </Suspense>
-
-            <Suspense
-              fallback={<Skeleton className={"w-full h-[400px] col-span-2"} />}
-            >
+            <div className="col-span-2">
+              <Suspense fallback={<Skeleton className={"w-full h-[400px]"} />}>
+                <TaskDailyStats id={session.user.id} />
+              </Suspense>
+            </div>
+          </div>
+          <div>
+            <Suspense fallback={<Skeleton className={"block h-[250px]"} />}>
               <Activity />
             </Suspense>
           </div>

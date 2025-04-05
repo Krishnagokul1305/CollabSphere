@@ -46,7 +46,7 @@ export default function ProjectChart({ data }) {
   const totalValue = data.completed + data.active + data.inactive;
 
   return (
-    <div className="flex flex-col border rounded-md p-6 bg-muted/50">
+    <div className="flex flex-col border h-full rounded-md p-6 bg-muted/50">
       <div className="pb-2">
         <h2 className="text-lg font-semibold">Project Stats</h2>
         <p className="text-gray-400">Here&apos;s Your Project Stats</p>
@@ -101,6 +101,17 @@ export default function ProjectChart({ data }) {
             </Pie>
           </PieChart>
         </ChartContainer>
+      </div>
+      <div className="flex mx-auto text-xs items-center gap-4">
+        <div className="flex items-center gap-1 ">
+          <span className="w-2 h-2 bg-green-500 rounded-sm"></span>Completed
+        </div>
+        <div className="flex items-center gap-1 ">
+          <span className="w-2 h-2 bg-chart-1 rounded-sm"></span>Active
+        </div>
+        <div className="flex items-center gap-1 ">
+          <span className="w-2 h-2 bg-red-500 rounded-sm"></span>Inactive
+        </div>
       </div>
     </div>
   );

@@ -12,6 +12,9 @@ import { inviteMember, rejectInvite } from "@/app/lib/actions/projectAction";
 
 export default function InviteUsersForm({ projectId, existingMembers }) {
   const [members, setMembers] = useState([]);
+  const [loadingInviteId, setLoadingInviteId] = useState(null);
+  const [loadingRemoveId, setLoadingRemoveId] = useState(null);
+
   const [projectMembers, setProjectMembers] = useState(
     new Set(existingMembers.map((m) => m.user))
   );
@@ -43,17 +46,27 @@ export default function InviteUsersForm({ projectId, existingMembers }) {
   }, [search]);
 
   const handleInvite = async (userId) => {
-    await inviteMember(projectId, userId);
-    setProjectMembers((prev) => new Set(prev).add(userId));
+    setLoadingInviteId(userId);
+    try {
+      await inviteMember(projectId, userId);
+      setProjectMembers((prev) => new Set(prev).add(userId));
+    } finally {
+      setLoadingInviteId(null);
+    }
   };
 
   const handleRemove = async (userId) => {
-    await rejectInvite(projectId, userId);
-    setProjectMembers((prev) => {
-      const newSet = new Set(prev);
-      newSet.delete(userId);
-      return newSet;
-    });
+    setLoadingRemoveId(userId);
+    try {
+      await rejectInvite(projectId, userId);
+      setProjectMembers((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(userId);
+        return newSet;
+      });
+    } finally {
+      setLoadingRemoveId(null);
+    }
   };
 
   return (
@@ -84,9 +97,11 @@ export default function InviteUsersForm({ projectId, existingMembers }) {
                   <AvatarImage src={member.avatar} alt={member.name} />
                   <AvatarFallback>{member.name[0]}</AvatarFallback>
                 </Avatar>
-                <div>
-                  <p className="text-sm font-medium">{member.name}</p>
-                  <p className="text-xs text-gray-500">{member.email}</p>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium truncate">{member.name}</p>
+                  <p className="text-xs text-gray-500 truncate">
+                    {member.email}
+                  </p>
                 </div>
               </div>
 
@@ -94,13 +109,18 @@ export default function InviteUsersForm({ projectId, existingMembers }) {
                 <Button
                   variant="destructive"
                   size="sm"
+                  disabled={loadingRemoveId === member._id}
                   onClick={() => handleRemove(member._id)}
                 >
-                  Remove
+                  {loadingRemoveId === member._id ? "Removing..." : "Remove"}
                 </Button>
               ) : (
-                <Button size="sm" onClick={() => handleInvite(member._id)}>
-                  Invite
+                <Button
+                  size="sm"
+                  disabled={loadingInviteId === member._id}
+                  onClick={() => handleInvite(member._id)}
+                >
+                  {loadingInviteId === member._id ? "Inviting..." : "Invite"}
                 </Button>
               )}
             </div>

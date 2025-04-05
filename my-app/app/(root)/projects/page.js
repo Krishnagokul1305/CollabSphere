@@ -4,9 +4,16 @@ import Modal from "@/app/_components/modal/Modal";
 import { Button } from "@/components/ui/button";
 import CreateProject from "@/app/_components/project/CreateProjectForm";
 import { getProjectcount, getProjects } from "@/app/lib/data-service";
+import TableSearch from "@/app/_components/table/TableSearch";
+import TableFilter from "@/app/_components/table/TableFilter";
 
 async function page({ searchParams }) {
-  const data = await getProjects(+searchParams?.page ?? 0);
+  const data = await getProjects(
+    +searchParams?.page ?? 0,
+    6,
+    searchParams?.search,
+    searchParams?.status
+  );
   const count = await getProjectcount();
   return (
     <div className="space-y-5">
@@ -20,6 +27,20 @@ async function page({ searchParams }) {
           <CreateProject />
         </Modal>
       </div>
+
+      <div className="flex rounded-md gap-4  items-center justify-between">
+        <TableSearch />
+        <TableFilter
+          name="status"
+          options={[
+            { label: "All", value: "all" },
+            { label: "Active", value: "active" },
+            { label: "Inactive", value: "inactive" },
+            { label: "Completed", value: "completed" },
+          ]}
+        />
+      </div>
+
       {data.length == 0 ? (
         <EmptyList
           count={0}

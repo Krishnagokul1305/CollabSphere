@@ -9,7 +9,7 @@ import { deleteProject } from "@/app/lib/actions/projectAction";
 import { formatDateTime } from "@/app/utils/helper";
 import DeleteModal from "../modal/DeleteModal";
 
-function ProjectList({ data,count }) {
+function ProjectList({ data, count }) {
   const router = useRouter();
   const modalRef = useRef(null);
   const deleteModalRef = useRef(null);

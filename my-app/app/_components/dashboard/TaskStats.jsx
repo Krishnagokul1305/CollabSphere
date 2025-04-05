@@ -15,13 +15,14 @@ function TaskStats({ data }) {
           </span>
         </div>
 
-        <div className="text-3xl font-semibold tracking-tight text-white">
+        <div className="text-3xl ms-5 font-semibold tracking-tight dark:text-white text-black">
           {data.value}
         </div>
 
         <div className={`flex items-center gap-x-1 `}>
-          {data.icon}{" "}
           <span className="text-gray-400 text-sm">{data.description}</span>
+          {"  "}
+          {data.icon}
         </div>
       </div>
 

@@ -128,7 +128,12 @@ export const searchUser = async (searchTerm) => {
   }
 };
 
-export const getProjects = async (page = 0, limit = 6) => {
+export const getProjects = async (
+  page = 0,
+  limit = 6,
+  search = "",
+  status = ""
+) => {
   try {
     await dbConnect();
     const session = await getServerSession(authOptions);
@@ -137,13 +142,35 @@ export const getProjects = async (page = 0, limit = 6) => {
     }
 
     const skip = (page - 1) * limit;
-
     const userId = session.user.id;
 
+    const baseCondition = {
+      $or: [{ owner: userId }, { "members.user": userId }],
+    };
+
+    const filterConditions = [];
+
+    if (search) {
+      filterConditions.push({
+        name: { $regex: search, $options: "i" },
+      });
+    }
+
+    if (status && status !== "all") {
+      filterConditions.push({
+        status,
+      });
+    }
+
+    const finalQuery =
+      filterConditions.length > 0
+        ? {
+            $and: [baseCondition, ...filterConditions],
+          }
+        : baseCondition;
+
     const projects = await projectModel
-      .find({
-        $or: [{ owner: userId }, { "members.user": userId }],
-      })
+      .find(finalQuery)
       .skip(skip)
       .limit(limit)
       .select("-members")
@@ -212,6 +239,7 @@ export const getProjectById = async (projectId) => {
     throw error;
   }
 };
+
 export async function isOwner(projectId) {
   try {
     await dbConnect();
@@ -525,7 +553,50 @@ export const getUpcomingTodos = async () => {
       ["date_time", 1],
     ])
     .limit(6)
-    .populate("user", "name email");
+    .select("-user")
+    .lean();
 
-  return todos;
+  return todos.map((todo) => ({ ...todo, _id: todo._id.toString() }));
+};
+
+export const getTaskStatsPerDay = async (userId) => {
+  userId = new mongoose.Types.ObjectId(userId);
+  const stats = await taskModel.aggregate([
+    {
+      $match: {
+        $or: [{ members: userId }, { completedMembers: userId }],
+      },
+    },
+    {
+      $project: {
+        date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+        isAssigned: {
+          $in: [userId, "$members"],
+        },
+        isCompleted: {
+          $in: [userId, "$completedMembers"],
+        },
+      },
+    },
+    {
+      $group: {
+        _id: "$date",
+        assignedCount: {
+          $sum: {
+            $cond: [{ $eq: ["$isAssigned", true] }, 1, 0],
+          },
+        },
+        completedCount: {
+          $sum: {
+            $cond: [{ $eq: ["$isCompleted", true] }, 1, 0],
+          },
+        },
+      },
+    },
+    {
+      $sort: { _id: 1 },
+    },
+  ]);
+
+  return stats;
 };

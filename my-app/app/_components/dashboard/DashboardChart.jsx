@@ -4,7 +4,7 @@ import ProjectChart from "./ProjectChart";
 async function DashboardChart() {
   const data = await getProjectStats();
   return (
-    <div>
+    <div className="h-full">
       <ProjectChart data={data} />
     </div>
   );

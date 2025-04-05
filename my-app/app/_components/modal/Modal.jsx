@@ -21,7 +21,7 @@ const Modal = forwardRef(({ title, description, children, Trigger }, ref) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {Trigger && <DialogTrigger asChild>{Trigger}</DialogTrigger>}
-      <DialogContent className="max-w-md">
+      <DialogContent>
         <DialogHeader>
           {title && <DialogTitle>{title}</DialogTitle>}
           {description && <DialogDescription>{description}</DialogDescription>}
