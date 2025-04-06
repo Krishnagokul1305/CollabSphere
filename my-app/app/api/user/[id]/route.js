@@ -3,7 +3,7 @@ import dbConnect from "@/app/lib/db";
 import userModel from "@/app/lib/models/user.model";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/lib/auth";
-import cloudinary from "@/app/lib/Uploader";
+import cloudinary from "@/app/utils/Uploader";
 
 export async function PUT(req, { params }) {
   try {

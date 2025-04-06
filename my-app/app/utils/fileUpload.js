@@ -1,4 +1,4 @@
-import cloudinary from "@/app/lib/Uploader";
+import cloudinary from "@/app/utils/Uploader";
 
 export async function uploadImage(file) {
   try {
