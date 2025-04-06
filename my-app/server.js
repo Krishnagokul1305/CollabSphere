@@ -12,10 +12,7 @@ nextApp.prepare().then(() => {
   const io = new Server(httpServer);
 
   io.on("connection", (socket) => {
-    console.log("✅ A user connected:", socket.id);
-
     socket.on("sendMessage", (message) => {
-      console.log("📩 Message received:", message);
       io.emit("receiveMessage", message); // ✅ Broadcast to all clients
     });
 

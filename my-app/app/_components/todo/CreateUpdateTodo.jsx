@@ -12,46 +12,62 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { SmartDatetimePicker } from "@/components/ui/smart-datetime-input";
+import { Input } from "@/components/ui/input";
 import { RadioGroupItem, RadioGroup } from "@/components/ui/radio-group";
 import toast from "react-hot-toast";
 import { createTodo, updateTodo } from "@/app/lib/actions/todoAction";
 import Spinner from "../Spinner";
 import { useState } from "react";
+import { format } from "date-fns";
 
 const formSchema = z.object({
   description: z.string().min(1, "Description is required"),
-  date_time: z.date(),
+  date: z.string().min(1, "Date is required"), // "YYYY-MM-DD"
+  time: z.string().min(1, "Time is required"), // "HH:mm"
   priority: z.string(),
 });
 
 export default function CreateUpdateTodo({ close, initialData }) {
-  let [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const initialDateTime = initialData?.date_time
+    ? new Date(initialData.date_time)
+    : new Date();
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       description: initialData?.description || "",
       priority: initialData?.priority || "low",
-      date_time: initialData?.date_time
-        ? new Date(initialData.date_time)
-        : new Date(),
+      date: format(initialDateTime, "yyyy-MM-dd"),
+      time: format(initialDateTime, "HH:mm"),
     },
   });
 
   async function onSubmit(values) {
     setLoading(true);
+
+    // Combine date + time into a single Date object
+    const combinedDateTime = new Date(`${values.date}T${values.time}:00`);
+
+    const payload = {
+      description: values.description,
+      priority: values.priority,
+      date_time: combinedDateTime,
+    };
+
     try {
       if (!initialData) {
-        toast.promise(createTodo(values), {
-          loading: "Loading",
-          success: "Created task Successfully",
-          error: "Error Creating task",
+        await toast.promise(createTodo(payload), {
+          loading: "Creating task...",
+          success: "Task created successfully!",
+          error: "Error creating task.",
         });
       } else {
-        toast.promise(updateTodo(initialData._id, values), {
-          loading: "Loading",
-          success: "Updated task Successfully",
-          error: "Error Creating task",
+        await toast.promise(updateTodo(initialData._id, payload), {
+          loading: "Updating task...",
+          success: "Task updated successfully!",
+          error: "Error updating task.",
         });
       }
       close();
@@ -68,6 +84,7 @@ export default function CreateUpdateTodo({ close, initialData }) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8 max-w-3xl mx-auto"
       >
+        {/* Description */}
         <FormField
           control={form.control}
           name="description"
@@ -81,30 +98,42 @@ export default function CreateUpdateTodo({ close, initialData }) {
                   {...field}
                 />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="date_time"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Deadline</FormLabel>
-              <FormControl>
-                <SmartDatetimePicker
-                  value={field.value}
-                  onValueChange={field.onChange}
-                />
-              </FormControl>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="date"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Deadline Date</FormLabel>
+                <FormControl>
+                  <Input type="date" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="time"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Deadline Time</FormLabel>
+                <FormControl>
+                  <Input type="time" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
+        {/* Priority */}
         <FormField
           control={form.control}
           name="priority"
@@ -115,41 +144,43 @@ export default function CreateUpdateTodo({ close, initialData }) {
                 <RadioGroup
                   onValueChange={field.onChange}
                   className="flex items-center gap-4"
+                  value={field.value}
                 >
                   {[
                     ["High", "high"],
                     ["Low", "low"],
-                  ].map((option, index) => (
+                  ].map(([label, value]) => (
                     <FormItem
+                      key={value}
                       className="flex items-center space-x-3 space-y-0"
-                      key={index}
                     >
                       <FormControl>
-                        <RadioGroupItem value={option[1]} />
+                        <RadioGroupItem value={value} />
                       </FormControl>
-                      <FormLabel className="font-normal">{option[0]}</FormLabel>
+                      <FormLabel className="font-normal">{label}</FormLabel>
                     </FormItem>
                   ))}
                 </RadioGroup>
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {/* Buttons */}
         <div className="flex items-center justify-end gap-3">
           <Button
             variant="outline"
             disabled={loading}
             onClick={(e) => {
-              e.preventDefault;
+              e.preventDefault();
               close();
             }}
           >
             Cancel
           </Button>
           <Button type="submit" variant="primary" disabled={loading}>
-            {loading ? <Spinner theme={"light"} /> : "Submit"}
+            {loading ? <Spinner theme="light" /> : "Submit"}
           </Button>
         </div>
       </form>

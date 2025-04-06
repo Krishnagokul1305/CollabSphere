@@ -8,6 +8,7 @@ export default async function Page(params) {
     params: { id },
   } = await params;
   const data = await getProjectById(id);
+  if (!data) throw new Error("Project not found");
   return (
     <div className="space-y-6">
       <Card className="bg-sidebar border-none rounded-md">

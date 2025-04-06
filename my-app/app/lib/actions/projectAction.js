@@ -84,8 +84,6 @@ export async function inviteMember(projectId, userId, role = "member") {
 
 export async function acceptInvite(projectId, userId, notificationId) {
   const project = await projectModel.findById(projectId);
-  console.log(projectId, userId, notificationId);
-  console.log(project);
   if (!project) {
     throw new Error("Project not found");
   }
@@ -133,17 +131,14 @@ export async function rejectInvite(projectId, userId, notificationId) {
 
 export async function removeMember(projectId, userId) {
   const project = await projectModel.findById(projectId);
-  console.log(project);
   if (!project) {
     throw new Error("Project not found");
   }
-  console.log(userId);
   const data = await projectModel.updateOne(
     { _id: projectId },
     { $pull: { members: { _id: new mongoose.Types.ObjectId(userId) } } },
     { new: true }
   );
-  console.log(data);
   await sendNotification({
     recipient: userId,
     sender: project.owner,

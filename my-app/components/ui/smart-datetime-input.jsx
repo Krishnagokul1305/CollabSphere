@@ -45,7 +45,6 @@ export function SmartDatetimePicker({ value, onValueChange }) {
       }
     }
 
-    // Prevent selecting past time on the current day
     if (newDate.toDateString() === now.toDateString() && newDate < now) {
       return;
     }

@@ -15,7 +15,6 @@ function TaskCard({ task, projectid, isOwner = false }) {
   const handleDelete = async () => {
     await deleteTask(task.id, projectid);
   };
-  console.log("complted", task.completedMembers);
   return (
     <div className="bg-sidebar p-4 rounded-md">
       {/* Delete Modal */}

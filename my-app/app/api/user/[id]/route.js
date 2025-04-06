@@ -3,7 +3,7 @@ import dbConnect from "@/app/lib/db";
 import userModel from "@/app/lib/models/user.model";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/lib/auth";
-// import cloudinary from "../../../lib/cloudinary";
+import cloudinary from "@/app/lib/cloudinary";
 
 export async function PUT(req, { params }) {
   try {
@@ -15,34 +15,31 @@ export async function PUT(req, { params }) {
     }
 
     const { id } = params;
-    console.log("User ID:", id);
 
     const formData = await req.formData();
     const updatedFields = {};
 
     for (const [key, value] of formData.entries()) {
       if (key === "file" && value.size > 0) {
-        console.log("Uploading file...");
+        const arrayBuffer = await value.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
 
-        // const arrayBuffer = await value.arrayBuffer();
-        // const buffer = Buffer.from(arrayBuffer);
+        const uploadResponse = await new Promise((resolve, reject) => {
+          cloudinary.uploader
+            .upload_stream(
+              {
+                folder: "avatars",
+                transformation: [{ width: 200, height: 200, crop: "fill" }],
+              },
+              (error, result) => {
+                if (error) reject(error);
+                else resolve(result);
+              }
+            )
+            .end(buffer);
+        });
 
-        // const uploadResponse = await new Promise((resolve, reject) => {
-        //   cloudinary.uploader
-        //     .upload_stream(
-        //       {
-        //         folder: "avatars",
-        //         transformation: [{ width: 200, height: 200, crop: "fill" }],
-        //       },
-        //       (error, result) => {
-        //         if (error) reject(error);
-        //         else resolve(result);
-        //       }
-        //     )
-        //     .end(buffer);
-        // });
-
-        // updatedFields["avatar"] = uploadResponse.secure_url;
+        updatedFields["avatar"] = uploadResponse.secure_url;
       } else if (
         value !== null &&
         value !== undefined &&

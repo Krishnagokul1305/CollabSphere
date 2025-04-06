@@ -1,31 +1,50 @@
 "use client";
 
-import { useTransition } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { acceptInvite, rejectInvite } from "@/app/lib/actions/projectAction";
 import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
 
 function InvitationNotification({ notification, requested = false }) {
-  const [isPending, startTransition] = useTransition();
+  const queryClient = useQueryClient();
 
-  const handleAccept = () => {
-    startTransition(() => {
+  const { mutate: acceptMutation, isPending: isAccepting } = useMutation({
+    mutationFn: () =>
       acceptInvite(
         notification.project,
         notification.recipient,
         notification._id
-      );
-    });
-  };
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["notifications", notification.recipient],
+      });
+      toast.success("Invitation accepted successfully!");
+    },
+    onError: (error) => {
+      toast.error("Failed to accept invitation : " + error.message);
+      console.error("Error accepting invitation:", error);
+    },
+  });
 
-  const handleReject = () => {
-    startTransition(() => {
+  const { mutate: rejectMutation, isPending: isRejecting } = useMutation({
+    mutationFn: () =>
       rejectInvite(
         notification.project,
         notification.recipient,
         notification._id
-      );
-    });
-  };
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["notifications", notification.recipient],
+      });
+      toast.success("Invitation rejected successfully!");
+    },
+    onError: (error) => {
+      toast.error("Failed to reject invitation");
+      console.error("Error rejecting invitation:", error);
+    },
+  });
 
   return (
     <div
@@ -44,18 +63,18 @@ function InvitationNotification({ notification, requested = false }) {
           <Button
             variant="success"
             size="sm"
-            disabled={isPending}
-            onClick={handleAccept}
+            disabled={isAccepting || isRejecting}
+            onClick={() => acceptMutation()}
           >
-            {isPending ? "Accepting..." : "Accept"}
+            {isAccepting ? "Accepting..." : "Accept"}
           </Button>
           <Button
             variant="destructive"
             size="sm"
-            disabled={isPending}
-            onClick={handleReject}
+            disabled={isAccepting || isRejecting}
+            onClick={() => rejectMutation()}
           >
-            {isPending ? "Rejecting..." : "Reject"}
+            {isRejecting ? "Rejecting..." : "Reject"}
           </Button>
         </div>
       )}

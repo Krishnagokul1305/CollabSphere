@@ -65,8 +65,6 @@ export async function signup(data) {
 }
 export async function updateUser(id, userData) {
   try {
-    console.log("Updating user:", id, userData);
-
     const res = await fetch(`/api/user/${id}`, {
       method: "PUT",
       body: userData,
@@ -103,9 +101,12 @@ export async function resetPassword(token, password) {
 export async function getUserById(id) {
   try {
     await dbConnect();
-    const data = await userModel.findById(id);
+    const data = await userModel.findById(id).lean();
     if (!data) throw new Error("User not found");
-    return data;
+    return {
+      ...data,
+      _id: data._id.toString(),
+    };
   } catch (error) {
     console.log(error);
   }

@@ -1,22 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GroupIcon,
-  LayoutDashboard,
-  LifeBuoy,
-  ListCheck,
-  Map,
-  PieChart,
-  Send,
-  Settings2,
-  SquareTerminal,
-  User2,
-} from "lucide-react";
+import { Bot, Home, LayoutDashboard, ListCheck, User2 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavSettings } from "@/components/nav-settings";
@@ -43,7 +28,7 @@ const data = {
     {
       title: "Dashboard",
       url: "/",
-      icon: LayoutDashboard,
+      icon: Home,
       isActive: true,
     },
     {
@@ -84,7 +69,7 @@ export function AppSidebar({ ...props }) {
             <SidebarMenuButton size="lg" asChild>
               <Link href="/">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Image src={"/logo.png"} alt="logo" width={32} height={32} />
+                  <LayoutDashboard size={20} />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">CollabSphere</span>

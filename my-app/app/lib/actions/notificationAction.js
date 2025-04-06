@@ -8,6 +8,14 @@ export async function markNotificationAsRead(notificationId) {
   revalidateTag("notifications");
 }
 
+export async function deleteUserNotifications(userId) {
+  try {
+    await Notification.deleteMany({ recipient: userId });
+  } catch (error) {
+    console.error("Error deleting user notifications:", error);
+  }
+}
+
 export const sendNotification = async ({
   recipient,
   sender,
@@ -25,7 +33,6 @@ export const sendNotification = async ({
     });
 
     await notification.save();
-    console.log(`Notification sent: ${message}`);
   } catch (error) {
     console.error("Error sending notification:", error);
   }

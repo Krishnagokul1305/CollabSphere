@@ -33,9 +33,7 @@ export const markTaskAsCompleted = async (taskId, userId) => {
 
 export const createTask = async (taskData) => {
   try {
-    console.log("Received Task Data:", taskData);
     const data = await taskModel.create(taskData);
-    console.log("Created Task:", data);
   } catch (error) {
     console.error("Task Creation Error:", error);
     throw new Error(error.message);
@@ -48,7 +46,6 @@ export const updateTask = async (taskId, updateData) => {
       new: true,
     });
     revalidatePath(`/projects/${updateData.project}/tasks`);
-    console.log(data);
   } catch (error) {
     throw new Error(error.message);
   }
@@ -56,7 +53,6 @@ export const updateTask = async (taskId, updateData) => {
 
 export const deleteTask = async (taskId, projectId) => {
   try {
-    console.log(taskId, projectId);
     await taskModel.findByIdAndDelete(taskId);
     revalidatePath(`/projects/${projectId}/tasks`);
   } catch (error) {

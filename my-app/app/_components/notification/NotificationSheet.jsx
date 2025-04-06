@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import {
   SheetContent,
@@ -10,31 +10,44 @@ import {
 } from "@/components/ui/sheet";
 import EmptyList from "../EmptyList";
 import { getUserNotifications } from "@/app/lib/data-service";
-import { markNotificationAsRead } from "@/app/lib/actions/notificationAction";
+import {
+  markNotificationAsRead,
+  deleteUserNotifications,
+} from "@/app/lib/actions/notificationAction";
 import InvitationNotification from "./InvitationNotification";
+import Spinner from "../Spinner";
 
 function NotificationSheet({ userId }) {
-  const [notifications, setNotifications] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    async function fetchNotifications() {
-      setIsLoading(true);
-      try {
-        const data = await getUserNotifications(userId);
-        setNotifications(data);
-      } catch (error) {
-        console.error("Error fetching notifications:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
+  const {
+    data: notifications = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["notifications", userId],
+    queryFn: () => getUserNotifications(userId),
+    enabled: !!userId,
+  });
 
-    fetchNotifications();
-  }, [userId]);
+  const { mutate: clearNotifications, isPending: isClearing } = useMutation({
+    mutationFn: () => deleteUserNotifications(userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications", userId] });
+    },
+    onError: (err) => {
+      console.error("Error deleting notifications:", err);
+    },
+  });
 
   const markAsRead = async (id) => {
-    await markNotificationAsRead(id);
+    try {
+      await markNotificationAsRead(id);
+      queryClient.invalidateQueries({ queryKey: ["notifications", userId] });
+    } catch (err) {
+      console.error("Failed to mark as read:", err);
+    }
   };
 
   return (
@@ -46,6 +59,18 @@ function NotificationSheet({ userId }) {
         </SheetDescription>
       </SheetHeader>
 
+      {notifications.length > 0 && (
+        <Button
+          variant="primary"
+          className="mt-4 ms-auto block"
+          size="sm"
+          onClick={() => clearNotifications()}
+          disabled={isClearing}
+        >
+          {isClearing ? <Spinner /> : "Clear All"}
+        </Button>
+      )}
+
       <div className="grid gap-4 py-4">
         {isLoading ? (
           [...Array(5)].map((_, index) => (
@@ -54,13 +79,16 @@ function NotificationSheet({ userId }) {
               className="h-12 w-full animate-pulse bg-gray-300 rounded-md"
             ></div>
           ))
+        ) : isError ? (
+          <p className="text-red-500">Failed to load notifications</p>
         ) : notifications?.length > 0 ? (
           notifications.map((notification) => {
-            if (
+            const isInvitation =
               notification.type === "invite_request" ||
-              "invite_accepted" ||
-              "invite_rejected"
-            ) {
+              notification.type === "invite_accepted" ||
+              notification.type === "invite_rejected";
+
+            if (isInvitation) {
               return (
                 <InvitationNotification
                   key={notification._id}
@@ -69,6 +97,7 @@ function NotificationSheet({ userId }) {
                 />
               );
             }
+
             return (
               <div
                 key={notification._id}
