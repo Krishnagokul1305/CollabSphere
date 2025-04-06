@@ -55,7 +55,7 @@ export default async function Page() {
             <Suspense fallback={<Skeleton className={"w-full h-[400px]"} />}>
               <DashboardChart />
             </Suspense>
-            <div className="col-span-2">
+            <div className="md:col-span-2">
               <Suspense fallback={<Skeleton className={"w-full h-[400px]"} />}>
                 <TaskDailyStats id={session.user.id} />
               </Suspense>
