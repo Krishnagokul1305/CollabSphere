@@ -3,7 +3,7 @@ import dbConnect from "@/app/lib/db";
 import userModel from "@/app/lib/models/user.model";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/lib/auth";
-import cloudinary from "@/app/utils/Uploader";
+// import cloudinary from "@/app/utils/Uploader";
 
 export async function PUT(req, { params }) {
   try {
@@ -20,33 +20,31 @@ export async function PUT(req, { params }) {
     const updatedFields = {};
 
     for (const [key, value] of formData.entries()) {
-      if (key === "file" && value.size > 0) {
-        const arrayBuffer = await value.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
-
-        const uploadResponse = await new Promise((resolve, reject) => {
-          cloudinary.uploader
-            .upload_stream(
-              {
-                folder: "avatars",
-                transformation: [{ width: 200, height: 200, crop: "fill" }],
-              },
-              (error, result) => {
-                if (error) reject(error);
-                else resolve(result);
-              }
-            )
-            .end(buffer);
-        });
-
-        updatedFields["avatar"] = uploadResponse.secure_url;
-      } else if (
-        value !== null &&
-        value !== undefined &&
-        (typeof value !== "string" || value.trim() !== "")
-      ) {
-        updatedFields[key] = value;
-      }
+      // if (key === "file" && value.size > 0) {
+      //   const arrayBuffer = await value.arrayBuffer();
+      //   const buffer = Buffer.from(arrayBuffer);
+      //   const uploadResponse = await new Promise((resolve, reject) => {
+      //     cloudinary.uploader
+      //       .upload_stream(
+      //         {
+      //           folder: "avatars",
+      //           transformation: [{ width: 200, height: 200, crop: "fill" }],
+      //         },
+      //         (error, result) => {
+      //           if (error) reject(error);
+      //           else resolve(result);
+      //         }
+      //       )
+      //       .end(buffer);
+      //   });
+      //   updatedFields["avatar"] = uploadResponse.secure_url;
+      // } else if (
+      //   value !== null &&
+      //   value !== undefined &&
+      //   (typeof value !== "string" || value.trim() !== "")
+      // ) {
+      //   updatedFields[key] = value;
+      // }
     }
 
     if (Object.keys(updatedFields).length === 0) {
