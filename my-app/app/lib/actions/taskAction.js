@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import taskModel from "../models/task.model";
+import { fileUpload } from "../fileUpload";
 
 export const markTaskAsCompleted = async (taskId, userId) => {
   try {
@@ -31,22 +32,92 @@ export const markTaskAsCompleted = async (taskId, userId) => {
   }
 };
 
-export const createTask = async (taskData) => {
+export const createTask = async (formData) => {
   try {
+    const fields = [
+      "title",
+      "description",
+      "dueDate",
+      "project",
+      "status",
+      "members",
+      "priority",
+      "report",
+      "tag",
+    ];
+
+    const taskData = {};
+
+    const file = formData.get("attachment");
+    const projectId = formData.get("project");
+    if (!projectId) {
+      throw new Error("Project ID is required");
+    }
+
+    if (file) {
+      taskData.attachment = await fileUpload(
+        file,
+        `project-${projectId}-task-${Date.now()}`,
+        "documents"
+      );
+    } else {
+      taskData.attachment = "";
+    }
+
+    for (const field of fields) {
+      taskData[field] = formData.get(field);
+    }
     const data = await taskModel.create(taskData);
+    console.log(data);
   } catch (error) {
     console.error("Task Creation Error:", error);
     throw new Error(error.message);
   }
 };
 
-export const updateTask = async (taskId, updateData) => {
+export const updateTask = async (taskId, formData) => {
   try {
-    const data = await taskModel.findByIdAndUpdate(taskId, updateData, {
+    const fields = [
+      "title",
+      "description",
+      "dueDate",
+      "project",
+      "status",
+      "members",
+      "priority",
+      "report",
+      "tag",
+    ];
+
+    const updateData = {};
+
+    const file = formData.get("attachment");
+    const projectId = formData.get("project");
+
+    if (!projectId) {
+      throw new Error("Project ID is required");
+    }
+
+    if (file && typeof file !== "string") {
+      updateData.attachment = await fileUpload(
+        file,
+        `project-${projectId}-task-${Date.now()}`,
+        "documents"
+      );
+    }
+
+    for (const field of fields) {
+      const value = formData.get(field);
+      if (value !== null) updateData[field] = value;
+    }
+
+    await taskModel.findByIdAndUpdate(taskId, updateData, {
       new: true,
     });
+
     revalidatePath(`/projects/${updateData.project}/tasks`);
   } catch (error) {
+    console.error("Task Update Error:", error);
     throw new Error(error.message);
   }
 };

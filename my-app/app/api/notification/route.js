@@ -7,7 +7,6 @@ export async function GET(req) {
     await dbConnect();
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get("userId");
-    console.log(userId);
     if (!userId) {
       return NextResponse.json(
         { error: "User ID is required" },

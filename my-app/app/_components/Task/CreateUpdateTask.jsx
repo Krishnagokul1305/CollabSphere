@@ -22,7 +22,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar as CalendarIcon, FileInput, FileUp } from "lucide-react";
 import {
   MultiSelector,
   MultiSelectorContent,
@@ -34,6 +34,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { createTask, updateTask } from "@/app/lib/actions/taskAction";
 import { useRouter } from "next/navigation";
+import FileUploader from "@/components/ui/file-upload";
 
 const formSchema = z.object({
   title: z.string().min(1),
@@ -42,6 +43,7 @@ const formSchema = z.object({
   status: z.string().optional(),
   members: z.array(z.string()).nonempty("Please select at least one member"),
   priority: z.string(),
+  attachment: z.union([z.instanceof(File), z.string()]).optional(),
   report: z.string().optional(),
   tag: z.string().optional(),
 });
@@ -52,6 +54,7 @@ export default function CreateUpdateTask({
   members,
   projectId = "",
 }) {
+  console.log(data);
   const router = useRouter();
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -69,21 +72,39 @@ export default function CreateUpdateTask({
       priority: data?.priority || "Low",
       report: data?.report || "",
       tag: data?.tag || "",
+      attachment: data?.attachment || "",
     },
   });
 
   async function onSubmit(values) {
     try {
+      const formData = new FormData();
+      console.log(values);
+      formData.append("title", values.title);
+      formData.append("description", values.description);
+      formData.append("dueDate", values.dueDate.toISOString());
+      if (values.status) formData.append("status", values.status);
+      formData.append("priority", values.priority);
+      if (values.report) formData.append("report", values.report);
+      if (values.tag) formData.append("tag", values.tag);
+
+      values.members.forEach((member) => {
+        formData.append("members", member);
+      });
+
+      if (values.attachment) {
+        formData.append("attachment", values.attachment);
+      }
+      formData.append("project", projectId);
+
       if (isCreate) {
-        await createTask({
-          ...values,
-          project: projectId,
-        });
+        await createTask(formData);
         toast.success("Task created successfully!");
       } else {
-        await updateTask(data._id, values);
+        await updateTask(data._id, formData);
         toast.success("Task updated successfully!");
       }
+
       router.push(`/projects/${projectId}/tasks`);
     } catch (error) {
       console.error("Form submission error", error);
@@ -195,35 +216,24 @@ export default function CreateUpdateTask({
           />
         </div>
 
-        {/* Status (only if not creating a new task) */}
-        {/* {!isCreate && (
-          <FormField
-            control={form.control}
-            name="status"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Status</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger className="py-6">
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )} */}
+        <FormField
+          control={form.control}
+          name="attachment"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Attachment</FormLabel>
+              <FormControl>
+                <FileUploader
+                  name="attachment"
+                  value={field.value}
+                  onValuesChange={field.onChange}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-        {/* Select Members */}
         <FormField
           control={form.control}
           name="members"

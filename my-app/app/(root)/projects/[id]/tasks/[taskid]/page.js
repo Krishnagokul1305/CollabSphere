@@ -8,6 +8,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/lib/auth";
 import { markTaskAsCompleted } from "@/app/lib/actions/taskAction";
 import CompleteButton from "@/app/_components/CompleteButton";
+import Link from "next/link";
 
 const users = [
   {
@@ -93,26 +94,37 @@ async function Page({ params }) {
           <CardTitle>Attachments</CardTitle>
         </CardHeader>
         <CardContent>
-          {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[...Array(3)].map((_, index) => (
-              <div
-                key={index}
-                className="flex justify-between items-center space-x-3 border p-3 rounded-lg"
-              >
+          {data?.attachment ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="flex justify-between items-center space-x-3 border p-3 rounded-lg">
                 <div className="flex items-center space-x-3">
                   <FileText className="w-6 h-6" />
-                  <div className="text-sm">
-                    <p className="truncate w-32">Connecting your tech...</p>
-                    <p className="text-xs">4.2MB</p>
-                  </div>
+                  <a
+                    href={data.attachment}
+                    target="__blank"
+                    className="text-sm"
+                  >
+                    <p className="truncate w-44">Attachment</p>
+                    <p className="text-xs text-gray-500 truncate w-44">
+                      {data.attachment.split("/").pop()}
+                    </p>
+                  </a>
                 </div>
-                <span className="cursor-pointer hover:bg-muted/50 p-2 rounded-full">
-                  <Download />
-                </span>
+                <a
+                  href={data.attachment}
+                  download
+                  target="__blank"
+                  className="cursor-pointer flex items-center justify-center hover:bg-muted/50 p-2 rounded-full"
+                >
+                  <span>
+                    <Download />
+                  </span>
+                </a>
               </div>
-            ))}
-          </div> */}
-          <EmptyList message={"No attachments found."} count={0} />
+            </div>
+          ) : (
+            <EmptyList message={"No attachments found."} count={0} />
+          )}
         </CardContent>
       </Card>
 

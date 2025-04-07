@@ -63,22 +63,6 @@ export async function signup(data) {
     throw new Error(error.message);
   }
 }
-export async function updateUser(id, userData) {
-  try {
-    const res = await fetch(`/api/user/${id}`, {
-      method: "PUT",
-      body: userData,
-    });
-
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message);
-
-    revalidatePath("/profile");
-    return data.user;
-  } catch (error) {
-    console.error("Error updating user:", error.message);
-  }
-}
 
 export async function resetPassword(token, password) {
   try {

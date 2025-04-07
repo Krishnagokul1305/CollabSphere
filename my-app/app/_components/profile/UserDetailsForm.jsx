@@ -7,7 +7,7 @@ import ImageUploader from "./ImageUploader";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import Spinner from "../Spinner";
-import { updateUser } from "@/app/lib/user";
+import { updateUser } from "@/app/lib/actions/userAction";
 
 export default function UserDetailsForm({ user, id }) {
   const {

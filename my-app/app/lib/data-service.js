@@ -48,7 +48,9 @@ export async function getTodos() {
 
 export const getTasks = async () => {
   try {
-    const task = await Task.find()
+    await dbConnect();
+    const task = await taskModel
+      .find()
       .select("-attachments") // Exclude attachments
       .populate({
         path: "members",
@@ -381,6 +383,7 @@ export const getTasksByProjectId = async (projectId) => {
 
 export const getTasksById = async (taskId) => {
   try {
+    await dbConnect();
     const task = await taskModel
       .findById(taskId)
       .populate("members", "name email")
@@ -560,6 +563,7 @@ export const getUpcomingTodos = async () => {
 };
 
 export const getTaskStatsPerDay = async (userId) => {
+  await dbConnect();
   userId = new mongoose.Types.ObjectId(userId);
   const stats = await taskModel.aggregate([
     {

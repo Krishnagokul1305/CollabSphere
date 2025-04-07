@@ -48,6 +48,16 @@ const taskSchema = new mongoose.Schema(
       ref: "projects",
       required: true,
     },
+    attachment: {
+      type: String,
+      trim: true,
+      validate: {
+        validator: function (v) {
+          return /^https?:\/\/.+/.test(v);
+        },
+        message: (props) => `${props.value} is not a valid URL!`,
+      },
+    },
   },
   {
     timestamps: true,

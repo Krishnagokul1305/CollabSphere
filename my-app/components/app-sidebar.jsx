@@ -1,7 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { Bot, Home, LayoutDashboard, ListCheck, User2 } from "lucide-react";
+import {
+  Bot,
+  File,
+  Home,
+  LayoutDashboard,
+  ListCheck,
+  User2,
+} from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavSettings } from "@/components/nav-settings";
@@ -37,9 +44,9 @@ const data = {
       icon: Bot,
     },
     // {
-    //   title: "Discussions",
-    //   url: "/chat",
-    //   icon: GroupIcon,
+    //   title: "Files",
+    //   url: "/files",
+    //   icon: File,
     // },
     {
       title: "Todo",
