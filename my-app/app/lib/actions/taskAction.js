@@ -71,6 +71,7 @@ export const createTask = async (formData) => {
     taskData.members = formData.getAll("members");
 
     await taskModel.create(taskData);
+    revalidatePath(`/projects/${projectId}/tasks`);
   } catch (error) {
     throw new Error(error.message);
   }
