@@ -21,7 +21,8 @@ export async function GET(req) {
         ],
         _id: { $ne: session?.user?.id },
       })
-      .select("name email avatar");
+      .select("name email avatar")
+      .limit(5);
 
     return NextResponse.json({ users }, { status: 200 });
   } catch (error) {
