@@ -1,7 +1,7 @@
 import dbConnect from "@/app/lib/db";
 import { NextResponse } from "next/server";
 import notificationModel from "@/app/lib/models/notifications.model";
-
+export const dynamic = "force-dynamic";
 export async function GET(req) {
   try {
     await dbConnect();

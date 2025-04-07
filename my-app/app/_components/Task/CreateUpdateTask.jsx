@@ -54,7 +54,6 @@ export default function CreateUpdateTask({
   members,
   projectId = "",
 }) {
-  console.log(data);
   const router = useRouter();
   const form = useForm({
     resolver: zodResolver(formSchema),

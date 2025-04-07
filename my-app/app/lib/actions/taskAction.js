@@ -68,7 +68,6 @@ export const createTask = async (formData) => {
       taskData[field] = formData.get(field);
     }
     const data = await taskModel.create(taskData);
-    console.log(data);
   } catch (error) {
     console.error("Task Creation Error:", error);
     throw new Error(error.message);
