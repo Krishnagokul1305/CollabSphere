@@ -97,16 +97,21 @@ export default function CreateUpdateTask({
       formData.append("project", projectId);
 
       if (isCreate) {
-        await createTask(formData);
-        toast.success("Task created successfully!");
+        toast.promise(createTask(formData), {
+          loading: "Creating...",
+          success: "Created Successfully",
+          error: "Error creating Task",
+        });
       } else {
-        await updateTask(data._id, formData);
-        toast.success("Task updated successfully!");
+        toast.promise(updateTask(data._id, formData), {
+          loading: "Updating...",
+          success: "Updated Successfully",
+          error: "Error updating Task",
+        });
       }
 
       router.push(`/projects/${projectId}/tasks`);
     } catch (error) {
-      console.error("Form submission error", error);
       toast.error("Failed to submit the form. Please try again.");
     }
   }
@@ -117,8 +122,6 @@ export default function CreateUpdateTask({
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-5 mx-auto"
       >
-        {/* Title */}
-        {/* ... (rest of your form fields) ... */}
         <FormField
           control={form.control}
           name="title"
@@ -137,7 +140,6 @@ export default function CreateUpdateTask({
           )}
         />
 
-        {/* Description */}
         <FormField
           control={form.control}
           name="description"
@@ -156,7 +158,6 @@ export default function CreateUpdateTask({
           )}
         />
 
-        {/* Due Date and Tag */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -303,7 +304,11 @@ export default function CreateUpdateTask({
         />
 
         {/* Submit Button */}
-        <Button type="submit" className="block ms-auto">
+        <Button
+          type="submit"
+          disabled={form?.formState?.isSubmitting}
+          className="block ms-auto"
+        >
           Submit
         </Button>
       </form>

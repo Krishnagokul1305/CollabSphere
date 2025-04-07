@@ -54,7 +54,7 @@ export const createTask = async (formData) => {
       throw new Error("Project ID is required");
     }
 
-    if (file) {
+    if (file && typeof file === "object" && "arrayBuffer" in file) {
       taskData.attachment = await fileUpload(
         file,
         `project-${projectId}-task-${Date.now()}`,
@@ -67,9 +67,11 @@ export const createTask = async (formData) => {
     for (const field of fields) {
       taskData[field] = formData.get(field);
     }
-    const data = await taskModel.create(taskData);
+
+    taskData.members = formData.getAll("members");
+
+    await taskModel.create(taskData);
   } catch (error) {
-    console.error("Task Creation Error:", error);
     throw new Error(error.message);
   }
 };
@@ -97,7 +99,7 @@ export const updateTask = async (taskId, formData) => {
       throw new Error("Project ID is required");
     }
 
-    if (file && typeof file !== "string") {
+    if (file && typeof file === "object" && "arrayBuffer" in file) {
       updateData.attachment = await fileUpload(
         file,
         `project-${projectId}-task-${Date.now()}`,
@@ -110,13 +112,14 @@ export const updateTask = async (taskId, formData) => {
       if (value !== null) updateData[field] = value;
     }
 
+    updateData.members = formData.getAll("members");
+
     await taskModel.findByIdAndUpdate(taskId, updateData, {
       new: true,
     });
 
     revalidatePath(`/projects/${updateData.project}/tasks`);
   } catch (error) {
-    console.error("Task Update Error:", error);
     throw new Error(error.message);
   }
 };

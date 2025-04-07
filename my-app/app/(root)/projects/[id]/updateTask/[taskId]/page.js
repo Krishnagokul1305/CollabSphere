@@ -6,7 +6,7 @@ async function page(params) {
     params: { taskId, id },
   } = await params;
   const data = await getTaskById(taskId);
-  let { members } = await getProjectUsers(id);
+  let { members } = await getProjectUsers(id, true);
 
   members = members.map((member) => ({
     _id: member?.user?._id.toString(),

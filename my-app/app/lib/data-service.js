@@ -147,7 +147,17 @@ export const getProjects = async (
     const userId = session.user.id;
 
     const baseCondition = {
-      $or: [{ owner: userId }, { "members.user": userId }],
+      $or: [
+        { owner: userId },
+        {
+          members: {
+            $elemMatch: {
+              user: userId,
+              status: { $nin: ["pending", "rejected"] },
+            },
+          },
+        },
+      ],
     };
 
     const filterConditions = [];

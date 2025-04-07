@@ -51,12 +51,6 @@ const taskSchema = new mongoose.Schema(
     attachment: {
       type: String,
       trim: true,
-      validate: {
-        validator: function (v) {
-          return /^https?:\/\/.+/.test(v);
-        },
-        message: (props) => `${props.value} is not a valid URL!`,
-      },
     },
   },
   {
