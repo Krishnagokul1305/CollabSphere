@@ -3,13 +3,8 @@
 **CollabSphere** is a full-stack project management platform built for teams to collaborate efficiently. Users can create projects, invite teammates, assign tasks, manage to-do lists, and receive basic notifications—all within a clean and intuitive UI.
 
 ---
-
-## 📸 Screenshots
-
 \
 ![Dashboard](./public/ss3.png)
-![View 1](./public/ss2.png)
-![View 2](./public/ss1.png)
 ---
 
 ## ✨ Features
