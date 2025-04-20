@@ -33,13 +33,6 @@
 
 ---
 
-## 🚀 Live Demo
-
-🌐 **Live Site:** [placeholder]\
-📂 **GitHub Repo:** [placeholder]
-
----
-
 ## ⚖️ Installation
 
 To run this project locally:
