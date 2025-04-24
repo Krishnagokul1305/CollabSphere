@@ -4,7 +4,7 @@ import { SiteHeader } from "@/components/site-header";
 import QueryProvider from "@/components/query-provider";
 
 export const metadata = {
-  title: "CollabSphere|Dashboard",
+  title: "CollabSphere",
   description: "A project management tool for teams",
 };
 
