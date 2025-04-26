@@ -348,7 +348,7 @@ export async function getUserNotifications(userId) {
 export async function getUserByEmail(email) {
   try {
     await dbConnect();
-    const user = await userModel.findOne({ email });
+    const user = await userModel.findOne({ email }).select("-_id").lean();
     return user;
   } catch (error) {
     console.error("Error fetching user by email:", error);

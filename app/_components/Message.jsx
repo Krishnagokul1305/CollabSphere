@@ -1,39 +1,43 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
+import { User } from "lucide-react";
 
-export function Message({ message, time, isSender, name, avatar }) {
+export function Message({ message, avatar, userName }) {
   return (
     <div
-      className={clsx("flex gap-3 items-start", { "justify-end": isSender })}
+      className={cn(
+        "flex gap-3 max-w-[80%]",
+        message.isMe ? "ml-auto flex-row-reverse" : ""
+      )}
     >
-      {!isSender && (
-        <Avatar>
-          <AvatarImage src={avatar} />
-          <AvatarFallback>{name[0]}</AvatarFallback>
+      {!message.isMe && (
+        <Avatar className="h-8 w-8">
+          <AvatarImage src={avatar || "/placeholder.svg"} alt={userName} />
+          <AvatarFallback>
+            <User className="h-4 w-4" />
+          </AvatarFallback>
         </Avatar>
       )}
-
-      <div className={clsx("md:max-w-[75%]", { "text-right": isSender })}>
-        <div className="flex items-center gap-2 mb-2">
-          <p className="text-sm font-semibold">{name}</p>
-          <p className="text-xs text-muted-foreground">{time}</p>
-        </div>
-        <p
-          className={clsx("rounded-lg p-2 text-sm", {
-            "bg-primary text-primary-foreground": isSender,
-            "bg-muted": !isSender,
-          })}
+      <div>
+        <div
+          className={cn(
+            "rounded-lg p-3",
+            message.isMe
+              ? "bg-blue-500 text-white"
+              : "bg-gray-100 text-gray-800"
+          )}
         >
-          {message}
-        </p>
+          <p className="text-sm">{message.text}</p>
+        </div>
+        <div
+          className={cn(
+            "flex items-center mt-1 text-xs text-gray-500",
+            message.isMe ? "justify-end" : ""
+          )}
+        >
+          <span>{message.time}</span>
+        </div>
       </div>
-
-      {isSender && (
-        <Avatar>
-          <AvatarImage src={avatar} />
-          <AvatarFallback>{name[0]}</AvatarFallback>
-        </Avatar>
-      )}
     </div>
   );
 }

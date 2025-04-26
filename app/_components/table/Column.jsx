@@ -74,6 +74,11 @@ export function createColumn(columnsConfig, actionItems = [], options = {}) {
             enableHiding: false,
             cell: ({ row }) => {
               const rowData = row.original;
+              const resolvedActionItems =
+                typeof actionItems === "function"
+                  ? actionItems(rowData)
+                  : actionItems;
+
               return (
                 <ReusableDropdown
                   trigger={
@@ -83,7 +88,7 @@ export function createColumn(columnsConfig, actionItems = [], options = {}) {
                     </Button>
                   }
                   label="Actions"
-                  items={actionItems.map((item) => ({
+                  items={resolvedActionItems.map((item) => ({
                     label: item.label,
                     onClick: () => item.action(rowData),
                     separator: item.separator || false,

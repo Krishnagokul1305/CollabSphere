@@ -14,7 +14,6 @@ import { createColumn } from "./Column";
 import DataTableHeader from "./TableHeader";
 import DataTableBody from "./TableBody";
 import TablePagination from "./TablePagination";
-import BulkActions from "./BulkActions";
 
 export default function DataTable({
   columnCofig,

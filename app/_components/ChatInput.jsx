@@ -1,43 +1,25 @@
 "use client";
-import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Send, X } from "lucide-react";
+import { Send, Smile, X } from "lucide-react";
 
-export default function ChatInput({ onSendMessage }) {
-  const [message, setMessage] = useState("");
-
-  const handleSend = () => {
-    if (!message.trim()) return;
-    onSendMessage(message);
-    setMessage(""); // Clear input
-  };
-
+export default function ChatInput() {
   return (
-    <div className="flex items-center gap-2 px-3 py-2 mx-auto max-w-6xl bg-sidebar rounded-lg w-full">
-      <Input
-        type="text"
-        placeholder="Write a message..."
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        className="bg-transparent text-white placeholder-gray-400 border-none focus:ring-0 focus:outline-none w-full"
-      />
-      {message && (
-        <Button
-          className="rounded-md bg-red-500 p-5 hover:bg-red-400"
-          size="icon"
-          onClick={() => setMessage("")}
-        >
-          <X className="h-5 w-5 text-gray-200" />
+    <div className="p-4 border-gray-200">
+      <div className="flex items-center gap-2">
+        <div className="relative flex-1">
+          <Input placeholder="Message..." className="p-5 pr-10 rounded-md" />
+          <Button
+            size="icon"
+            className="absolute bg-transparent right-0 top-0 h-full"
+          >
+            <Smile className="h-10 w-10 text-gray-500" />
+          </Button>
+        </div>
+        <Button size="icon" className="rounded-md p-5">
+          <Send className="h-5 w-5" />
         </Button>
-      )}
-      <Button
-        className="rounded-md bg-sidebar-primary p-5 hover:bg-sidebar-primary/90"
-        size="icon"
-        onClick={handleSend}
-      >
-        <Send className="h-5 w-5 text-gray-200" />
-      </Button>
+      </div>
     </div>
   );
 }

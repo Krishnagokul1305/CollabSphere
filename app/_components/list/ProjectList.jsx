@@ -77,26 +77,35 @@ function ProjectList({ data, count }) {
             },
           },
         ]}
-        actionItems={[
-          {
-            label: "View",
-            action: (data) => router.push(`/projects/${data._id}`),
-          },
-          {
-            label: "Update",
-            action: (data) => {
-              setInitialData(data);
-              modalRef.current?.open();
+        actionItems={(rowData) => {
+          const items = [
+            {
+              label: "View",
+              action: (data) => router.push(`/projects/${data._id}`),
             },
-          },
-          {
-            label: "Delete",
-            action: (data) => {
-              setSelectedProject(data);
-              deleteModalRef.current?.open();
-            },
-          },
-        ]}
+          ];
+
+          if (rowData.isOwnerofProject) {
+            items.push(
+              {
+                label: "Update",
+                action: (data) => {
+                  setInitialData(data);
+                  modalRef.current?.open();
+                },
+              },
+              {
+                label: "Delete",
+                action: (data) => {
+                  setSelectedProject(data);
+                  deleteModalRef.current?.open();
+                },
+              }
+            );
+          }
+
+          return items;
+        }}
         data={data}
         count={count}
       />

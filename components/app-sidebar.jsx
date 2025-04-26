@@ -23,14 +23,9 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import Image from "next/image";
+import { ChatBubbleIcon } from "@radix-ui/react-icons";
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Dashboard",
@@ -43,11 +38,11 @@ const data = {
       url: "/projects",
       icon: Bot,
     },
-    // {
-    //   title: "Files",
-    //   url: "/files",
-    //   icon: File,
-    // },
+    {
+      title: "Chat",
+      url: "/chat",
+      icon: ChatBubbleIcon,
+    },
     {
       title: "Todo",
       url: "/todo",
