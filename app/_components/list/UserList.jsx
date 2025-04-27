@@ -7,6 +7,7 @@ import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 
 const MOCK_USERS = [
   {
@@ -56,7 +57,7 @@ const MOCK_USERS = [
   },
 ];
 
-export default function UserList({ onSelectUser }) {
+export default function UserList() {
   const [users, setUsers] = useState(MOCK_USERS);
 
   return (
@@ -68,10 +69,10 @@ export default function UserList({ onSelectUser }) {
 
       <div className="flex-1 overflow-auto">
         {users.map((user) => (
-          <div
+          <Link
+            href={"/chat/44324"}
             key={user.id}
             className="flex items-center gap-3 p-4 cursor-pointer border-b hover:bg-border/30"
-            onClick={() => onSelectUser(user.id)}
           >
             <div className="relative">
               <Avatar className="h-11 w-11">
@@ -111,7 +112,7 @@ export default function UserList({ onSelectUser }) {
                 {user.unread}
               </Badge>
             )}
-          </div>
+          </Link>
         ))}
       </div>
     </div>

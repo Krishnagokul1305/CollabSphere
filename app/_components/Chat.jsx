@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import ChatInput from "./ChatInput";
 import { socket } from "../lib/socket";
 import { Message } from "./Message";
-import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { useParams } from "next/navigation";
+import EmptyList from "./EmptyList";
 
 export default function Chat() {
   const [messages, setMessages] = useState([
@@ -53,9 +53,18 @@ export default function Chat() {
     },
   ]);
 
+  const params = useParams();
+
   useEffect(() => {
     socket.on("receiveMessage", (newMessage) => {
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      const formattedMessage = {
+        id: newMessage.id,
+        sender: newMessage.sender,
+        text: newMessage.text,
+        time: newMessage.time,
+        isMe: false,
+      };
+      setMessages((prev) => [...prev, formattedMessage]);
     });
 
     return () => {
@@ -63,17 +72,39 @@ export default function Chat() {
     };
   }, []);
 
-  const sendMessage = (newMessage) => {
-    const formattedMessage = {
-      message: newMessage,
-      time: "Now",
-      isSender: true,
-      name: "You",
-      avatar: "/receiver-avatar.png",
+  const sendMessage = (text) => {
+    const newMessage = {
+      id: Date.now().toString(),
+      sender: "me",
+      text,
+      time: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      isMe: true,
     };
-    setMessages((prev) => [...prev, formattedMessage]);
-    socket.emit("sendMessage", formattedMessage);
+
+    setMessages((prev) => [...prev, newMessage]);
+
+    // Emit to server
+    socket.emit("sendMessage", {
+      id: newMessage.id,
+      sender: params.id,
+      text: newMessage.text,
+      time: newMessage.time,
+    });
   };
+
+  if (!params?.id) {
+    return (
+      <div className="flex flex-1 min-h-screen">
+        <EmptyList
+          title="Explore Messages"
+          message={"Go and explore messages that you received"}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full mx-auto bg-sidebar h-screen flex flex-col justify-between rounded-lg">
@@ -88,7 +119,7 @@ export default function Chat() {
         ))}
       </div>
       <div className="border-t">
-        <ChatInput />
+        <ChatInput onSendMessage={sendMessage} />
       </div>
     </div>
   );
