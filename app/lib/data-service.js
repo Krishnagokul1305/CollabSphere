@@ -6,7 +6,8 @@ import "./models/user.model";
 import userModel from "./models/user.model";
 import { authOptions } from "./auth";
 import taskModel from "./models/task.model";
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
+import messageModel from "./models/message.model";
 
 export async function getTodos() {
   await dbConnect();
@@ -614,3 +615,111 @@ export const getTaskStatsPerDay = async (userId) => {
 
   return stats;
 };
+
+export const getAllProjectsWithDetails = async (search = "") => {
+  try {
+    await dbConnect();
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      throw new Error("Unauthorized");
+    }
+
+    const userId = session.user.id;
+
+    const baseCondition = {
+      $or: [
+        { owner: userId },
+        {
+          members: {
+            $elemMatch: {
+              user: userId,
+              status: { $nin: ["pending", "rejected"] },
+            },
+          },
+        },
+      ],
+    };
+
+    const filterConditions = [];
+
+    if (search) {
+      filterConditions.push({
+        name: { $regex: search, $options: "i" },
+      });
+    }
+
+    const finalQuery =
+      filterConditions.length > 0
+        ? { $and: [baseCondition, ...filterConditions] }
+        : baseCondition;
+
+    const projects = await projectModel
+      .find(finalQuery)
+      .select("name owner createdAt updatedAt members") // include members
+      .lean();
+
+    const projectsWithDetails = await Promise.all(
+      projects.map(async (project) => {
+        const latestMessage = await messageModel
+          .findOne({ projectId: project._id })
+          .sort({ createdAt: -1 })
+          .lean();
+
+        return {
+          ...project,
+          _id: project._id.toString(),
+          isOwnerofProject: project.owner.toString() === userId,
+          owner: project.owner.toString(),
+          createdAt: project.createdAt.toISOString(),
+          updatedAt: project.updatedAt.toISOString(),
+          latestMessage: latestMessage
+            ? {
+                text: latestMessage.text,
+                createdAt: latestMessage.createdAt.toISOString(),
+                sender: latestMessage.sender.toString(),
+              }
+            : null,
+          membersCount: project.members.length,
+        };
+      })
+    );
+
+    return projectsWithDetails;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export async function getMessagesByProjectId(projectId) {
+  try {
+    await dbConnect();
+    const messages = await messageModel
+      .find({ project: new mongoose.Types.ObjectId(projectId) })
+      .sort({ createdAt: 1 })
+      .populate({
+        path: "sender",
+        select: "name email avatar",
+      })
+      .lean();
+
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      throw new Error("Unauthorized");
+    }
+    const userId = session.user.id;
+
+    return messages.map((msg) => ({
+      id: msg._id.toString(),
+      sender: { ...msg.sender, _id: msg.sender?._id?.toString() },
+      text: msg.content,
+      isMe: msg.sender._id.toString() === userId,
+      createdAt: msg.createdAt.toISOString(),
+      time: msg.createdAt.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    }));
+  } catch (error) {
+    throw error;
+  }
+}

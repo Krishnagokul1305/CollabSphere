@@ -1,10 +1,12 @@
-import UserList from "@/app/_components/list/UserList";
+import ConversationList from "@/app/_components/chat/ConversationList";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Suspense } from "react";
 
 function page() {
   return (
-    <div className="space-y-5">
-      <UserList />
-    </div>
+    <Suspense fallback={<Skeleton className={"min-h-[40vh] w-full p-5"} />}>
+      <ConversationList />
+    </Suspense>
   );
 }
 

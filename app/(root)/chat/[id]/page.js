@@ -1,9 +1,12 @@
-import Chat from "@/app/_components/Chat";
+import ChatArea from "@/app/_components/chat/Chat";
+import { getMessagesByProjectId } from "@/app/lib/data-service";
 
-function page() {
+async function page({ params }) {
+  const { id } = await params;
+  const data = await getMessagesByProjectId(id);
   return (
     <div>
-      <Chat />
+      <ChatArea projectId={id} messages={data} />
     </div>
   );
 }

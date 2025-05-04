@@ -12,13 +12,32 @@ nextApp.prepare().then(() => {
     handle(req, res);
   });
 
-  const io = new Server(httpServer);
+  const io = new Server(httpServer, {
+    cors: {
+      origin: "*", // adjust this in production
+      methods: ["GET", "POST"],
+    },
+  });
 
   io.on("connection", (socket) => {
     console.log("✅ User connected:", socket.id);
 
-    socket.on("sendMessage", (message) => {
-      io.emit("receiveMessage", message);
+    socket.on("joinRoom", ({ projectId }) => {
+      socket.join(projectId);
+      console.log(`🟢 User ${socket.id} joined room ${projectId}`);
+    });
+
+    socket.on("sendMessage", ({ projectId, message }) => {
+      io.to(projectId).emit("receiveMessage", message);
+      console.log(`📤 Message sent to room ${projectId}`);
+    });
+
+    socket.on("userTyping", ({ projectId, user }) => {
+      socket.to(projectId).emit("userTyping", { user });
+    });
+
+    socket.on("userStoppedTyping", ({ projectId, user }) => {
+      socket.to(projectId).emit("userStoppedTyping", { user });
     });
 
     socket.on("disconnect", () => {
