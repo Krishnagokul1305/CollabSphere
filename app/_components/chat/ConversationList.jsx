@@ -8,8 +8,9 @@ import { formatDateTime } from "@/app/utils/helper";
 import Link from "next/link";
 
 export default async function ConversationList() {
-  const data = await getAllProjectsWithDetails();
-  console.log(data)
+  // const data = await getAllProjectsWithDetails();
+  const data = [];
+  console.log(data);
   return (
     <div className="flex flex-col h-full">
       <div className="p-4 border-b dark:border-gray-700">
