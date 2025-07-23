@@ -2,22 +2,23 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Search } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { getAllProjectsWithDetails } from "@/app/lib/data-service";
 import { formatDateTime } from "@/app/utils/helper";
 import Link from "next/link";
+import ConversationLayout from "./ConversationLayout";
+import { cn } from "@/lib/utils";
 
 export default async function ConversationList() {
-  // const data = await getAllProjectsWithDetails();
-  const data = [];
-  console.log(data);
+  const data = await getAllProjectsWithDetails();
+  // const data = [];
+  // console.log(data);
   return (
-    <div className="flex flex-col h-full">
+    <ConversationLayout>
       <div className="p-4 border-b dark:border-gray-700">
         <h2 className="text-xl font-semibold">Chat</h2>
       </div>
 
-      <div className="p-4">
+      <div className="pt-4 px-2">
         <div className="relative">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
           <Input
@@ -27,7 +28,7 @@ export default async function ConversationList() {
           />
         </div>
       </div>
-      <ScrollArea className="flex-1 px-3">
+      <ScrollArea className="flex-1 px-2">
         <div className="space-y-2 py-2">
           {data?.length > 0 ? (
             data?.map((conversation) => (
@@ -68,6 +69,6 @@ export default async function ConversationList() {
           )}
         </div>
       </ScrollArea>
-    </div>
+    </ConversationLayout>
   );
 }
