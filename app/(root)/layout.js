@@ -10,7 +10,10 @@ export const metadata = {
 
 function layout({ children }) {
   return (
-    <div className="[--header-height:calc(theme(spacing.14))] w-full relative">
+    <div
+      className="[--header-height:calc(theme(spacing.14))] w-full relative"
+      suppressHydrationWarning
+    >
       <QueryProvider>
         <SidebarProvider className="flex flex-col h-screen">
           <SiteHeader />

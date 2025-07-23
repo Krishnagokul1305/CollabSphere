@@ -28,5 +28,7 @@ export async function middleware(req) {
 }
 
 export const config = {
-  matcher: "/:path*", // Applies middleware to all routes
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+  ],
 };
