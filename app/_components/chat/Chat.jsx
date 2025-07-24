@@ -17,13 +17,17 @@ import socket from "@/app/lib/socket";
 export default function ChatArea({ projectId, messages = [], userId }) {
   const [chatMessages, setChatMessages] = useState(messages);
   const scrollRef = useRef(null);
-  const socketRef = useRef(null);
 
   useEffect(() => {
+    socket.connect();
     socket.emit("join-room", { userId, projectId });
 
     socket.on("message", (msg) => {
-      setChatMessages((prev) => [...prev, msg]);
+      console.log(msg, userId);
+      setChatMessages((prev) => [
+        ...prev,
+        { ...msg, isMe: msg?.sender == userId },
+      ]);
       scrollRef.current?.scrollIntoView({ behavior: "smooth" });
     });
 
@@ -34,7 +38,7 @@ export default function ChatArea({ projectId, messages = [], userId }) {
 
   const handleSendMessage = (msg) => {
     setChatMessages((prev) => [...prev, msg]);
-    socketRef.current?.emit("message", msg);
+    socket.emit("message", msg);
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 

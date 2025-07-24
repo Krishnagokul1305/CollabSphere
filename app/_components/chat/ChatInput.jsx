@@ -10,12 +10,13 @@ export default function ChatInput({ projectId, userId, onSend }) {
   const [message, setMessage] = useState("");
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async () =>
-      await createMessage({
+    mutationFn: async () => {
+      return await createMessage({
         project: projectId,
         content: message,
         sender: userId,
-      }),
+      });
+    },
     onSuccess: (newMessage) => {
       onSend?.(newMessage);
       setMessage(""); // clear input after sending

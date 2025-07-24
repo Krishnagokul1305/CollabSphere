@@ -2,16 +2,14 @@
 const { createServer } = require("http");
 const next = require("next");
 const { Server } = require("socket.io");
-const dotenv = require("dotenv");
 const mongoose = require("mongoose");
-dotenv.config();
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(process.env.MONGODB_URI)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB error:", err));
 
@@ -28,8 +26,6 @@ app.prepare().then(() => {
   });
 
   io.on("connection", (socket) => {
-    console.log("Socket connected:", socket.id);
-
     socket.on("join-room", ({ userId, projectId }) => {
       socket.join(projectId);
       socket.to(projectId).emit("user_joined", { userId });
