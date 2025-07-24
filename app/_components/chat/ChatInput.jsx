@@ -1,32 +1,24 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { createMessage } from "@/app/lib/actions/messageAction";
 import { Send } from "lucide-react";
-import { socket } from "@/app/lib/socket";
 
-export default function ChatInput({ projectId }) {
+export default function ChatInput({ projectId, userId, onSend }) {
   const [message, setMessage] = useState("");
-
-  const typingTimeoutRef = useRef(null);
-
-  useEffect(() => {
-    return () => {
-      // Clear any pending timeouts when component unmounts
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
-      }
-    };
-  }, []);
 
   const { mutate, isPending } = useMutation({
     mutationFn: async () =>
-      await createMessage({ project: projectId, content: message }),
+      await createMessage({
+        project: projectId,
+        content: message,
+        sender: userId,
+      }),
     onSuccess: (newMessage) => {
-      socket.emit("newMessage", { projectId, message: newMessage });
-      setMessage("");
+      onSend?.(newMessage);
+      setMessage(""); // clear input after sending
     },
   });
 
@@ -44,22 +36,7 @@ export default function ChatInput({ projectId }) {
             disabled={isPending}
             placeholder="Message..."
             value={message}
-            onChange={(e) => {
-              setMessage(e.target.value);
-
-              // Emit typing event
-              socket.emit("userTyping", { projectId, user: "me" });
-
-              // Clear previous timeout
-              if (typingTimeoutRef.current) {
-                clearTimeout(typingTimeoutRef.current);
-              }
-
-              // Set new timeout to stop typing indicator after 2 seconds
-              typingTimeoutRef.current = setTimeout(() => {
-                socket.emit("userStoppedTyping", { projectId, user: "me" });
-              }, 2000);
-            }}
+            onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
             className="p-5 pr-10 rounded-md"
           />

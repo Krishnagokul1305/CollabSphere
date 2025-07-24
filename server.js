@@ -1,51 +1,51 @@
-const { createServer } = require("node:http");
-const { Server } = require("socket.io");
+// server.js
+const { createServer } = require("http");
 const next = require("next");
+const { Server } = require("socket.io");
+const dotenv = require("dotenv");
+const mongoose = require("mongoose");
+dotenv.config();
 
 const dev = process.env.NODE_ENV !== "production";
-const port = 3000;
-const nextApp = next({ dev });
-const handle = nextApp.getRequestHandler();
+const app = next({ dev });
+const handle = app.getRequestHandler();
 
-nextApp.prepare().then(() => {
-  const httpServer = createServer((req, res) => {
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB error:", err));
+
+app.prepare().then(() => {
+  const server = createServer((req, res) => {
     handle(req, res);
   });
 
-  const io = new Server(httpServer, {
+  const io = new Server(server, {
+    path: "/api/socket_io",
     cors: {
-      origin: "*", // adjust this in production
-      methods: ["GET", "POST"],
+      origin: "*",
     },
   });
 
   io.on("connection", (socket) => {
-    console.log("✅ User connected:", socket.id);
+    console.log("Socket connected:", socket.id);
 
-    socket.on("joinRoom", ({ projectId }) => {
+    socket.on("join-room", ({ userId, projectId }) => {
       socket.join(projectId);
-      console.log(`🟢 User ${socket.id} joined room ${projectId}`);
+      socket.to(projectId).emit("user_joined", { userId });
     });
 
-    socket.on("sendMessage", ({ projectId, message }) => {
-      io.to(projectId).emit("receiveMessage", message);
-      console.log(`📤 Message sent to room ${projectId}`);
-    });
-
-    socket.on("userTyping", ({ projectId, user }) => {
-      socket.to(projectId).emit("userTyping", { user });
-    });
-
-    socket.on("userStoppedTyping", ({ projectId, user }) => {
-      socket.to(projectId).emit("userStoppedTyping", { user });
+    socket.on("message", (msg) => {
+      io.to(msg.projectId).emit("message", msg);
     });
 
     socket.on("disconnect", () => {
-      console.log("❌ User disconnected:", socket.id);
+      console.log("Socket disconnected:", socket.id);
     });
   });
 
-  httpServer.listen(port, () => {
-    console.log(`🚀 Server running at http://localhost:${port}`);
+  const PORT = process.env.PORT || 3000;
+  server.listen(PORT, () => {
+    console.log(`> Server listening at http://localhost:${PORT}`);
   });
 });
