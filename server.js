@@ -29,6 +29,10 @@ app.prepare().then(() => {
       io.to(msg.projectId).emit("message", msg);
     });
 
+    socket.on("delete-message", ({ messageId, projectId }) => {
+      io.to(projectId).emit("message-deleted", { messageId });
+    });
+
     socket.on("disconnect", () => {
       console.log("Socket disconnected:", socket.id);
     });

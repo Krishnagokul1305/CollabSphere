@@ -78,7 +78,6 @@ export default function CreateUpdateTask({
   async function onSubmit(values) {
     try {
       const formData = new FormData();
-      console.log(values);
       formData.append("title", values.title);
       formData.append("description", values.description);
       formData.append("dueDate", values.dueDate.toISOString());

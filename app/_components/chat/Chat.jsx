@@ -13,6 +13,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import socket from "@/app/lib/socket";
+import TypingIndicator from "./TypingIndicator";
 
 export default function ChatArea({ projectId, messages = [], user }) {
   const [chatMessages, setChatMessages] = useState(messages);
@@ -28,7 +29,6 @@ export default function ChatArea({ projectId, messages = [], user }) {
         ...prev,
         { ...msg, isMe: msg?.sender?.id == userId },
       ]);
-      // Small delay to ensure message is rendered before scrolling
       setTimeout(() => {
         scrollRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 100);
@@ -73,6 +73,7 @@ export default function ChatArea({ projectId, messages = [], user }) {
             {chatMessages.map((message, i) => (
               <Message key={i} message={message} />
             ))}
+            <TypingIndicator />
             <div ref={scrollRef} />
           </div>
         </ScrollArea>

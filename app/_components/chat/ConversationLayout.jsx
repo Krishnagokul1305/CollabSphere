@@ -9,10 +9,10 @@ function ConversationLayout({ children }) {
   return (
     <div
       className={cn(
-        "hidden flex-col justify-center items-center h-screen min-h-screen w-96 md:border-r border-muted",
+        "hidden flex-col justify-center items-center h-screen min-h-screen w-full lg:w-96 md:border-r border-border",
         {
           block: !isActive,
-          "lg:block": isActive,
+          "md:block": isActive,
         }
       )}
     >

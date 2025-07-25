@@ -663,6 +663,10 @@ export const getAllProjectsWithDetails = async (search = "") => {
         const latestMessage = await messageModel
           .findOne({ project: project._id })
           .sort({ createdAt: -1 })
+          .populate({
+            path: "sender",
+            select: "name -_id",
+          })
           .lean();
 
         return {
@@ -674,9 +678,9 @@ export const getAllProjectsWithDetails = async (search = "") => {
           updatedAt: project.updatedAt.toISOString(),
           latestMessage: latestMessage
             ? {
-                text: latestMessage.text,
+                text: latestMessage.content,
                 createdAt: latestMessage.createdAt.toISOString(),
-                sender: latestMessage.sender.toString(),
+                sender: latestMessage.sender,
               }
             : null,
           membersCount: project.members.length,

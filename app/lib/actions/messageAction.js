@@ -31,3 +31,22 @@ export async function createMessage({ project, content }) {
     projectId: msg.project.toString(),
   };
 }
+
+export async function deleteMessage(message) {
+  await dbConnect();
+
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    throw new Error("Unauthorized");
+  }
+
+  const userId = session?.user?.id;
+
+  if (message.sender.senderId !== userId) {
+    throw new Error("You can only delete your own messages");
+  }
+
+  await messageModel.findByIdAndDelete(message.id);
+
+  return { success: true, message: "Message deleted successfully" };
+}
