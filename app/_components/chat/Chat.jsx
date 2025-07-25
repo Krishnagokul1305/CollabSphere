@@ -14,21 +14,24 @@ import {
 } from "@/components/ui/breadcrumb";
 import socket from "@/app/lib/socket";
 
-export default function ChatArea({ projectId, messages = [], userId }) {
+export default function ChatArea({ projectId, messages = [], user }) {
   const [chatMessages, setChatMessages] = useState(messages);
   const scrollRef = useRef(null);
+  const userId = user.id;
 
   useEffect(() => {
     socket.connect();
     socket.emit("join-room", { userId, projectId });
 
     socket.on("message", (msg) => {
-      console.log(msg, userId);
       setChatMessages((prev) => [
         ...prev,
-        { ...msg, isMe: msg?.sender == userId },
+        { ...msg, isMe: msg?.sender?.id == userId },
       ]);
-      scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+      // Small delay to ensure message is rendered before scrolling
+      setTimeout(() => {
+        scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
     });
 
     return () => {
@@ -36,17 +39,19 @@ export default function ChatArea({ projectId, messages = [], userId }) {
     };
   }, [projectId, userId]);
 
-  const handleSendMessage = (msg) => {
-    setChatMessages((prev) => [...prev, msg]);
-    socket.emit("message", msg);
+  useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatMessages]);
+
+  const handleSendMessage = (msg) => {
+    socket.emit("message", msg);
   };
 
   if (!projectId) return <EmptyChat />;
 
   return (
-    <div className="flex flex-col flex-1 min-h-[90vh] overflow-hidden">
-      <header className="flex items-center justify-between p-5 border-b">
+    <div className="flex flex-col bg-sidebar h-screen max-h-screen overflow-hidden">
+      <header className="flex-shrink-0 flex items-center justify-between p-5 border-b">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -55,27 +60,32 @@ export default function ChatArea({ projectId, messages = [], userId }) {
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink href={`/chat/${projectId}`}>
-                Project {projectId}
+                Project
               </BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </header>
 
-      <ScrollArea className="flex-1 p-4">
-        <div className="space-y-4">
-          {chatMessages.map((message) => (
-            <Message key={message?._id || message?.id} message={message} />
-          ))}
-          <div ref={scrollRef} />
-        </div>
-      </ScrollArea>
+      <div className="flex-1 overflow-hidden">
+        <ScrollArea className="h-full">
+          <div className="p-4 space-y-4">
+            {chatMessages.map((message, i) => (
+              <Message key={i} message={message} />
+            ))}
+            <div ref={scrollRef} />
+          </div>
+        </ScrollArea>
+      </div>
 
-      <ChatInput
-        projectId={projectId}
-        userId={userId}
-        onSend={handleSendMessage}
-      />
+      {/* Fixed Chat Input */}
+      <div className="flex-shrink-0 border-t">
+        <ChatInput
+          projectId={projectId}
+          user={user}
+          onSend={handleSendMessage}
+        />
+      </div>
     </div>
   );
 }

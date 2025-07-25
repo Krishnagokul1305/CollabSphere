@@ -5,10 +5,11 @@ import { cn } from "@/lib/utils";
 
 function ConversationLayout({ children }) {
   const { isActive } = useChat();
+
   return (
     <div
       className={cn(
-        "hidden flex-col justify-center items-center h-full w-96 md:border-r border-muted",
+        "hidden flex-col justify-center items-center h-screen min-h-screen w-96 md:border-r border-muted",
         {
           block: !isActive,
           "lg:block": isActive,

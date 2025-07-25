@@ -15,8 +15,12 @@ export default function Message({ message }) {
           </AvatarFallback>
         </Avatar>
       )}
-
       <div className={cn("max-w-[75%]", message?.isMe && "order-1")}>
+        {!message?.isMe && (
+          <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1 px-1">
+            {message?.sender?.name || "Unknown User"}
+          </p>
+        )}
         <div
           className={cn(
             "rounded-lg p-3",
@@ -27,7 +31,7 @@ export default function Message({ message }) {
         >
           <p className="text-sm">{message?.text}</p>
         </div>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 px-1">
           {message?.time}
         </p>
       </div>

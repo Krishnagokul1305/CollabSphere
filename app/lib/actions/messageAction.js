@@ -19,10 +19,9 @@ export async function createMessage({ project, content }) {
     sender,
     content,
   });
-  console.log(msg);
   return {
     id: msg._id.toString(),
-    sender: msg.sender?._id?.toString(),
+    sender: { senderId: msg.sender?._id?.toString() },
     text: msg.content,
     createdAt: msg.createdAt.toISOString(),
     time: msg.createdAt.toLocaleTimeString([], {

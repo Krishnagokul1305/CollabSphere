@@ -655,13 +655,13 @@ export const getAllProjectsWithDetails = async (search = "") => {
 
     const projects = await projectModel
       .find(finalQuery)
-      .select("name owner createdAt updatedAt members") // include members
+      .select("name owner createdAt updatedAt members")
       .lean();
 
     const projectsWithDetails = await Promise.all(
       projects.map(async (project) => {
         const latestMessage = await messageModel
-          .findOne({ projectId: project._id })
+          .findOne({ project: project._id })
           .sort({ createdAt: -1 })
           .lean();
 

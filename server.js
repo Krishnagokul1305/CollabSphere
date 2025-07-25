@@ -2,16 +2,10 @@
 const { createServer } = require("http");
 const next = require("next");
 const { Server } = require("socket.io");
-const mongoose = require("mongoose");
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
 const handle = app.getRequestHandler();
-
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error("MongoDB error:", err));
 
 app.prepare().then(() => {
   const server = createServer((req, res) => {

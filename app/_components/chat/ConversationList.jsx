@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 export default async function ConversationList() {
   const data = await getAllProjectsWithDetails();
   // const data = [];
-  // console.log(data);
+  console.log(data);
   return (
     <ConversationLayout>
       <div className="p-4 border-b dark:border-gray-700">
