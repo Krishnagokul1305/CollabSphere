@@ -73,7 +73,7 @@ export default function ChatArea({ projectId, messages = [], user }) {
             {chatMessages.map((message, i) => (
               <Message key={i} message={message} />
             ))}
-            <TypingIndicator />
+            {/* <TypingIndicator /> */}
             <div ref={scrollRef} />
           </div>
         </ScrollArea>
