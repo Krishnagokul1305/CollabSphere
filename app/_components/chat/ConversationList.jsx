@@ -12,12 +12,10 @@ export default async function ConversationList() {
 
   return (
     <ConversationLayout>
-      {/* Header */}
       <div className="flex-shrink-0 p-4 border-b border-border">
         <h2 className="text-xl font-semibold text-foreground">Chats</h2>
       </div>
 
-      {/* Search */}
       <div className="flex-shrink-0 p-4 pb-2">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />

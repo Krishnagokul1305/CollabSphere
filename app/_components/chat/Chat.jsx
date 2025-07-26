@@ -13,14 +13,12 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import socket from "@/app/lib/socket";
-import TypingIndicator from "./TypingIndicator";
 
 export default function ChatArea({ projectId, messages = [], user }) {
   const [chatMessages, setChatMessages] = useState(messages);
   const scrollRef = useRef(null);
   const userId = user.id;
 
-  // ✅ Connect and join room
   useEffect(() => {
     socket.connect();
     socket.emit("join-room", { userId, projectId });
@@ -30,7 +28,6 @@ export default function ChatArea({ projectId, messages = [], user }) {
     };
   }, [projectId, userId]);
 
-  // ✅ Listen for incoming messages
   useEffect(() => {
     const handleMessage = (msg) => {
       setChatMessages((prev) => {
@@ -63,7 +60,6 @@ export default function ChatArea({ projectId, messages = [], user }) {
     };
   }, []);
 
-  // ✅ Scroll on new messages
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages]);
