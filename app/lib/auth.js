@@ -2,6 +2,7 @@ import dbConnect from "@/app/lib/db";
 import userModel from "@/app/lib/models/user.model";
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { sendWelcomeEmail } from "./data-service";
 
 export const authOptions = {
   session: {
@@ -27,6 +28,7 @@ export const authOptions = {
             avatar: token.picture,
             role: "user",
           });
+          await sendWelcomeEmail(existingUser);
         }
 
         token.user = {

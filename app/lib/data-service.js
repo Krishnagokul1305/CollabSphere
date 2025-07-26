@@ -304,10 +304,10 @@ export async function getProjectUsers(projectId, onlyAccepted = false) {
         .filter((member) => !onlyAccepted || member.status === "active")
         .map((member) => ({
           ...member,
-          _id: member._id.toString(),
+          _id: member?._id?.toString(),
           user: {
             ...member.user,
-            _id: member.user._id.toString(),
+            _id: member?.user?._id?.toString(),
           },
         })),
     };
@@ -724,6 +724,37 @@ export async function getMessagesByProjectId(projectId) {
         minute: "2-digit",
       }),
     }));
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function sendProjectInvitation(project, userEmail) {
+  try {
+    await fetch(
+      `${process.env.NEXTAUTH_URL}/api/email/send-project-invitation`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ project, to: userEmail }),
+      }
+    );
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function sendWelcomeEmail(user) {
+  try {
+    await fetch(`${process.env.NEXTAUTH_URL}/api/email/send-welcome`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ user }),
+    });
   } catch (error) {
     throw error;
   }

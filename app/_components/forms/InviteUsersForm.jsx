@@ -45,10 +45,10 @@ export default function InviteUsersForm({ projectId, existingMembers }) {
     loadMembers();
   }, [search]);
 
-  const handleInvite = async (userId) => {
+  const handleInvite = async (userId, email) => {
     setLoadingInviteId(userId);
     try {
-      await inviteMember(projectId, userId);
+      await inviteMember(projectId, userId, email);
       setProjectMembers((prev) => new Set(prev).add(userId));
     } finally {
       setLoadingInviteId(null);
@@ -118,7 +118,7 @@ export default function InviteUsersForm({ projectId, existingMembers }) {
                 <Button
                   size="sm"
                   disabled={loadingInviteId === member._id}
-                  onClick={() => handleInvite(member._id)}
+                  onClick={() => handleInvite(member._id, member?.email)}
                 >
                   {loadingInviteId === member._id ? "Inviting..." : "Invite"}
                 </Button>

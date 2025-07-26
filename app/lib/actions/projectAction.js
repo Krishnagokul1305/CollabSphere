@@ -6,6 +6,7 @@ import { markNotificationAsRead, sendNotification } from "./notificationAction";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
 import mongoose from "mongoose";
+import { sendProjectInvitation } from "../data-service";
 export async function insertProject(project) {
   try {
     const session = await getServerSession(authOptions);
@@ -52,8 +53,16 @@ export async function deleteProject(id) {
   }
 }
 
-export async function inviteMember(projectId, userId, role = "member") {
-  const project = await projectModel.findById(projectId);
+export async function inviteMember(
+  projectId,
+  userId,
+  userEmail,
+  role = "member"
+) {
+  const project = await projectModel.findById(projectId).populate({
+    path: "owner",
+    select: "name email",
+  });
 
   if (!project) {
     throw new Error("Project not found");
@@ -70,6 +79,8 @@ export async function inviteMember(projectId, userId, role = "member") {
   await projectModel.findByIdAndUpdate(projectId, {
     $push: { members: { user: userId, role, status: "pending" } },
   });
+
+  await sendProjectInvitation(project, userEmail);
 
   await sendNotification({
     recipient: userId,

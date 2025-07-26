@@ -1,5 +1,8 @@
 import nodemailer from "nodemailer";
-import { generateSendWelcomEmail } from "./HTMLGenerate";
+import {
+  generateSendProjectInvitationEmail,
+  generateSendWelcomEmail,
+} from "./HTMLGenerate";
 
 export class Email {
   constructor(userEmail) {
@@ -32,6 +35,11 @@ export class Email {
   async sendWelcome(username) {
     const html = generateSendWelcomEmail(username, process.env.NEXTAUTH_URL);
     await this.send("Welcome to CollabSphere", html);
+  }
+
+  async sendProjectInvitation(project, link) {
+    const html = generateSendProjectInvitationEmail(project, link);
+    await this.send("Project Invitation", html);
   }
 
   async sendTestEmail() {
