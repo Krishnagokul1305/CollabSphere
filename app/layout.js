@@ -13,6 +13,7 @@ export const metadata = {
   title: "CollabSphere",
   description: "A project management tool for teams",
 };
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
