@@ -20,31 +20,60 @@ export default function ChatArea({ projectId, messages = [], user }) {
   const scrollRef = useRef(null);
   const userId = user.id;
 
+  // ✅ Connect and join room
   useEffect(() => {
     socket.connect();
     socket.emit("join-room", { userId, projectId });
-
-    socket.on("message", (msg) => {
-      setChatMessages((prev) => [
-        ...prev,
-        { ...msg, isMe: msg?.sender?.id == userId },
-      ]);
-      setTimeout(() => {
-        scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-    });
 
     return () => {
       socket.disconnect();
     };
   }, [projectId, userId]);
 
+  // ✅ Listen for incoming messages
+  useEffect(() => {
+    const handleMessage = (msg) => {
+      setChatMessages((prev) => {
+        const exists = prev.some((m) => m.id === msg.id);
+        return exists
+          ? prev
+          : [...prev, { ...msg, isMe: msg?.sender?.id == userId }];
+      });
+      setTimeout(() => {
+        scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    };
+
+    socket.on("message", handleMessage);
+
+    return () => {
+      socket.off("message", handleMessage);
+    };
+  }, [userId]);
+
+  useEffect(() => {
+    const handleDelete = ({ messageId }) => {
+      setChatMessages((prev) => prev.filter((msg) => msg.id !== messageId));
+    };
+
+    socket.on("message-deleted", handleDelete);
+
+    return () => {
+      socket.off("message-deleted", handleDelete);
+    };
+  }, []);
+
+  // ✅ Scroll on new messages
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages]);
 
   const handleSendMessage = (msg) => {
     socket.emit("message", msg);
+  };
+
+  const handleDeleteMessage = (messageId) => {
+    socket.emit("delete-message", { messageId, projectId });
   };
 
   if (!projectId) return <EmptyChat />;
@@ -71,7 +100,11 @@ export default function ChatArea({ projectId, messages = [], user }) {
         <ScrollArea className="h-full">
           <div className="p-4 space-y-4">
             {chatMessages.map((message, i) => (
-              <Message key={i} message={message} />
+              <Message
+                key={i}
+                message={message}
+                onDelete={handleDeleteMessage}
+              />
             ))}
             {/* <TypingIndicator /> */}
             <div ref={scrollRef} />
@@ -79,7 +112,6 @@ export default function ChatArea({ projectId, messages = [], user }) {
         </ScrollArea>
       </div>
 
-      {/* Fixed Chat Input */}
       <div className="flex-shrink-0 border-t">
         <ChatInput
           projectId={projectId}

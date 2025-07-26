@@ -1,15 +1,24 @@
 "use client";
 
+import { deleteMessage } from "@/app/lib/actions/messageAction";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Trash2 } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { Loader2, Trash2 } from "lucide-react";
 
 export default function Message({ message, onDelete }) {
-  const handleDelete = () => {
-    if (onDelete) {
+  const { mutate, isPending } = useMutation({
+    mutationFn: async () => {
+      await deleteMessage(message);
+    },
+    onSuccess: () => {
       onDelete(message.id);
-    }
+    },
+  });
+
+  const handleDelete = () => {
+    mutate();
   };
 
   return (
@@ -36,13 +45,19 @@ export default function Message({ message, onDelete }) {
             variant="ghost"
             size="icon"
             onClick={handleDelete}
+            disabled={isPending}
             className={cn(
               "absolute -left-10 top-0 h-8 w-8 rounded-full bg-destructive/50 hover:bg-destructive/70 text-white hover:text-white transition-all duration-200 z-10",
               "opacity-100",
-              "lg:opacity-0 lg:group-hover:opacity-100"
+              "lg:opacity-0 lg:group-hover:opacity-100",
+              isPending && "cursor-not-allowed opacity-50"
             )}
           >
-            <Trash2 className="h-4 w-4" />
+            {isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Trash2 className="h-4 w-4" />
+            )}
           </Button>
         )}
         {!message?.isMe && (

@@ -676,6 +676,7 @@ export const getAllProjectsWithDetails = async (search = "") => {
           owner: project.owner.toString(),
           createdAt: project.createdAt.toISOString(),
           updatedAt: project.updatedAt.toISOString(),
+          members: null,
           latestMessage: latestMessage
             ? {
                 text: latestMessage.content,
@@ -714,7 +715,7 @@ export async function getMessagesByProjectId(projectId) {
 
     return messages.map((msg) => ({
       id: msg._id.toString(),
-      sender: { ...msg.sender, _id: msg.sender?._id?.toString() },
+      sender: { ...msg.sender, id: msg.sender?._id?.toString(), _id: null },
       text: msg.content,
       isMe: msg.sender._id.toString() === userId,
       createdAt: msg.createdAt.toISOString(),

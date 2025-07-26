@@ -21,7 +21,10 @@ export async function createMessage({ project, content }) {
   });
   return {
     id: msg._id.toString(),
-    sender: { senderId: msg.sender?._id?.toString() },
+    sender: {
+      senderId: msg.sender?._id?.toString(),
+      id: msg.sender?.id.toString(),
+    },
     text: msg.content,
     createdAt: msg.createdAt.toISOString(),
     time: msg.createdAt.toLocaleTimeString([], {
@@ -34,19 +37,14 @@ export async function createMessage({ project, content }) {
 
 export async function deleteMessage(message) {
   await dbConnect();
-
   const session = await getServerSession(authOptions);
   if (!session) {
     throw new Error("Unauthorized");
   }
-
   const userId = session?.user?.id;
-
-  if (message.sender.senderId !== userId) {
+  if (message.sender.id !== userId) {
     throw new Error("You can only delete your own messages");
   }
-
   await messageModel.findByIdAndDelete(message.id);
-
   return { success: true, message: "Message deleted successfully" };
 }
