@@ -20,10 +20,6 @@ export default function ChatArea({ projectId, messages = [], user }) {
   const userId = user.id;
 
   useEffect(() => {
-    fetch("/api/socketio");
-  }, []);
-
-  useEffect(() => {
     socket.connect();
     socket.emit("join-room", { userId, projectId });
 
