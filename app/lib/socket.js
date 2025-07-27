@@ -1,7 +1,8 @@
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:3000", {
-  path: "/api/socket_io",
+const socket = io({
+  path: "/api/socketio",
+  transports: ["polling", "websocket"],
   autoConnect: false,
 });
 
