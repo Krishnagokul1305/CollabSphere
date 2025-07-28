@@ -91,6 +91,8 @@ MONGODB_URI=your_mongodb_connection_string
 # Authentication
 NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=your_nextauth_secret_key
+GOOGLE_CLIENT_ID=google_client_id
+GOOGLE_CLIENT_SECRET=google_client_secret
 
 # AWS S3 Configuration
 AWS_ACCESS_KEY_ID=your_aws_access_key
