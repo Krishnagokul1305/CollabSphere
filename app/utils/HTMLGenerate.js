@@ -417,8 +417,7 @@ export function generateSendWelcomEmail(username, link) {
 }
 
 export function generateSendProjectInvitationEmail(project, link) {
-  return `
-    <!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -434,6 +433,7 @@ export function generateSendProjectInvitationEmail(project, link) {
         table, td {
             mso-table-lspace: 0pt;
             mso-table-rspace: 0pt;
+            border-collapse: collapse;
         }
         img {
             -ms-interpolation-mode: bicubic;
@@ -443,10 +443,10 @@ export function generateSendProjectInvitationEmail(project, link) {
             outline: none;
             text-decoration: none;
         }
-
+        
         /* Base styles */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: Arial, sans-serif;
             line-height: 1.6;
             color: #333333;
             background-color: #f8f9fa;
@@ -455,266 +455,58 @@ export function generateSendProjectInvitationEmail(project, link) {
             width: 100% !important;
             min-width: 100%;
         }
-
+        
+        .email-wrapper {
+            width: 100%;
+            background-color: #f8f9fa;
+            padding: 20px 0;
+        }
+        
         .email-container {
+            width: 600px;
             max-width: 600px;
             margin: 0 auto;
             background-color: #ffffff;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
-
-        .email-header {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            padding: 30px;
-            text-align: center;
-            position: relative;
-        }
-
+        
         .header-icon {
             width: 60px;
             height: 60px;
             background-color: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            text-align: center;
+            line-height: 60px;
             font-size: 24px;
-            backdrop-filter: blur(10px);
         }
-
-        .email-header h1 {
-            color: #ffffff;
-            font-size: 24px;
-            font-weight: 700;
-            margin: 0;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .email-header p {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 16px;
-            margin: 8px 0 0;
-        }
-
-        .email-body {
-            padding: 40px 30px;
-        }
-
-        .invitation-message {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .invitation-message h2 {
-            color: #1f2937;
-            font-size: 22px;
-            font-weight: 600;
-            margin: 0 0 10px;
-        }
-
-        .invitation-message p {
-            color: #6b7280;
-            font-size: 16px;
-            margin: 0;
-        }
-
-        .project-card {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            border-radius: 12px;
-            padding: 25px;
-            margin: 30px 0;
-            border-left: 4px solid #4f46e5;
-            position: relative;
-        }
-
-        .project-status {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status-active {
-            background-color: #dcfce7;
-            color: #166534;
-        }
-
-        .status-inactive {
-            background-color: #fef3c7;
-            color: #92400e;
-        }
-
-        .status-completed {
-            background-color: #dbeafe;
-            color: #1e40af;
-        }
-
-        .project-name {
-            font-size: 20px;
-            font-weight: 700;
-            color: #1f2937;
-            margin: 0 0 12px;
-            padding-right: 80px;
-        }
-
-        .project-description {
-            font-size: 15px;
-            color: #4b5563;
-            line-height: 1.6;
-            margin: 0;
-        }
-
-        .project-owner {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #e5e7eb;
-            font-size: 14px;
-            color: #6b7280;
-        }
-
-        .owner-name {
-            font-weight: 600;
-            color: #4f46e5;
-        }
-
-        .steps-section {
-            background-color: #f9fafb;
-            border-radius: 12px;
-            padding: 25px;
-            margin: 30px 0;
-        }
-
-        .steps-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1f2937;
-            margin: 0 0 20px;
-            text-align: center;
-        }
-
-        .step-item {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 16px;
-            padding: 12px;
-            background-color: #ffffff;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-        }
-
-        .step-number {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            color: #ffffff;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: 700;
-            margin-right: 15px;
-            flex-shrink: 0;
-        }
-
-        .step-content {
-            flex: 1;
-        }
-
-        .step-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #1f2937;
-            margin: 0 0 4px;
-        }
-
-        .step-description {
-            font-size: 14px;
-            color: #6b7280;
-            margin: 0;
-        }
-
-        .cta-section {
-            text-align: center;
-            margin: 35px 0;
-        }
-
+        
         .cta-button {
             display: inline-block;
             background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            background-color: #4f46e5; /* fallback */
             color: #ffffff !important;
             padding: 16px 32px;
             border-radius: 8px;
             text-decoration: none;
             font-weight: 600;
             font-size: 16px;
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
-            transition: all 0.3s ease;
         }
-
-        .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
-        }
-
-        .alternative-action {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #6b7280;
-        }
-
-        .alternative-action a {
-            color: #4f46e5;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .warning-box {
-            background-color: #fef3c7;
-            border: 1px solid #f59e0b;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 25px 0;
-        }
-
-        .warning-box p {
-            margin: 0;
-            font-size: 14px;
-            color: #92400e;
-        }
-
-        .email-footer {
-            background-color: #f9fafb;
-            padding: 25px 30px;
+        
+        .step-number {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            background-color: #4f46e5; /* fallback */
+            color: #ffffff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
             text-align: center;
-            border-top: 1px solid #e5e7eb;
-        }
-
-        .footer-content {
+            line-height: 28px;
             font-size: 14px;
-            color: #6b7280;
-            line-height: 1.6;
+            font-weight: 700;
         }
-
-        .footer-links {
-            margin: 15px 0;
-        }
-
-        .footer-links a {
-            color: #4f46e5;
-            text-decoration: none;
-            margin: 0 12px;
-            font-weight: 500;
-        }
-
+        
         /* Mobile responsiveness */
         @media only screen and (max-width: 600px) {
             .email-container {
@@ -723,118 +515,163 @@ export function generateSendProjectInvitationEmail(project, link) {
                 border-radius: 0 !important;
             }
             
-            .email-header,
-            .email-body,
-            .email-footer {
+            .mobile-padding {
                 padding: 20px !important;
             }
             
-            .project-name {
-                padding-right: 0 !important;
-                margin-bottom: 20px !important;
-            }
-            
-            .project-status {
-                position: static !important;
-                display: inline-block !important;
-                margin-bottom: 10px !important;
-            }
-            
-            .cta-button {
+            .project-status-mobile {
                 display: block !important;
-                margin: 0 auto;
+                margin-bottom: 10px !important;
             }
         }
     </style>
 </head>
 <body>
-    <div class="email-container">
-        <!-- Header -->
-        <div class="email-header">
-            <div class="header-icon">🤝</div>
-            <h1>Project Invitation</h1>
-            <p>You've been invited to collaborate</p>
-        </div>
-
-        <div class="email-body">
-            <div class="invitation-message">
-                <h2>Hi Buddy,</h2>
-                <p>${
-                  project?.owner?.name || "Unknown"
-                } has invited you to join a project on CollabSphere!</p>
-            </div>
-
-            <!-- Project Details Card -->
-            <div class="project-card">
-                <div class="project-status status-${project.status}">${
-    project.status
-  }</div>
-                <h3 class="project-name">${project.name}</h3>
-                <p class="project-description">${
-                  project?.description || "No description provided"
-                }</p>
-                <div class="project-owner">
-                    Project Owner: <span class="owner-name">${
-                      project?.owner?.name || "Unknown"
-                    }</span>
-                </div>
-            </div>
-
-            <!-- Steps to Accept -->
-            <div class="steps-section">
-                <h3 class="steps-title">How to Accept This Invitation</h3>
-                
-                <div class="step-item">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <div class="step-title">Go to Your Dashboard</div>
-                        <div class="step-description">Click the button below or log into your CollabSphere account</div>
-                    </div>
-                </div>
-
-                <div class="step-item">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <div class="step-title">Check Your Notifications</div>
-                        <div class="step-description">Look for the notification bell icon and click to view pending invitations</div>
-                    </div>
-                </div>
-
-                <div class="step-item">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <div class="step-title">Accept the Request</div>
-                        <div class="step-description">Find this project invitation and click "Accept" to join the team</div>
-                    </div>
-                </div>
-
-                <div class="step-item">
-                    <div class="step-number">4</div>
-                    <div class="step-content">
-                        <div class="step-title">Start Collaborating</div>
-                        <div class="step-description">Once accepted, you'll have full access to the project and can start contributing</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Call to Action -->
-            <div class="cta-section">
-                <a href="${link}" class="cta-button">Go to Dashboard & Accept</a>
-            </div>
-
-            <div class="invitation-message">
-                <p>We're excited to see what you and the team will accomplish together on CollabSphere!</p>
-                <p><strong>The CollabSphere Team</strong></p>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="email-footer">
-            <div class="footer-content">
-                <p>&copy; 2025 CollabSphere. All rights reserved.</p>
-            </div>
-        </div>
-    </div>
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f8f9fa;">
+        <tr>
+            <td align="center" style="padding: 20px 0;">
+                <!-- Main Container -->
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden;">
+                    
+                    <!-- Header -->
+                    <tr>
+                        <td align="center" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); background-color: #4f46e5; padding: 30px; text-align: center;">
+                            <div class="header-icon">🤝</div>
+                            <h1 style="color: #ffffff; font-size: 24px; font-weight: 700; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">Project Invitation</h1>
+                            <p style="color: rgba(255, 255, 255, 0.9); font-size: 16px; margin: 8px 0 0;">You've been invited to collaborate</p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding: 40px 30px;" class="mobile-padding">
+                            
+                            <!-- Invitation Message -->
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                <tr>
+                                    <td align="center" style="text-align: center; margin-bottom: 30px;">
+                                        <h2 style="color: #1f2937; font-size: 22px; font-weight: 600; margin: 0 0 10px;">Hi Buddy,</h2>
+                                        <p style="color: #6b7280; font-size: 16px; margin: 0;">${
+                                          project?.owner?.name || "Unknown"
+                                        } has invited you to join a project on CollabSphere!</p>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Project Details Card -->
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); background-color: #f8fafc; border-radius: 12px; margin: 30px 0; border-left: 4px solid #4f46e5;">
+                                <tr>
+                                    <td style="padding: 25px; position: relative;">
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                            <tr>
+                                                <td>
+                                                    <div style="position: absolute; top: 15px; right: 15px; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; background-color: #dcfce7; color: #166534;" class="project-status-mobile">
+                                                        ${project.status}
+                                                    </div>
+                                                    <h3 style="font-size: 20px; font-weight: 700; color: #1f2937; margin: 0 0 12px; padding-right: 80px;">${
+                                                      project.name
+                                                    }</h3>
+                                                    <p style="font-size: 15px; color: #4b5563; line-height: 1.6; margin: 0;">${
+                                                      project?.description ||
+                                                      "No description provided"
+                                                    }</p>
+                                                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 14px; color: #6b7280;">
+                                                        Project Owner: <span style="font-weight: 600; color: #4f46e5;">${
+                                                          project?.owner
+                                                            ?.name || "Unknown"
+                                                        }</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Steps Section -->
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f9fafb; border-radius: 12px; margin: 30px 0;">
+                                <tr>
+                                    <td style="padding: 25px;">
+                                        <h3 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0 0 20px; text-align: center;">How to Accept This Invitation</h3>
+                                        
+                                        <!-- Step 1 -->
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 16px; padding: 12px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb;">
+                                            <tr>
+                                                <td style="width: 28px; vertical-align: top; padding-right: 15px;">
+                                                    <div class="step-number">1</div>
+                                                </td>
+                                                <td style="vertical-align: top;">
+                                                    <div style="font-size: 16px; font-weight: 600; color: #1f2937; margin: 0 0 4px;">Go to Your Dashboard</div>
+                                                    <div style="font-size: 14px; color: #6b7280; margin: 0;">Click the button below or log into your CollabSphere account</div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        
+                                        <!-- Step 2 -->
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 16px; padding: 12px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb;">
+                                            <tr>
+                                                <td style="width: 28px; vertical-align: top; padding-right: 15px;">
+                                                    <div class="step-number">2</div>
+                                                </td>
+                                                <td style="vertical-align: top;">
+                                                    <div style="font-size: 16px; font-weight: 600; color: #1f2937; margin: 0 0 4px;">Check Your Notifications</div>
+                                                    <div style="font-size: 14px; color: #6b7280; margin: 0;">Look for the notification bell icon and click to view pending invitations</div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        
+                                        <!-- Step 3 -->
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 16px; padding: 12px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb;">
+                                            <tr>
+                                                <td style="width: 28px; vertical-align: top; padding-right: 15px;">
+                                                    <div class="step-number">3</div>
+                                                </td>
+                                                <td style="vertical-align: top;">
+                                                    <div style="font-size: 16px; font-weight: 600; color: #1f2937; margin: 0 0 4px;">Accept the Request</div>
+                                                    <div style="font-size: 14px; color: #6b7280; margin: 0;">Find this project invitation and click "Accept" to join the team</div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        
+                                        <!-- Step 4 -->
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 16px; padding: 12px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb;">
+                                            <tr>
+                                                <td style="width: 28px; vertical-align: top; padding-right: 15px;">
+                                                    <div class="step-number">4</div>
+                                                </td>
+                                                <td style="vertical-align: top;">
+                                                    <div style="font-size: 16px; font-weight: 600; color: #1f2937; margin: 0 0 4px;">Start Collaborating</div>
+                                                    <div style="font-size: 14px; color: #6b7280; margin: 0;">Once accepted, you'll have full access to the project and can start contributing</div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- CTA Section -->
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                <tr>
+                                    <td align="center" style="text-align: center; margin: 35px 0;">
+                                        <a href="${link}" class="cta-button">Go to Dashboard & Accept</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #f9fafb; padding: 25px 30px; text-align: center; border-top: 1px solid #e5e7eb;" class="mobile-padding">
+                            <p style="font-size: 14px; color: #6b7280; line-height: 1.6; margin: 0;">&copy; 2025 CollabSphere. All rights reserved.</p>
+                        </td>
+                    </tr>
+                    
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
-</html>`;
+</html>
+`;
 }
