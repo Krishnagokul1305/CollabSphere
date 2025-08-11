@@ -106,7 +106,7 @@ export default function ChatArea({ projectId, messages = [], user }) {
             </Button>
           }
         >
-          <Members users={[]} projectId={projectId} />
+          <Members projectId={projectId} />
         </Modal>
       </header>
 

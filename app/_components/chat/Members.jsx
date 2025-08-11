@@ -24,14 +24,15 @@ function Members({ projectId }) {
       return res.json();
     },
   });
+
   const filteredUsers = users?.filter(
     (user) =>
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
+      user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user?.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Search Bar */}
       <div className="relative">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -39,14 +40,13 @@ function Members({ projectId }) {
           placeholder="Search users..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-9"
+          className="pl-9 w-full"
         />
       </div>
 
       <ScrollArea className="h-[400px] w-full rounded-md border">
-        <div className="p-4">
+        <div className="p-2 w-full">
           {isLoading ? (
-            // Skeleton loader
             <div className="space-y-3">
               {Array.from({ length: 8 }).map((_, index) => (
                 <div
@@ -68,42 +68,39 @@ function Members({ projectId }) {
             <div className="text-center text-red-500 py-8">
               Failed to load members.
             </div>
-          ) : filteredUsers.length === 0 ? (
+          ) : filteredUsers?.length === 0 ? (
             <div className="text-center text-muted-foreground py-8">
               No users found matching your search.
             </div>
           ) : (
             <div className="space-y-3">
-              {filteredUsers.map((user) => (
+              {filteredUsers?.map((user) => (
                 <div
-                  key={user.id}
-                  className="flex items-start justify-between p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+                  key={user?.id}
+                  className="flex  min-w-0 items-start justify-between p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
                 >
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center  min-w-0 space-x-3">
                     <Avatar className="h-10 w-10">
                       <AvatarImage
-                        src={user.avatar || "/placeholder.svg"}
-                        alt={user.name}
+                        src={user?.avatar || "/placeholder.svg"}
+                        alt={user?.name || "User"}
                       />
                       <AvatarFallback>
-                        {user.name
-                          .split()
-                          .map((n) => n[0])
+                        {user?.name
+                          ?.split()
+                          .map((n) => n?.[0] || "")
                           .join("")}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">
-                        {user.name}
+                        {user?.name || "Unnamed User"}
                       </p>
-                      <p className="text-xs text-muted-foreground truncate">
-                        {user.email}
+                      <p className="text-xs truncate text-muted-foreground">
+                        {user?.email || "No email"}
                       </p>
                     </div>
                   </div>
-                  <Badge className="text-xs bg-blue-700 text-white">
-                    {user.role || "Member"}
-                  </Badge>
                 </div>
               ))}
             </div>

@@ -22,8 +22,8 @@ function InvitationNotification({ notification, requested = false }) {
       toast.success("Invitation accepted successfully!");
     },
     onError: (error) => {
-      toast.error("Failed to accept invitation : " + error.message);
-      console.error("Error accepting invitation:", error);
+      toast.error("Failed to accept invitation");
+      console.error("Error accepting invitation");
     },
   });
 
