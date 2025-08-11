@@ -2,13 +2,9 @@
 
 import { useChat } from "@/hooks/useChat";
 import { cn } from "@/lib/utils";
-import { useEffect } from "react";
 
 function ConversationLayout({ children }) {
   const { isActive } = useChat();
-  useEffect(() => {
-    fetch("/api/socketio");
-  }, []);
   return (
     <div
       className={cn(

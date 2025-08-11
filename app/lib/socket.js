@@ -1,7 +1,6 @@
 import { io } from "socket.io-client";
 
-const socket = io({
-  path: "/api/socketio",
+const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL, {
   transports: ["polling", "websocket"],
   autoConnect: false,
 });
