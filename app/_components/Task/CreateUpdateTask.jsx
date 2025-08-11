@@ -244,6 +244,10 @@ export default function CreateUpdateTask({
                   values={field.value}
                   onValuesChange={field.onChange}
                   loop
+                  displayValuesMap={members.reduce((acc, m) => {
+                    acc[m._id] = m.name;
+                    return acc;
+                  }, {})}
                 >
                   <MultiSelectorTrigger>
                     <MultiSelectorInput placeholder="Select members" />
