@@ -10,6 +10,7 @@ export async function fileUpload(file, name, folder = "users") {
     Key: key,
     Body: buffer,
     ContentType: file.type,
+    ContentDisposition: "attachment",
   };
 
   const command = new PutObjectCommand(params);

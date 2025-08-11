@@ -8,7 +8,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/lib/auth";
 
 async function page() {
-  const data = await getTodos();
+  let data = await getTodos();
   const session = await getServerSession(authOptions);
   return (
     <div className="space-y-5">

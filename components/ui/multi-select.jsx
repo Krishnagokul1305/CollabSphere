@@ -40,6 +40,7 @@ const MultiSelector = ({
   onValuesChange: onValueChange,
   loop = false,
   className,
+  displayValuesMap = {},
   children,
   dir,
   ...props
@@ -173,6 +174,7 @@ const MultiSelector = ({
         open,
         setOpen,
         inputValue,
+        displayValuesMap,
         setInputValue,
         activeIndex,
         setActiveIndex,
@@ -197,7 +199,8 @@ const MultiSelector = ({
 
 const MultiSelectorTrigger = forwardRef(
   ({ className, children, ...props }, ref) => {
-    const { value, onValueChange, activeIndex } = useMultiSelect();
+    const { value, onValueChange, activeIndex, displayValuesMap } =
+      useMultiSelect();
 
     const mousePreventDefault = useCallback((e) => {
       e.preventDefault();
@@ -225,7 +228,7 @@ const MultiSelectorTrigger = forwardRef(
             )}
             variant={"secondary"}
           >
-            <span className="text-xs">{item}</span>
+            <span className="text-xs">{displayValuesMap[item] || item}</span>
             <button
               aria-label={`Remove ${item} option`}
               aria-roledescription="button to remove option"
@@ -317,6 +320,8 @@ const MultiSelectorItem = forwardRef(
       e.preventDefault();
       e.stopPropagation();
     }, []);
+
+    console.log(value);
 
     const isIncluded = Options.includes(value);
     return (
