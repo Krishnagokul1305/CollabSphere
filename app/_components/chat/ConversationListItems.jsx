@@ -32,7 +32,7 @@ function ConversationListItems({ conversation }) {
       </div>
       <div className="flex-1 min-w-0 space-y-1">
         <div className="flex items-center justify-between gap-2">
-          <h3 className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+          <h3 className="font-semibold text-accent-foreground truncate group-hover:text-primary transition-colors">
             {conversation.name}
           </h3>
           <span className="text-xs text-muted-foreground font-medium flex-shrink-0">

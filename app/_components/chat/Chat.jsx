@@ -13,6 +13,10 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import socket from "@/app/lib/socket";
+import { CalendarIcon, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Modal from "../modal/Modal";
+import Members from "./Members";
 
 export default function ChatArea({ projectId, messages = [], user }) {
   const [chatMessages, setChatMessages] = useState(messages);
@@ -76,7 +80,7 @@ export default function ChatArea({ projectId, messages = [], user }) {
 
   return (
     <div className="flex flex-col bg-sidebar h-screen max-h-screen overflow-hidden">
-      <header className="flex-shrink-0 flex items-center justify-between p-5 border-b">
+      <header className="flex-shrink-0 flex items-center justify-between p-3 border-b">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -90,6 +94,20 @@ export default function ChatArea({ projectId, messages = [], user }) {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
+        <Modal
+          title="Members"
+          description="View all members in your Project."
+          Trigger={
+            <Button
+              variant={"ghost"}
+              className="flex md:space-y-0 p-2 px-5 gap-2 items-center text-sm border rounded-full "
+            >
+              <Users className="h-4 w-4" /> Members
+            </Button>
+          }
+        >
+          <Members users={[]} projectId={projectId} />
+        </Modal>
       </header>
 
       <div className="flex-1 overflow-hidden">
