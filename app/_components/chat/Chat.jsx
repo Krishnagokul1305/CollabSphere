@@ -67,14 +67,14 @@ export default function ChatArea({ projectId, messages = [], user }) {
   }, []);
 
   useEffect(() => {
-    socket.on("typing", ({ user }) => {
+    socket.on("user_typing", ({ user }) => {
       setTypingUsers((prev) => {
         if (prev.some((u) => u.id === user.id)) return prev;
         return [...prev, user];
       });
     });
 
-    socket.on("stop_typing", ({ user }) => {
+    socket.on("user_stop_typing", ({ user }) => {
       setTypingUsers((prev) => prev.filter((u) => u.id !== user.id));
     });
 

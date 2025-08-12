@@ -10,31 +10,31 @@ export default function TypingIndicator({ users, className = "" }) {
   if (users.length === 0) return null;
 
   return (
-    <div className={`flex items-end gap-2 ${className}`}>
+    <div className={`flex items-start gap-2 ${className}`}>
       <TooltipProvider>
         <div className="flex -space-x-2">
           {users.slice(0, 3).map((user) => (
             <Tooltip key={user?.id}>
               <TooltipTrigger asChild>
-                <Avatar className="w-7 h-7 border-2 border-white dark:border-gray-900">
+                <Avatar className="w-8 h-8 border-2 border-white dark:border-gray-900">
                   <AvatarImage
                     src={user?.avatar || "/placeholder.svg"}
                     alt={user?.name}
                   />
                   <AvatarFallback className="text-xs">
-                    {user.name.charAt(0).toUpperCase()}
+                    {user?.name?.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
               </TooltipTrigger>
               <TooltipContent>
-                <p>{user.name} is typing...</p>
+                <p>{user?.name} is typing...</p>
               </TooltipContent>
             </Tooltip>
           ))}
           {users.length > 3 && (
             <Tooltip>
               <TooltipTrigger asChild>
-                <Avatar className="w-7 h-7 border-2 border-white dark:border-gray-900 bg-gray-200 dark:bg-gray-700">
+                <Avatar className="w-8 h-8 border-2 border-white dark:border-gray-900 bg-gray-200 dark:bg-gray-700">
                   <AvatarFallback className="text-xs">
                     +{users.length - 3}
                   </AvatarFallback>
@@ -44,7 +44,7 @@ export default function TypingIndicator({ users, className = "" }) {
                 <p>
                   {users
                     .slice(3)
-                    .map((u) => u.name)
+                    .map((u) => u?.name)
                     .join(", ")}
                   {users.length > 4 ? " and others" : ""} typing...
                 </p>
@@ -54,7 +54,7 @@ export default function TypingIndicator({ users, className = "" }) {
         </div>
       </TooltipProvider>
       <div
-        className={`flex items-center gap-1 px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-2xl w-fit ${className}`}
+        className={`flex items-center gap-1 px-3 py-4 bg-sidebar-border rounded-md w-fit ${className}`}
       >
         <span
           className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"
