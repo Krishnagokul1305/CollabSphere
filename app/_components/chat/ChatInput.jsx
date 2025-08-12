@@ -8,6 +8,7 @@ import { createMessage } from "@/app/lib/actions/messageAction";
 import { Send, Smile } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
 import { useClickAway } from "react-use";
+import socket from "@/app/lib/socket";
 
 export default function ChatInput({ projectId, user, onSend }) {
   const [message, setMessage] = useState("");
@@ -16,7 +17,20 @@ export default function ChatInput({ projectId, user, onSend }) {
   const emojiPickerRef = useRef(null);
   const userId = user.id;
 
-  // Close emoji picker when clicking outside
+  const typingTimeoutRef = useRef(null);
+
+  const emitTyping = () => {
+    socket.emit("typing", { projectId, user });
+    console.log("emitting");
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    typingTimeoutRef.current = setTimeout(() => {
+      socket.emit("stop-typing", { projectId, user });
+    }, 1500);
+  };
+
   useClickAway(emojiPickerRef, () => setShowEmojiPicker(false));
 
   const { mutate, isPending } = useMutation({
@@ -88,7 +102,10 @@ export default function ChatInput({ projectId, user, onSend }) {
             disabled={isPending}
             placeholder="Message..."
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) => {
+              setMessage(e.target.value);
+              emitTyping();
+            }}
             onKeyDown={handleKeyDown}
             className="min-h-[44px] max-h-32 resize-none rounded-md pr-12"
             rows={1}

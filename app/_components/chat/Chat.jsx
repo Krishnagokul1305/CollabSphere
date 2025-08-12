@@ -13,13 +13,15 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import socket from "@/app/lib/socket";
-import { CalendarIcon, Users } from "lucide-react";
+import { Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Modal from "../modal/Modal";
 import Members from "./Members";
+import TypingIndicator from "./TypingIndicator";
 
 export default function ChatArea({ projectId, messages = [], user }) {
   const [chatMessages, setChatMessages] = useState(messages);
+  const [typingUsers, setTypingUsers] = useState([]);
   const scrollRef = useRef(null);
   const userId = user.id;
 
@@ -61,6 +63,24 @@ export default function ChatArea({ projectId, messages = [], user }) {
 
     return () => {
       socket.off("message-deleted", handleDelete);
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.on("typing", ({ user }) => {
+      setTypingUsers((prev) => {
+        if (prev.some((u) => u.id === user.id)) return prev;
+        return [...prev, user];
+      });
+    });
+
+    socket.on("stop_typing", ({ user }) => {
+      setTypingUsers((prev) => prev.filter((u) => u.id !== user.id));
+    });
+
+    return () => {
+      socket.off("typing");
+      socket.off("stop_typing");
     };
   }, []);
 
@@ -120,7 +140,7 @@ export default function ChatArea({ projectId, messages = [], user }) {
                 onDelete={handleDeleteMessage}
               />
             ))}
-            {/* <TypingIndicator /> */}
+            {typingUsers.length > 0 && <TypingIndicator users={typingUsers} />}
             <div ref={scrollRef} />
           </div>
         </ScrollArea>
